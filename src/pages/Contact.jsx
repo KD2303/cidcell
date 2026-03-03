@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, ArrowRight } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
@@ -40,7 +41,7 @@ export default function Contact() {
         <div className="container-max mx-auto">
           <div className="grid lg:grid-cols-5 gap-12">
             {/* Contact Info */}
-            <div className="lg:col-span-2 space-y-10">
+            <ScrollReveal className="lg:col-span-2 space-y-10">
               <div>
                 <h3 className="font-heading font-black text-3xl text-black mb-6 uppercase">
                   Reach Out to CID-Cell
@@ -109,10 +110,10 @@ export default function Contact() {
                   ))}
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Contact Form */}
-            <div className="lg:col-span-3">
+            <ScrollReveal className="lg:col-span-3" delay={200}>
               <div className="bg-highlight-cream border-3 border-black p-8 lg:p-10 shadow-neo transform rotate-1">
                 <h3 className="font-heading font-black text-3xl text-black mb-2 uppercase">Send a Message</h3>
                 <p className="text-black font-medium mb-8 border-b-2 border-black pb-4">Fill in the form below and we'll get back to you soon.</p>
@@ -186,23 +187,28 @@ export default function Contact() {
                   </button>
                 </form>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Map Section */}
-      <section className="h-96 bg-gray-200 relative border-b-3 border-black">
-         {/* Pattern for map placeholder */}
-        <div className="absolute inset-0 opacity-20" 
-             style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '10px 10px' }} 
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white border-3 border-black p-8 shadow-neo text-center transform -rotate-1">
-            <MapPin size={48} className="text-black mx-auto mb-4" strokeWidth={2.5} />
-            <p className="text-black font-black text-xl uppercase">Google Map Integration</p>
-            <p className="text-gray-500 font-bold mt-2">Replace with your Google Maps embed</p>
-          </div>
+      <section className="relative border-b-3 border-black">
+        <div className="border-b-3 border-black px-6 py-4 bg-highlight-yellow flex items-center gap-3">
+          <MapPin size={22} strokeWidth={2.5} />
+          <span className="font-heading font-black text-lg uppercase">Find Us — Madhav Institute of Technology &amp; Science, Gwalior</span>
+        </div>
+        <div className="w-full h-[480px]">
+          <iframe
+            title="CID-Cell Location"
+            src="https://maps.google.com/maps?q=Madhav+Institute+of+Technology+%26+Science,+Gwalior&hl=en&z=16&output=embed"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </section>
     </>

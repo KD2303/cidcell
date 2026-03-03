@@ -1,5 +1,6 @@
 import { Lightbulb, Users, Briefcase } from 'lucide-react';
 import SectionHeading from './SectionHeading';
+import ScrollReveal from './ScrollReveal';
 
 const pillars = [
   {
@@ -33,8 +34,9 @@ export default function VisionMission() {
         />
 
         <div className="grid md:grid-cols-3 gap-12">
-          {pillars.map(({ icon: Icon, title, desc, color }) => (
-            <div key={title} className="text-center group h-full">
+          {pillars.map(({ icon: Icon, title, desc, color }, idx) => (
+            <ScrollReveal key={title} delay={idx * 150} className="h-full">
+            <div className="text-center group h-full">
               <div className="bg-white border-3 border-primary shadow-neo rounded-neo p-8 h-full flex flex-col items-center hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200">
                 <div
                   className={`w-24 h-24 ${color} border-3 border-primary rounded-full flex items-center justify-center mb-6 shadow-neo-sm group-hover:shadow-none transition-all`}
@@ -45,6 +47,7 @@ export default function VisionMission() {
                 <p className="text-primary font-medium leading-relaxed">{desc}</p>
               </div>
             </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

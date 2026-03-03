@@ -1,31 +1,38 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Terminal, Cpu, Code2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function HeroSection() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return (
     <section className="relative pt-40 pb-32 overflow-hidden bg-bg text-primary">
       {/* Abstract Background Shapes */}
-      <div className="absolute top-20 right-10 w-32 h-32 bg-highlight-yellow border-3 border-primary rounded-full shadow-neo animate-float hidden lg:block"></div>
-      <div className="absolute bottom-20 left-10 w-24 h-24 bg-highlight-purple border-3 border-primary transform rotate-12 shadow-neo hidden lg:block"></div>
-      <div className="absolute top-1/3 left-1/4 w-16 h-16 bg-highlight-teal border-3 border-primary rounded-none shadow-neo hidden lg:block animate-float animation-delay-200"></div>
+      <div className={`absolute top-20 right-10 w-32 h-32 bg-highlight-yellow border-3 border-primary rounded-full shadow-neo animate-float hidden lg:block transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0'}`}></div>
+      <div className={`absolute bottom-20 left-10 w-24 h-24 bg-highlight-purple border-3 border-primary transform rotate-12 shadow-neo hidden lg:block transition-all duration-1000 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}></div>
+      <div className={`absolute top-1/3 left-1/4 w-16 h-16 bg-highlight-teal border-3 border-primary rounded-none shadow-neo hidden lg:block animate-float animation-delay-200 transition-all duration-1000 delay-500 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}></div>
 
-      <div className="container-max mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className={`container-max mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ease-out transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}>
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           {/* Text Content */}
           <div className="flex-1 text-center lg:text-left">
-            <div className="inline-block px-4 py-2 bg-white border-2 border-primary shadow-neo-sm transform -rotate-2 mb-6">
+            <div className="inline-block px-4 py-2 bg-white border-2 border-primary shadow-neo-sm transform -rotate-2 mb-8">
               <span className="font-bold uppercase tracking-widest text-sm">
                 Collaborative Innovation & Development
               </span>
             </div>
             
-            <h1 className="font-heading text-6xl md:text-7xl lg:text-8xl mb-8 uppercase tracking-tighter leading-none">
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-10 uppercase tracking-tighter leading-none">
               <span className="block mb-2">Bridging</span>
-              <span className="bg-highlight-yellow px-4 py-1 border-3 border-primary transform -skew-x-6 inline-block mb-2">ACADEMICS</span> <br />
+              <span className="bg-highlight-yellow px-4 py-1 border-3 border-primary transform -skew-x-6 inline-block mb-3">ACADEMICS</span> <br />
               <span className="block mt-2">WITH <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-gray-800">INDUSTRY</span></span>
             </h1>
 
-            <p className="text-lg md:text-xl font-medium mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed border-l-4 border-primary pl-6">
+            <p className="text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed border-l-4 border-primary pl-6">
               A structured platform for hands-on learning, real-world projects, and innovation-driven growth in the Department of CSE.
             </p>
 

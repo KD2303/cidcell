@@ -8,6 +8,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import SectionHeading from './SectionHeading';
+import ScrollReveal from './ScrollReveal';
 
 const activities = [
   {
@@ -57,10 +58,10 @@ export default function KeyActivities() {
         />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {activities.map(({ icon: Icon, title, desc, bg }) => (
+          {activities.map(({ icon: Icon, title, desc, bg }, idx) => (
+            <ScrollReveal key={title} delay={idx * 100}>
             <div
-              key={title}
-              className={`border-3 border-primary rounded-neo p-8 shadow-neo hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200 bg-white group flex flex-col items-start`}
+              className={`border-3 border-primary rounded-neo p-8 shadow-neo hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200 bg-white group flex flex-col items-start h-full`}
             >
               <div
                 className={`w-20 h-20 rounded-full ${bg} border-3 border-primary flex items-center justify-center mb-6 transition-transform group-hover:rotate-12 shadow-neo-sm`}
@@ -70,6 +71,7 @@ export default function KeyActivities() {
               <h3 className="font-heading font-black text-3xl uppercase text-primary mb-4">{title}</h3>
               <p className="text-primary font-medium text-base leading-relaxed border-l-3 border-primary pl-4">{desc}</p>
             </div>
+            </ScrollReveal>
           ))}
 
           {/* CTA card */}

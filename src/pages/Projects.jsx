@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ExternalLink, Github, Filter } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
 
 const categories = ['All', 'Capstone', 'Macro', 'Micro', 'Open Source'];
 
@@ -11,6 +12,7 @@ const projects = [
     tech: ['React', 'Node.js', 'MongoDB', 'IoT'],
     desc: 'An integrated campus management platform with automated attendance, smart energy management, and real-time analytics dashboard.',
     github: '#',
+    image: 'https://placehold.co/600x400/8B5CF6/FFFFFF?text=Smart+Campus',
   },
   {
     title: 'AI-Powered Placement Predictor',
@@ -18,6 +20,7 @@ const projects = [
     tech: ['Python', 'TensorFlow', 'Flask', 'React'],
     desc: 'Machine learning model that predicts student placement probability based on academic performance, skills, and extracurriculars.',
     github: '#',
+    image: 'https://placehold.co/600x400/EC4899/FFFFFF?text=Placement+AI',
   },
   {
     title: 'E-Commerce Microservices Platform',
@@ -25,6 +28,7 @@ const projects = [
     tech: ['Spring Boot', 'Docker', 'Kubernetes', 'PostgreSQL'],
     desc: 'Scalable e-commerce platform built with microservices architecture, containerized deployment, and CI/CD pipeline.',
     github: '#',
+    image: 'https://placehold.co/600x400/10B981/FFFFFF?text=E-Commerce',
   },
   {
     title: 'Collaborative Code Editor',
@@ -32,6 +36,7 @@ const projects = [
     tech: ['React', 'Socket.io', 'Express', 'Monaco Editor'],
     desc: 'Real-time collaborative code editor with syntax highlighting, multi-language support, and live chat functionality.',
     github: '#',
+    image: 'https://placehold.co/600x400/F59E0B/FFFFFF?text=Code+Editor',
   },
   {
     title: 'College Event Management Portal',
@@ -39,6 +44,7 @@ const projects = [
     tech: ['Next.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
     desc: 'Full-featured event management system with registration, QR-based check-in, and real-time event updates.',
     github: '#',
+    image: 'https://placehold.co/600x400/3B82F6/FFFFFF?text=Event+Portal',
   },
   {
     title: 'Personal Finance Tracker',
@@ -46,6 +52,7 @@ const projects = [
     tech: ['React Native', 'Firebase', 'Chart.js'],
     desc: 'Mobile application for tracking personal expenses, setting budgets, and visualizing spending patterns.',
     github: '#',
+    image: 'https://placehold.co/600x400/EF4444/FFFFFF?text=Finance+Tracker',
   },
   {
     title: 'Weather Dashboard',
@@ -53,6 +60,7 @@ const projects = [
     tech: ['HTML', 'CSS', 'JavaScript', 'Weather API'],
     desc: 'Clean weather dashboard displaying real-time weather data, forecasts, and location-based information.',
     github: '#',
+    image: 'https://placehold.co/600x400/14B8A6/FFFFFF?text=Weather+App',
   },
   {
     title: 'Todo CLI Application',
@@ -60,6 +68,7 @@ const projects = [
     tech: ['Python', 'Click', 'SQLite'],
     desc: 'Command-line task manager with priorities, due dates, categories, and export capabilities.',
     github: '#',
+    image: 'https://placehold.co/600x400/6366F1/FFFFFF?text=Todo+CLI',
   },
   {
     title: 'Portfolio Generator',
@@ -67,6 +76,7 @@ const projects = [
     tech: ['React', 'Tailwind CSS', 'Vite'],
     desc: 'Template-based portfolio website generator where students can input their data and generate a hosted portfolio.',
     github: '#',
+    image: 'https://placehold.co/600x400/F97316/FFFFFF?text=Portfolio+Gen',
   },
   {
     title: 'VS Code Extension — Snippet Manager',
@@ -74,6 +84,7 @@ const projects = [
     tech: ['TypeScript', 'VS Code API'],
     desc: 'Open-source VS Code extension for managing, sharing, and syncing code snippets across devices.',
     github: '#',
+    image: 'https://placehold.co/600x400/0EA5E9/FFFFFF?text=VS+Code+Ext',
   },
   {
     title: 'Documentation Site Builder',
@@ -81,6 +92,7 @@ const projects = [
     tech: ['MDX', 'Next.js', 'Tailwind CSS'],
     desc: 'Contributed to an open-source documentation framework with custom themes and search functionality.',
     github: '#',
+    image: 'https://placehold.co/600x400/84CC16/FFFFFF?text=Docs+Builder',
   },
   {
     title: 'GitHub Profile Analyzer',
@@ -88,6 +100,7 @@ const projects = [
     tech: ['Python', 'GitHub API', 'Streamlit'],
     desc: 'Open-source tool that analyzes GitHub profiles and generates contribution reports and skill assessments.',
     github: '#',
+    image: 'https://placehold.co/600x400/1E293B/FFFFFF?text=GitHub+Analyzer',
   },
 ];
 
@@ -146,14 +159,24 @@ export default function Projects() {
 
           {/* Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map((project) => (
+            {filtered.map((project, index) => (
+              <ScrollReveal key={project.title} delay={index * 50}>
               <div
-                key={project.title}
-                className="neo-card flex flex-col overflow-hidden group hover:rotate-1"
+                className="neo-card flex flex-col overflow-hidden group hover:rotate-1 h-full"
               >
+                {/* Thumbnail */}
+                <div className="relative h-48 overflow-hidden border-b-3 border-primary bg-gray-100">
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/0 transition-colors duration-300 pointer-events-none" />
+                </div>
+
                 {/* Color bar */}
                 <div
-                  className={`h-4 border-b-3 border-primary ${
+                  className={`h-3 border-b-3 border-primary ${
                     project.category === 'Capstone'
                       ? 'bg-highlight-purple'
                       : project.category === 'Macro'
@@ -197,6 +220,7 @@ export default function Projects() {
                   </div>
                 </div>
               </div>
+              </ScrollReveal>
             ))}
           </div>
 

@@ -1,4 +1,6 @@
 import SectionHeading from './SectionHeading';
+import React from 'react';
+import ScrollReveal from './ScrollReveal';
 import { ChevronRight } from 'lucide-react';
 
 const semesters = [
@@ -70,7 +72,8 @@ export default function Timeline() {
             {semesters.map((item, idx) => {
               const isLeft = idx % 2 === 0;
               return (
-                <div key={item.sem} className="relative flex flex-col md:flex-row items-center justify-center w-full">
+                <ScrollReveal key={item.sem} delay={idx * 50} className="w-full">
+                <div className="relative flex flex-col md:flex-row items-center justify-center w-full">
                   
                   {/* Desktop: Left Side Content */}
                   <div className={`hidden md:block w-1/2 pr-16 text-right`}>
@@ -78,7 +81,7 @@ export default function Timeline() {
                   </div>
 
                   {/* Center/Left Marker */}
-                  <div className="absolute left-8 md:search-result md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center z-10">
+                  <div className="absolute left-8 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center z-10">
                     <div className="w-12 h-12 bg-black border-4 border-white flex items-center justify-center shadow-neo">
                        <span className="text-white font-bold text-lg font-heading">{idx + 1}</span>
                     </div>
@@ -90,11 +93,12 @@ export default function Timeline() {
                   </div>
                   
                    {/* Mobile Content Display */}
-                   <div className="md:hidden w-full pl-20 pr-4">
+                   <div className="md:hidden w-full pl-24 pr-4">
                       <TimelineCard item={item} align="left" />
                    </div>
 
                 </div>
+                </ScrollReveal>
               );
             })}
           </div>

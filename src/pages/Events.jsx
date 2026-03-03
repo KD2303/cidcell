@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Calendar, Clock, MapPin, ArrowRight } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
 
 const categories = ['All', 'Workshops', 'Hackathons', 'Coding', 'Guest Lectures', 'Mentorship'];
 
@@ -188,29 +189,29 @@ export default function Events() {
 
           {/* Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map((event) => (
+            {filtered.map((event, idx) => (
+              <ScrollReveal key={event.title} delay={idx * 50}>
               <div
-                key={event.title}
-                className="neo-card flex flex-col group relative"
+                className="neo-card flex flex-col group relative h-full overflow-hidden"
               >
                 <div className="p-0 flex flex-col flex-1 bg-white">
                   <div className={`p-4 border-b-3 border-primary flex justify-between items-center ${
-                        event.category === 'Workshops'
-                          ? 'bg-highlight-teal'
-                          : event.category === 'Hackathons'
-                          ? 'bg-highlight-orange'
-                          : event.category === 'Coding'
-                          ? 'bg-highlight-purple'
-                          : event.category === 'Guest Lectures'
-                          ? 'bg-highlight-pink'
-                          : 'bg-highlight-green'
-                      }`}>
-                    <span className="font-heading font-black uppercase tracking-wide text-lg">
+                      event.category === 'Workshops'
+                        ? 'bg-highlight-teal'
+                        : event.category === 'Hackathons'
+                        ? 'bg-highlight-orange'
+                        : event.category === 'Coding'
+                        ? 'bg-highlight-purple'
+                        : event.category === 'Guest Lectures'
+                        ? 'bg-highlight-pink'
+                        : 'bg-highlight-green'
+                    }`}>
+                    <span className="font-heading font-black uppercase tracking-wide text-xl">
                       {event.category}
                     </span>
                     <span
                       className={`text-xs font-bold uppercase px-2 py-1 border-2 border-primary bg-white shadow-neo-sm ${
-                        event.status === 'upcoming' ? 'text-green-600' : 'text-gray-500'
+                        event.status === 'upcoming' ? 'text-green-600' : 'text-primary'
                       }`}
                     >
                       {event.status === 'upcoming' ? 'Upcoming' : 'Past'}
@@ -218,32 +219,32 @@ export default function Events() {
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="font-heading text-2xl font-black text-primary mb-4 leading-none group-hover:text-highlight-orange transition-colors uppercase">
+                    <h3 className="font-heading text-4xl font-black text-primary mb-6 leading-none group-hover:text-highlight-orange transition-colors uppercase">
                       {event.title}
                     </h3>
                     
-                    <div className="space-y-3 mb-6 flex-1">
-                      <div className="flex items-center gap-3 font-medium text-sm">
-                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
-                          <Calendar size={14} />
+                    <div className="space-y-4 mb-6 flex-1">
+                      <div className="flex items-center gap-4 font-bold text-base">
+                        <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 border-2 border-primary">
+                          <Calendar size={18} />
                         </div>
                         {event.date}
                       </div>
-                      <div className="flex items-center gap-3 font-medium text-sm">
-                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
-                          <Clock size={14} />
+                      <div className="flex items-center gap-4 font-bold text-base">
+                        <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 border-2 border-primary">
+                          <Clock size={18} />
                         </div>
                         {event.time}
                       </div>
-                      <div className="flex items-center gap-3 font-medium text-sm">
-                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
-                          <MapPin size={14} />
+                      <div className="flex items-center gap-4 font-bold text-base">
+                        <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 border-2 border-primary">
+                          <MapPin size={18} />
                         </div>
                         {event.venue}
                       </div>
                     </div>
 
-                    <p className="text-gray-700 text-sm leading-relaxed mb-6 border-l-2 border-dashed border-gray-300 pl-3">
+                    <p className="text-gray-800 text-base font-medium leading-relaxed mb-8 border-l-4 border-dashed border-gray-300 pl-4 py-1">
                       {event.desc}
                     </p>
 
@@ -259,6 +260,7 @@ export default function Events() {
                   </div>
                 </div>
               </div>
+              </ScrollReveal>
             ))}
           </div>
 

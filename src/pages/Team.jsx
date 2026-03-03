@@ -1,5 +1,6 @@
 import { Linkedin, Github, Mail } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
 
 const teamSections = [
   {
@@ -153,8 +154,12 @@ export default function Team() {
               }`}
             >
               {section.members.map((member, mi) => (
-                <div
+                <ScrollReveal
                   key={member.name}
+                  delay={mi * 100}
+                  className="h-full"
+                >
+                <div
                   className="bg-white border-3 border-black p-6 shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200 text-center flex flex-col items-center h-full"
                 >
                   {/* Avatar */}
@@ -200,6 +205,7 @@ export default function Team() {
                     )}
                   </div>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
 
 const objectives = [
   { icon: Code2, text: 'Provide hands-on experience through structured project-based learning from semester 1 to final year.' },
@@ -52,6 +53,7 @@ export default function About() {
       <section className="section-padding bg-white border-b-3 border-black">
         <div className="container-max mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <ScrollReveal className="h-full">
             <div>
               <SectionHeading
                 subtitle="Introduction"
@@ -74,6 +76,8 @@ export default function About() {
                 </p>
               </div>
             </div>
+            </ScrollReveal>
+            <ScrollReveal delay={200} className="h-full">
             <div className="bg-highlight-blue border-3 border-black p-8 lg:p-10 shadow-neo transform rotate-1">
               <h3 className="font-heading font-black text-3xl text-black mb-6 uppercase">Purpose of CID-Cell</h3>
               <ul className="space-y-4">
@@ -93,6 +97,7 @@ export default function About() {
                 ))}
               </ul>
             </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -148,12 +153,14 @@ export default function About() {
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {objectives.map(({ icon: Icon, text }, i) => (
-              <div key={i} className="flex flex-col items-start gap-4 bg-highlight-yellow/10 border-3 border-black p-6 hover:bg-highlight-yellow transition-colors duration-200">
+              <ScrollReveal key={i} delay={i * 50} className="h-full">
+              <div className="flex flex-col items-start gap-4 bg-highlight-yellow/10 border-3 border-black p-6 hover:bg-highlight-yellow transition-colors duration-200 h-full">
                 <div className="w-12 h-12 bg-white border-3 border-black flex items-center justify-center shrink-0 shadow-small">
                   <Icon size={24} className="text-black" strokeWidth={2.5} />
                 </div>
                 <p className="text-black font-bold leading-relaxed">{text}</p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -169,15 +176,16 @@ export default function About() {
             light
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            {flowSteps.map(({ step, title, desc }) => (
+            {flowSteps.map(({ step, title, desc }, idx) => (
+              <ScrollReveal key={step} delay={idx * 50} className="h-full">
               <div
-                key={step}
-                className="bg-gray-900 border-2 border-white p-6 hover:bg-white hover:text-black transition-colors group"
+                className="bg-gray-900 border-2 border-white p-6 hover:bg-white hover:text-black transition-colors group h-full"
               >
                 <span className="text-5xl font-heading font-black text-transparent text-stroke-white group-hover:text-stroke-black mb-4 block">{step}</span>
                 <h3 className="font-heading font-bold text-2xl mt-3 mb-2 uppercase">{title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed group-hover:text-black font-medium">{desc}</p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>

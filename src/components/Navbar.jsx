@@ -81,10 +81,10 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu overlay */}
         {isOpen && (
-          <div className="md:hidden pb-4 animate-fade-in-up">
-            <div className="bg-white border-3 border-primary shadow-neo rounded-xl p-4 space-y-2">
+          <div className="absolute top-full left-0 w-full md:hidden px-4 pb-4 animate-fade-in-up bg-bg/95 backdrop-blur-sm border-b-2 border-primary shadow-neo h-screen sm:h-auto z-40">
+            <div className="bg-white border-3 border-primary shadow-neo rounded-xl p-4 space-y-2 mt-4">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.name}

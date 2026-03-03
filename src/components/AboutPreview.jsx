@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Target, Award } from 'lucide-react';
 import SectionHeading from './SectionHeading';
+import ScrollReveal from './ScrollReveal';
 
 export default function AboutPreview() {
   return (
@@ -34,10 +35,10 @@ export default function AboutPreview() {
               icon: Award,
               bg: 'bg-highlight-blue',
             },
-          ].map((card) => (
+          ].map((card, idx) => (
+            <ScrollReveal key={card.title} delay={idx * 150}>
             <div
-              key={card.title}
-              className="group border-3 border-primary bg-white shadow-neo hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 p-8 flex flex-col items-start relative overflow-hidden"
+              className={`group border-3 border-primary bg-white shadow-neo hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 p-8 flex flex-col items-start relative overflow-hidden h-full`}
             >
               <div className={`absolute top-0 right-0 w-24 h-24 ${card.bg} border-b-3 border-l-3 border-primary rounded-bl-full -mr-4 -mt-4 transition-transform hover:scale-110`}></div>
               
@@ -48,6 +49,7 @@ export default function AboutPreview() {
               <h3 className="font-heading text-3xl font-black text-primary mb-4 uppercase leading-none relative z-10">{card.title}</h3>
               <p className="text-primary font-medium text-lg leading-relaxed relative z-10 border-l-4 border-gray-200 pl-4">{card.desc}</p>
             </div>
+            </ScrollReveal>
           ))}
         </div>
 
