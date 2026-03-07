@@ -6,7 +6,7 @@ import ScrollReveal from './ScrollReveal';
 export default function AboutPreview() {
   return (
     <section className="section-padding bg-white relative">
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 bg-primary h-1/2"></div>
+      
       
       <div className="container-max mx-auto">
         <SectionHeading

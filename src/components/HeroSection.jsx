@@ -1,12 +1,47 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Terminal, Cpu, Code2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+
+const SLIDES = [
+  '/slideshow/1.webp',
+  '/slideshow/3.webp',
+  '/slideshow/5.webp',
+  '/slideshow/6.webp',
+  '/slideshow/7.webp',
+  '/slideshow/2.webp',
+  '/slideshow/4.png',
+];
 
 export default function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const intervalRef = useRef(null);
+
+  const startAutoPlay = () => {
+    intervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+    }, 3000);
+  };
+
+  const resetAutoPlay = () => {
+    clearInterval(intervalRef.current);
+    startAutoPlay();
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
+    resetAutoPlay();
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+    resetAutoPlay();
+  };
 
   useEffect(() => {
     setIsVisible(true);
+    startAutoPlay();
+    return () => clearInterval(intervalRef.current);
   }, []);
 
   return (
@@ -63,41 +98,45 @@ export default function HeroSection() {
           {/* Visual/Image */}
           <div className="flex-1 relative w-full max-w-lg lg:max-w-none">
             <div className="relative bg-white border-4 border-primary rounded-neo shadow-neo-lg p-2 transform rotate-2 hover:rotate-0 transition-transform duration-500">
-              <div className="bg-primary/5 border-2 border-primary border-dashed rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center relative">
-                 {/* Decorative code block */}
-                <div className="absolute inset-0 p-6 font-mono text-xs opacity-20 overflow-hidden leading-relaxed whitespace-pre">
-                  {`function innovate() {
-  const ideas = [];
-  const team = new Team(['Dev', 'Design', 'Manager']);
-  
-  while(true) {
-    try {
-      const project = team.brainstorm();
-      ideas.push(project.build());
-    } catch(err) {
-      team.learn(err);
-    }
-  }
-}`}
-                </div>
-                
-                <div className="grid grid-cols-2 gap-6 relative z-10 w-full p-8">
-                  <div className="bg-highlight-blue border-3 border-primary p-6 rounded-xl shadow-neo flex flex-col items-center justify-center aspect-square card-hover w-full h-full">
-                    <Terminal size={40} className="mb-2" />
-                    <span className="font-heading font-bold text-lg uppercase">Code</span>
-                  </div>
-                  <div className="bg-highlight-orange border-3 border-primary p-6 rounded-xl shadow-neo flex flex-col items-center justify-center aspect-square mt-8 card-hover w-full h-full">
-                    <Cpu size={40} className="mb-2" />
-                    <span className="font-heading font-bold text-lg uppercase">Build</span>
-                  </div>
-                  <div className="bg-highlight-green border-3 border-primary p-6 rounded-xl shadow-neo flex flex-col items-center justify-center aspect-square -mt-8 card-hover w-full h-full">
-                     <Code2 size={40} className="mb-2" />
-                    <span className="font-heading font-bold text-lg uppercase">Deploy</span>
-                  </div>
-                  <div className="bg-highlight-purple border-3 border-primary p-6 rounded-xl shadow-neo flex flex-col items-center justify-center aspect-square card-hover w-full h-full">
-                     <ArrowRight size={40} className="mb-2 transform -rotate-45" />
-                    <span className="font-heading font-bold text-lg uppercase">Scale</span>
-                  </div>
+              <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-black">
+                {/* Slides */}
+                {SLIDES.map((src, i) => (
+                  <img
+                    key={src}
+                    src={src}
+                    alt={`Slide ${i + 1}`}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                ))}
+
+                {/* Prev Button */}
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white border-2 border-primary shadow-neo-sm rounded-full p-1 hover:bg-highlight-yellow transition-colors"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+
+                {/* Next Button */}
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white border-2 border-primary shadow-neo-sm rounded-full p-1 hover:bg-highlight-yellow transition-colors"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={22} />
+                </button>
+
+                {/* Dot Indicators */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                  {SLIDES.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { setCurrentSlide(i); resetAutoPlay(); }}
+                      className={`w-2 h-2 rounded-full border border-primary transition-all ${i === currentSlide ? 'bg-highlight-yellow w-4' : 'bg-white'}`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
