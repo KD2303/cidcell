@@ -47,9 +47,9 @@ export default function HeroSection() {
   return (
     <section className="relative pt-40 pb-32 overflow-hidden bg-bg text-primary">
       {/* Abstract Background Shapes */}
-      <div className={`absolute top-20 right-10 w-32 h-32 bg-highlight-yellow border-3 border-primary rounded-full shadow-neo animate-float hidden lg:block transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0'}`}></div>
-      <div className={`absolute bottom-20 left-10 w-24 h-24 bg-highlight-purple border-3 border-primary transform rotate-12 shadow-neo hidden lg:block transition-all duration-1000 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}></div>
-      <div className={`absolute top-1/3 left-1/4 w-16 h-16 bg-highlight-teal border-3 border-primary rounded-none shadow-neo hidden lg:block animate-float animation-delay-200 transition-all duration-1000 delay-500 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}></div>
+      <div className={`absolute top-20 right-10 w-32 h-32 bg-highlight-yellow border-3 border-primary rounded-full shadow-neo animate-float hidden lg:block transition-all duration-1000 ${isVisible ? 'transform translate-y-0 opacity-100' : 'transform -translate-y-12 opacity-0'}`}></div>
+      <div className={`absolute bottom-20 left-10 w-24 h-24 bg-highlight-purple border-3 border-primary shadow-neo hidden lg:block transition-all duration-1000 delay-200 ${isVisible ? 'transform translate-y-0 rotate-12 opacity-100' : 'transform translate-y-12 rotate-12 opacity-0'}`}></div>
+      <div className={`absolute top-1/3 left-1/4 w-16 h-16 bg-highlight-teal border-3 border-primary rounded-none shadow-neo hidden lg:block animate-float animation-delay-200 transition-all duration-1000 delay-500 ${isVisible ? 'transform scale-100 opacity-100' : 'transform scale-0 opacity-0'}`}></div>
 
       <div className={`container-max mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ease-out transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}>
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
