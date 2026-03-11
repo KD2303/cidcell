@@ -143,6 +143,7 @@ const teamSections = [
     bg: 'bg-white',
     members: [
       { name: 'Sarvesh Baghel',  linkedin: 'https://www.linkedin.com/in/sarvesh-baghel-b3a726274/', github: 'https://github.com/sarveshbaghel' },
+      { name: 'Shashank Nigam', linkedin: 'https://www.linkedin.com/in/shashanknigam2712/',  github: 'https://github.com/ShashankNigam27' },
       { name: 'Archit Varshney', linkedin: 'https://www.linkedin.com/in/archit-varshney-30b2773a2',  github: 'https://github.com/architvarshney7' },
       { name: 'Naveen Sharma',   linkedin: 'https://www.linkedin.com/in/naveen-sharma-64b51333a/' },
     ],
