@@ -8,6 +8,7 @@ import Projects from './pages/Projects';
 import Events from './pages/Events';
 import Team from './pages/Team';
 import Contact from './pages/Contact';
+import Developers from './pages/Developers';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/team" element={<Team />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/developers" element={<Developers />} />
         </Routes>
       </main>
       <Footer />

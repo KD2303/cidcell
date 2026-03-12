@@ -8,7 +8,7 @@ const navLinks = [
   { name: 'Projects', path: '/projects' },
   { name: 'Events', path: '/events' },
   { name: 'Team', path: '/team' },
-  { name: 'Contact', path: '/contact' },
+  { name: 'Developers', path: '/developers' },
 ];
 
 export default function Navbar() {
@@ -57,7 +57,7 @@ export default function Navbar() {
                     isActive
                       ? 'bg-highlight-purple border-primary shadow-neo-sm'
                       : 'text-primary'
-                  }`
+                  } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black' : ''}`
                 }
               >
                 {link.name}
@@ -95,7 +95,7 @@ export default function Navbar() {
                       isActive
                         ? 'bg-highlight-purple border-primary shadow-neo-sm'
                         : 'border-transparent hover:bg-highlight-blue hover:border-primary'
-                    }`
+                    } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black' : ''}`
                   }
                 >
                   {link.name}
