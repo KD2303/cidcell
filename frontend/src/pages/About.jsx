@@ -55,6 +55,11 @@ export default function About() {
 
       {/* Introduction */}
       <section className="section-padding bg-bg border-b-4 border-primary relative overflow-hidden">
+        {/* Background Grid Pattern & Hazard Lines */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none -z-10"></div>
+        <div className="absolute top-1/4 -right-12 w-48 h-8 bg-hazard border-y-2 border-primary transform -rotate-45 hidden lg:block opacity-80 z-0"></div>
+        <div className="absolute bottom-1/4 -left-12 w-48 h-8 bg-hazard border-y-2 border-primary transform 45 hidden lg:block opacity-80 z-0"></div>
+
         {/* Decorative background elements */}
         <div className="absolute top-20 right-0 w-64 h-64 bg-highlight-teal/20 rounded-full blur-3xl -z-10"></div>
         <div className="absolute bottom-20 left-0 w-80 h-80 bg-highlight-pink/20 rounded-full blur-3xl -z-10"></div>
@@ -62,15 +67,17 @@ export default function About() {
         <div className="container-max mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <ScrollReveal className="h-full">
-            <div className="relative">
+            <div className="relative pt-4">
               {/* Floating accent for the left intro card */}
-              <div className="absolute -top-8 -left-8 w-16 h-16 bg-highlight-yellow border-4 border-primary shadow-neo transform -rotate-12 hidden md:block"></div>
+              <div className="absolute top-0 -left-6 lg:-left-10 w-16 h-16 bg-highlight-yellow border-4 border-primary shadow-neo transform -rotate-12 hidden md:block"></div>
               
               <SectionHeading
                 subtitle="Introduction"
                 title="What is CID-Cell?"
+                alignLeft={true}
+                compact={true}
               />
-              <div className="space-y-6 text-primary font-medium text-lg leading-relaxed mt-8">
+              <div className="space-y-6 text-primary font-medium text-lg leading-relaxed mt-4">
                 <p>
                   The <strong className="bg-highlight-pink px-2 py-0.5 border-2 border-primary shadow-neo-sm inline-block transform -rotate-1">Collaborative Innovation & Development Cell (CID-C)</strong> is a
                   structured platform operating under the Department of Computer Science & Engineering. It is designed

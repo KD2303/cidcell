@@ -39,6 +39,15 @@
   .neo-badge {
     @apply px-3 py-1 bg-white border-2 border-primary rounded-full text-xs font-bold uppercase shadow-neo-sm inline-block;
   }
+  .bg-hazard {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #FFD700,
+      #FFD700 15px,
+      #1a1a1a 15px,
+      #1a1a1a 30px
+    );
+  }
 }
 
 ::-webkit-scrollbar {

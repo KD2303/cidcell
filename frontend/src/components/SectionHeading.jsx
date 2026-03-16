@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function SectionHeading({ subtitle, title, description, light = false, compact = false }) {
+export default function SectionHeading({ subtitle, title, description, light = false, compact = false, alignLeft = false }) {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
 
@@ -32,12 +32,12 @@ export default function SectionHeading({ subtitle, title, description, light = f
   return (
     <div 
       ref={elementRef}
-      className={`text-center max-w-3xl mx-auto ${compact ? 'mb-10 md:mb-12' : 'mb-20 md:mb-24'} relative transition-all duration-1000 ease-out transform ${
+      className={`${alignLeft ? 'text-left' : 'text-center mx-auto'} max-w-3xl ${compact ? 'mb-10 md:mb-12' : 'mb-20 md:mb-24'} relative transition-all duration-1000 ease-out transform ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
       }`}
     >
       {/* Decorative elements behind heading */}
-      <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-24 bg-highlight-yellow opacity-50 rounded-full blur-xl -z-10"></div>
+      <div className={`absolute -top-6 ${alignLeft ? 'left-6' : 'left-1/2 -translate-x-1/2'} w-24 h-24 bg-highlight-yellow opacity-50 rounded-full blur-xl -z-10`}></div>
       
       {subtitle && (
         <span className={`inline-block px-3 py-1 bg-white border-2 border-primary shadow-neo-sm text-primary text-xs font-bold uppercase tracking-widest ${compact ? 'mb-4' : 'mb-6'} transform -rotate-2`}>
