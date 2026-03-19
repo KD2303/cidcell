@@ -5,11 +5,14 @@ import { AuthContext } from '../context/AuthContext';
 
 const navLinks = [
   { name: 'Home', path: '/' },
+  { name: 'Dashboard', path: '/dashboard', authRequired: true },
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
+  { name: 'Roadmap', path: '/roadmap' },
   { name: 'Events', path: '/events' },
   { name: 'Team', path: '/team' },
   { name: 'Developers', path: '/developers' },
+  { name: 'Chat', path: '/chat', authRequired: true },
 ];
 
 export default function Navbar() {
@@ -23,65 +26,88 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Disable scrolling when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 border-b-3 ${scrolled
-          ? 'bg-white border-primary shadow-neo'
-          : 'bg-bg border-transparent'
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
+          ? 'bg-white border-b-4 border-primary shadow-sm py-1'
+          : 'bg-transparent border-b-4 border-transparent shadow-none py-3'
         }`}
     >
-      <div className="container-max mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 md:h-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 border-3 border-primary bg-highlight-yellow flex items-center justify-center shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all">
-              <span className="text-primary font-heading font-black text-xl">CID</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="text-primary font-heading text-2xl uppercase tracking-tighter leading-none block">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 z-10">
+            <img 
+              src="/logo.png" 
+              alt="CID-Cell Logo" 
+              className="w-10 h-10 md:w-12 md:h-12 object-contain shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all" 
+            />
+            <div className="hidden sm:flex flex-col justify-center">
+              <span className="text-primary font-heading text-xl md:text-2xl uppercase tracking-tighter leading-none block">
                 CID-Cell
               </span>
-              <span className="text-primary font-bold text-xs uppercase tracking-widest bg-highlight-teal inline-block px-1 border border-primary -mt-1 transform -rotate-2">
+              <span className="text-primary font-bold text-[10px] md:text-xs uppercase tracking-widest bg-highlight-teal inline-block px-1 border border-primary mt-0.5 transform -rotate-1 self-start">
                 CSE DEPT
               </span>
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-2">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `px-4 py-2 font-bold uppercase text-sm border-2 border-transparent hover:border-primary hover:bg-highlight-blue hover:shadow-neo-sm transition-all rounded-lg ${isActive
-                    ? 'bg-highlight-purple border-primary shadow-neo-sm'
-                    : 'text-primary'
-                  } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black' : ''}`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
+          {/* Desktop nav - Centered */}
+          <div className="hidden xl:flex flex-1 justify-center items-center px-4">
+            <div className="flex items-center bg-white border-4 border-primary shadow-neo px-1 py-1">
+              {navLinks.filter(link => !link.authRequired || user).map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `px-3 lg:px-4 py-2 font-bold uppercase text-[12px] lg:text-sm transition-all border-2 ${isActive
+                      ? 'bg-highlight-purple border-primary shadow-neo-sm -translate-y-[2px]'
+                      : 'border-transparent text-primary hover:bg-highlight-yellow hover:border-primary hover:shadow-neo-sm hover:-translate-y-[2px]'
+                    } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black shadow-neo-sm' : ''}`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+            
+          {/* Actions - Right side */}
+          <div className="hidden md:flex items-center gap-2 pl-2 z-10 shrink-0">
             <Link
               to="/contact"
-              className="ml-4 btn-neo py-2 text-sm"
+              className="btn-neo py-2 px-4 text-xs lg:text-sm whitespace-nowrap bg-highlight-orange"
             >
-              Join CID
+              Contact
             </Link>
 
             {user ? (
-              <Link to="/profile" className="ml-2 group">
-                <img
-                  src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}`}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full border-2 border-primary shadow-neo-sm group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none transition-all"
-                />
+              <Link to="/profile" className="ml-1 group">
+                <div className="relative">
+                  <img
+                    src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}`}
+                    alt="Profile"
+                    className="w-9 h-9 lg:w-10 lg:h-10 rounded-full border-2 border-primary shadow-neo-sm group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-none transition-all object-cover"
+                  />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
               </Link>
             ) : (
               <Link
                 to="/auth"
-                className="ml-2 px-4 py-2 font-bold uppercase text-sm border-2 border-primary bg-highlight-yellow hover:bg-highlight-blue shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-[4px]"
+                className="px-4 py-2 font-bold uppercase text-xs lg:text-sm border-2 border-primary bg-white hover:bg-highlight-blue shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-lg"
               >
                 Login
               </Link>
@@ -102,7 +128,7 @@ export default function Navbar() {
         {isOpen && (
           <div className="absolute top-full left-0 w-full md:hidden px-4 pb-4 animate-fade-in-up bg-bg/95 backdrop-blur-sm border-b-2 border-primary shadow-neo h-screen sm:h-auto z-40">
             <div className="bg-white border-3 border-primary shadow-neo rounded-xl p-4 space-y-2 mt-4">
-              {navLinks.map((link) => (
+              {navLinks.filter(link => !link.authRequired || user).map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
@@ -120,9 +146,9 @@ export default function Navbar() {
               <Link
                 to="/contact"
                 onClick={() => setIsOpen(false)}
-                className="block text-center mt-4 w-full btn-neo justify-center"
+                className="block text-center mt-4 w-full btn-neo justify-center bg-highlight-orange"
               >
-                Join CID
+                Contact
               </Link>
 
               {user ? (

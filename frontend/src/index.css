@@ -5,9 +5,13 @@
 @layer base {
   body {
     @apply bg-bg text-primary antialiased font-body;
+    font-family: var(--font-body);
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading uppercase tracking-wide leading-tight;
+  }
+  .admin-panel h1, .admin-panel h2, .admin-panel h3, .admin-panel h4, .admin-panel h5, .admin-panel h6 {
+    @apply font-sans normal-case tracking-normal leading-normal;
   }
 }
 
@@ -39,6 +43,15 @@
   .neo-badge {
     @apply px-3 py-1 bg-white border-2 border-primary rounded-full text-xs font-bold uppercase shadow-neo-sm inline-block;
   }
+  .bg-hazard {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #FFD700,
+      #FFD700 15px,
+      #1a1a1a 15px,
+      #1a1a1a 30px
+    );
+  }
 }
 
 ::-webkit-scrollbar {
@@ -51,7 +64,7 @@
   @apply bg-primary rounded-full border-2 border-bg;
 }
 
-/* Admin Sidebar Scrollbar */
+/* Admin Global Scrollbar for Modals and Lists */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
@@ -60,11 +73,18 @@
   border-left: none;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border: none;
   border-radius: 10px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+.custom-scrollbar-dark:hover::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
 }
 

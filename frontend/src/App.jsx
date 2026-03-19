@@ -9,17 +9,23 @@ import Events from './pages/Events';
 import Team from './pages/Team';
 import Contact from './pages/Contact';
 import Developers from './pages/Developers';
+import Roadmap from './pages/Roadmap';
 import { AuthProvider } from './context/AuthContext';
 import Auth from './pages/Auth';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import ProjectDetail from './pages/ProjectDetail';
+import EventDetail from './pages/EventDetail';
+import Chat from './pages/Chat';
+import Dashboard from './pages/Dashboard';
 
 // Admin Imports
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/pages/AdminDashboard';
 import UserManagement from './admin/pages/UserManagement';
 import ProjectManagement from './admin/pages/ProjectManagement';
+import EventManagement from './admin/pages/EventManagement';
+import MemberManagement from './admin/pages/MemberManagement';
 
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
@@ -67,7 +73,7 @@ const AdminRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) return null;
-  if (!user || user.userType !== 'Admin') {
+  if (!user || user.userType?.toLowerCase() !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
@@ -89,10 +95,20 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/developers" element={<Developers />} />
           <Route path="/auth" element={<Auth />} />
+
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <OnboardingGuard>
+                <Dashboard />
+              </OnboardingGuard>
+            </PrivateRoute>
+          } />
 
           <Route path="/profile" element={
             <PrivateRoute>
@@ -108,6 +124,12 @@ function App() {
             </PrivateRoute>
           } />
 
+          <Route path="/chat" element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>
+          } />
+
           {/* Admin Routes */}
           <Route path="/admin" element={
             <AdminRoute>
@@ -118,6 +140,8 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="projects" element={<ProjectManagement />} />
+            <Route path="events" element={<EventManagement />} />
+            <Route path="members" element={<MemberManagement />} />
           </Route>
         </Routes>
       </main>

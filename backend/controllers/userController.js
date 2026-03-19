@@ -17,14 +17,17 @@ const getUsers = async (req, res) => {
 // @access  Private/Admin
 const getUserById = async (req, res) => {
     try {
+        console.log('Fetching user by ID:', req.params.id);
         const user = await User.findById(req.params.id);
         if (user) {
             res.json(user);
         } else {
+            console.warn('User not found:', req.params.id);
             res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error fetching user:', req.params.id, error);
+        res.status(500).json({ message: error.message, stack: error.stack });
     }
 };
 
