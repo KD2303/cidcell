@@ -376,11 +376,8 @@ export default function MentorHub() {
   const fetchMentors = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/mentors`, {
-          headers: { Authorization: `Bearer ${token}` }
-      });
-      
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/mentors`);
+
       const mapped = res.data.map(m => ({
           _id: m._id,
           designation: 'Mentor',
