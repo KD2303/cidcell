@@ -11,10 +11,10 @@ const navLinks = [
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
   { name: 'Roadmap', path: '/roadmap' },
+    { name: 'Mentors', path: '/find-mentor', authRequired: true, studentRequired: true },
   { name: 'Events', path: '/events' },
   { name: 'Team', path: '/team' },
   { name: 'Developers', path: '/developers' },
-  { name: 'Chat', path: '/chat', authRequired: true, hideForMentor: true },
 ];
 
 export default function Navbar() {
@@ -72,6 +72,7 @@ export default function Navbar() {
               {navLinks.filter(link => {
                 if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
                 if (link.mentorRequired && user?.userType !== 'mentor') return false;
+                if (link.studentRequired && user?.userType !== 'student') return false;
                 if (link.hideForMentor && user?.userType === 'mentor') return false;
                 if (link.authRequired && !user) return false;
                 return true;
@@ -139,6 +140,7 @@ export default function Navbar() {
               {navLinks.filter(link => {
                 if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
                 if (link.mentorRequired && user?.userType !== 'mentor') return false;
+                if (link.studentRequired && user?.userType !== 'student') return false;
                 if (link.hideForMentor && user?.userType === 'mentor') return false;
                 if (link.authRequired && !user) return false;
                 return true;

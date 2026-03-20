@@ -58,6 +58,10 @@ const userSchema = mongoose.Schema(
         aboutMentor: {
             type: String,
             default: '',
+        },
+        expertise: {
+            type: [String],
+            default: [],
         }
     },
     {

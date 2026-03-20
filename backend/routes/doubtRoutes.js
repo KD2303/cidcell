@@ -8,6 +8,16 @@ const DoubtMessage = require('../models/DoubtMessage');
 router.post('/sessions', protect, async (req, res) => {
     try {
         const { mentorId, domain } = req.body;
+        
+        let existingSession = await DoubtSession.findOne({
+            mentorId,
+            studentId: req.user._id
+        });
+
+        if (existingSession) {
+            return res.status(200).json(existingSession);
+        }
+
         const newSession = await DoubtSession.create({
             mentorId,
             studentId: req.user._id,
@@ -49,8 +59,16 @@ router.put('/sessions/:id/status', protect, async (req, res) => {
 // Get messages for a session
 router.get('/sessions/:id/messages', protect, async (req, res) => {
     try {
-        const messages = await DoubtMessage.find({ sessionId: req.params.id }).sort('timestamp');
-        res.status(200).json(messages);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+
+        const messages = await DoubtMessage.find({ sessionId: req.params.id })
+            .sort({ timestamp: -1 })
+            .skip(skip)
+            .limit(limit);
+            
+        res.status(200).json(messages.reverse());
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

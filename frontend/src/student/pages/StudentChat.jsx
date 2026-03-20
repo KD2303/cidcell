@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ChatInterface from '../../components/ChatInterface';
 
-const MentorChat = () => {
+const StudentChat = () => {
     const { user } = useContext(AuthContext);
     const token = localStorage.getItem('token');
     const [sessions, setSessions] = useState([]);
@@ -30,6 +30,7 @@ const MentorChat = () => {
     };
     
     const navigate = useNavigate();
+    const location = useLocation();
     
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -45,7 +46,7 @@ const MentorChat = () => {
                     ? { ...s, lastMessage: message.content, updatedAt: message.timestamp } 
                     : s
             ).sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-            
+            // scroll to bottom on new message
             scrollToBottom(true);
         });
 
@@ -59,12 +60,18 @@ const MentorChat = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setSessions(res.data);
+                
+                // If navigated with a selectedSessionId
+                if (location.state?.selectedSessionId) {
+                    const sel = res.data.find(s => s._id === location.state.selectedSessionId);
+                    if (sel) setActiveSession(sel);
+                }
             } catch (err) {
                 console.error("Failed to fetch sessions", err);
             }
         };
         fetchSessions();
-    }, [API_URL, token]);
+    }, [API_URL, token, location.state]);
 
     const fetchMessages = async (pageToLoad = 1) => {
         if (!activeSession) return;
@@ -112,7 +119,7 @@ const MentorChat = () => {
         try {
             const res = await axios.post(`${API_URL}/doubts/sessions/${activeSession._id}/messages`, {
                 content: newMessage,
-                senderType: 'mentor'
+                senderType: 'student'
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -142,7 +149,7 @@ const MentorChat = () => {
 
     return (
         <ChatInterface 
-            userType="mentor"
+            userType="student"
             user={user}
             sessions={sessions}
             activeSession={activeSession}
@@ -154,11 +161,11 @@ const MentorChat = () => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             chatContainerRef={chatContainerRef}
-            onBack={() => navigate('/mentor/dashboard')}
+            onBack={() => navigate(-1)}
             onLoadMore={loadMore}
             hasMore={hasMore}
         />
     );
 };
 
-export default MentorChat;
+export default StudentChat;

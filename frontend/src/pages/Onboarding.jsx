@@ -69,7 +69,8 @@ export default function Onboarding() {
         },
         domainOfExpertise: user?.domainOfExpertise || '',
         department: user?.department || '',
-        aboutMentor: user?.aboutMentor || ''
+        aboutMentor: user?.aboutMentor || '',
+        expertise: user?.expertise?.join(', ') || ''
     });
 
     const [customSkill, setCustomSkill] = useState('');
@@ -210,6 +211,20 @@ export default function Onboarding() {
                                         value={formData.domainOfExpertise}
                                         onChange={handleChange}
                                         placeholder="e.g. Web Dev, Machine Learning"
+                                        required
+                                        className={inputCls}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
+                                        Expertise Tags (comma-separated) <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="expertise"
+                                        value={formData.expertise}
+                                        onChange={handleChange}
+                                        placeholder="e.g. React, UX, Cloud"
                                         required
                                         className={inputCls}
                                     />

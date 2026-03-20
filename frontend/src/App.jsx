@@ -28,6 +28,8 @@ import EventManagement from './admin/pages/EventManagement';
 import MemberManagement from './admin/pages/MemberManagement';
 import MentorDashboard from './mentor/pages/MentorDashboard';
 import MentorChat from './mentor/pages/MentorChat';
+import FindMentor from './pages/FindMentor';
+import StudentChat from './student/pages/StudentChat';
 
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
@@ -144,6 +146,18 @@ function App() {
           <Route path="/chat" element={
             <PrivateRoute>
               <Chat />
+            </PrivateRoute>
+          } />
+
+          <Route path="/find-mentor" element={
+            <PrivateRoute>
+              <FindMentor />
+            </PrivateRoute>
+          } />
+
+          <Route path="/student/chat" element={
+            <PrivateRoute>
+              <StudentChat />
             </PrivateRoute>
           } />
 

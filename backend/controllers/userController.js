@@ -45,6 +45,15 @@ const updateUser = async (req, res) => {
             user.branch = req.body.branch || user.branch;
             user.batch = req.body.batch || user.batch;
             user.userType = req.body.userType || user.userType;
+            user.domainOfExpertise = req.body.domainOfExpertise || user.domainOfExpertise;
+            user.department = req.body.department || user.department;
+            if (typeof req.body.aboutMentor !== 'undefined') user.aboutMentor = req.body.aboutMentor;
+            
+            if (req.body.expertise) {
+                user.expertise = Array.isArray(req.body.expertise)
+                    ? req.body.expertise
+                    : req.body.expertise.split(',').map(s => s.trim()).filter(Boolean);
+            }
             
             // Handle skills (expecting array or comma-separated string)
             if (req.body.skills) {
@@ -91,9 +100,32 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// @desc    Get all mentors (publicly searchable by domain)
+// @route   GET /api/users/mentors
+// @access  Private
+const getMentors = async (req, res) => {
+    try {
+        const { domain } = req.query;
+        let query = { userType: 'mentor' };
+        
+        if (domain) {
+            query.domainOfExpertise = { $regex: domain, $options: 'i' };
+        }
+
+        const mentors = await User.find(query)
+            .select('username profilePicture domainOfExpertise department aboutMentor expertise')
+            .sort({ createdAt: -1 });
+            
+        res.json(mentors);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getUsers,
     getUserById,
     updateUser,
     deleteUser,
+    getMentors,
 };
