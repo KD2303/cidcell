@@ -5,10 +5,33 @@ const Project = require('../models/Project');
 // @access  Public
 const getProjects = async (req, res) => {
     try {
-        // If query param 'all' is true and user is admin, return everything
-        // Otherwise only return approved ones
-        const filter = (req.query.all === 'true') ? {} : { isApproved: true };
-        const projects = await Project.find(filter).populate('createdBy', 'username email');
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12; // Default 12 per page
+        const skip = (page - 1) * limit;
+
+        const isPaginated = req.query.page !== undefined;
+
+        // If query param 'all' is true return everything, otherwise only approved ones
+        const filter = (req.query.all === 'true') ? {} : { isApproved: true };  
+
+        let query = Project.find(filter).populate('createdBy', 'username email');
+        
+        if (isPaginated) {
+            query = query.skip(skip).limit(limit);
+        }
+
+        const projects = await query;
+        
+        if (isPaginated) {
+            const total = await Project.countDocuments(filter);
+            return res.json({
+                projects,
+                page,
+                pages: Math.ceil(total / limit),
+                total
+            });
+        }
+
         res.json(projects);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });

@@ -5,7 +5,30 @@ const User = require('../models/User');
 // @access  Private/Admin
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find({}).sort({ createdAt: -1 });
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+
+        const isPaginated = req.query.page !== undefined;
+
+        let query = User.find({}).sort({ createdAt: -1 });
+
+        if (isPaginated) {
+            query = query.skip(skip).limit(limit);
+        }
+
+        const users = await query;
+
+        if (isPaginated) {
+            const total = await User.countDocuments({});
+            return res.json({
+                users,
+                page,
+                pages: Math.ceil(total / limit),
+                total
+            });
+        }
+
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -11,6 +11,8 @@ import {
   Clock,
   Check
 } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const ProjectManagement = () => {
   const [projects, setProjects] = useState([]);
@@ -270,7 +272,12 @@ const ProjectManagement = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-600 uppercase">Description</label>
-                  <textarea required rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2 border rounded text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="Project description..."></textarea>
+                  <ReactQuill 
+                    theme="snow" 
+                    value={formData.description} 
+                    onChange={value => setFormData({ ...formData, description: value })}
+                    className="bg-white"
+                  />
                 </div>
 
                 <div className="space-y-2">

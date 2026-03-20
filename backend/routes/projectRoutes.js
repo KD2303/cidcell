@@ -8,9 +8,10 @@ const {
     deleteProject
 } = require('../controllers/projectController');
 const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, schemas } = require('../middleware/validate');
 
 router.route('/')
-    .get(getProjects)
+    .get(validate(schemas.paginationSchema), getProjects)
     .post(protect, createProject); // Removed mandatory admin for creation
 
 router.route('/:id')

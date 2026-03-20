@@ -12,8 +12,11 @@ import {
   MapPin,
   Users,
   Search,
-  ExternalLink
+  ExternalLink,
+  Download
 } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { formatTime12h } from '../../utils/formatTime';
 
 const EventManagement = () => {
@@ -68,6 +71,46 @@ const EventManagement = () => {
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast({ message: '', type: null }), 3000);
+  };
+
+  const handleDownloadCSV = async (eventId, eventTitle) => {
+    try {
+      showToast("Preparing CSV...", "success");
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/events/${eventId}/registrations`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      
+      if (!data || data.length === 0) {
+        showToast("No registrations found for this event.", "error");
+        return;
+      }
+
+      const headers = ['Name', 'Email', 'SAP ID', 'Branch', 'Year', 'Section', 'Registered At'];
+      const csvRows = data.map(reg => {
+        const user = reg.userId || {};
+        return [
+          user.name || 'N/A',
+          user.email || 'N/A',
+          user.sapId || 'N/A',
+          user.branch || 'N/A',
+          user.year || 'N/A',
+          user.section || 'N/A',
+          new Date(reg.createdAt).toLocaleDateString()
+        ].map(val => `"${val}"`).join(',');
+      });
+
+      const csvContent = [headers.join(','), ...csvRows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${eventTitle.replace(/\s+/g, '_')}_registrations.csv`;
+      link.click();
+      
+      showToast("CSV downloaded successfully", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Error downloading CSV", "error");
+    }
   };
 
   const handleOpenModal = (event = null) => {
@@ -203,6 +246,7 @@ const EventManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
+                    <button onClick={() => handleDownloadCSV(ev._id, ev.title)} title="Download Registrations CSV" className="p-1.5 text-slate-400 hover:text-green-600 border border-transparent hover:border-green-100 hover:bg-green-50 rounded"><Download size={16} /></button>
                     <button onClick={() => handleOpenModal(ev)} className="p-1.5 text-slate-400 hover:text-blue-600 border border-transparent hover:border-blue-100 hover:bg-blue-50 rounded"><Edit2 size={16} /></button>
                     <button onClick={() => setDeleteConfirm({ isOpen: true, id: ev._id })} className="p-1.5 text-slate-400 hover:text-red-600 border border-transparent hover:border-red-100 hover:bg-red-50 rounded"><Trash2 size={16} /></button>
                   </td>
@@ -288,7 +332,7 @@ const EventManagement = () => {
 
                   {/* WhatsApp & Image */}
                   <div className="col-span-1 md:col-span-2 space-y-1">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-green-600">WhatsApp Group Link*</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-green-600">WhatsApp Group Link*</label>
                     <input type="text" required value={formData.whatsappGroupLink} onChange={e => setFormData({ ...formData, whatsappGroupLink: e.target.value })} className="w-full p-2.5 border-2 border-green-100 bg-green-50/30 rounded-lg outline-none focus:border-green-500 text-sm font-bold" />
                   </div>
                   <div className="col-span-1 md:col-span-2 space-y-1">
@@ -299,13 +343,18 @@ const EventManagement = () => {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Description*</label>
-                  <textarea required rows="4" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full p-3 border-2 border-slate-100 rounded-lg outline-none focus:border-blue-500 text-sm font-bold" placeholder="Full event itinerary or description..."></textarea>
+                  <ReactQuill 
+                    theme="snow" 
+                    value={formData.description} 
+                    onChange={value => setFormData({ ...formData, description: value })}
+                    className="bg-white"
+                  />
                 </div>
 
                 <div className="flex items-center gap-4 py-2 border-t border-slate-50">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={formData.isScheduled} onChange={e => setFormData({ ...formData, isScheduled: e.target.checked })} className="w-4 h-4 rounded text-blue-600 border-2 border-slate-200 focus:ring-0" />
-                    <span className="text-xs font-bold text-slate-600 uppercase tracking-wider uppercase">Publish Event Immediately</span>
+                    <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Publish Event Immediately</span>
                   </label>
                 </div>
               </div>
@@ -329,7 +378,7 @@ const EventManagement = () => {
             <p className="text-slate-500 mb-8 text-sm font-medium">This will permanently delete the event and all associated registrations. Continue?</p>
             <div className="flex gap-3">
               <button onClick={() => setDeleteConfirm({ isOpen: false, id: null })} className="flex-1 p-2.5 bg-slate-100 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition-colors uppercase tracking-widest text-xs">Retreat</button>
-              <button onClick={handleDelete} className="flex-1 p-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg active:scale-95 uppercase tracking-widest text-xs font-black">Confirm</button>
+              <button onClick={handleDelete} className="flex-1 p-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all shadow-lg active:scale-95 uppercase tracking-widest text-xs font-black">Confirm</button>
             </div>
           </div>
         </div>

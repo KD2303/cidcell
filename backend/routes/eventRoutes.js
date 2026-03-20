@@ -6,18 +6,23 @@ const {
     createEvent,
     updateEvent,
     deleteEvent,
-    registerForEvent
+    registerForEvent,
+    getEventRegistrations
 } = require('../controllers/eventController');
 const { protect, admin, optionalProtect } = require('../middleware/authMiddleware');
+const { validate, schemas } = require('../middleware/validate');
 
 router.route('/')
-    .get(getEvents)
-    .post(protect, admin, createEvent);
+    .get(validate(schemas.paginationSchema), getEvents)
+    .post(protect, admin, validate(schemas.createEventSchema), createEvent);
 
 router.route('/:id')
     .get(optionalProtect, getEventById)
     .put(protect, admin, updateEvent)
     .delete(protect, admin, deleteEvent);
+
+router.route('/:id/registrations')
+    .get(protect, admin, getEventRegistrations);
 
 router.post('/:id/register', protect, registerForEvent);
 
