@@ -8,6 +8,7 @@ const navLinks = [
   { name: 'Dashboard', path: '/dashboard', authRequired: true },
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
+  { name: 'Mentors', path: '/mentors' },
   { name: 'Roadmap', path: '/roadmap' },
   { name: 'Events', path: '/events' },
   { name: 'Team', path: '/team' },
@@ -55,7 +56,7 @@ export default function Navbar() {
               className="w-10 h-10 md:w-12 md:h-12 object-contain shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all" 
             />
             <div className="hidden sm:flex flex-col justify-center">
-              <span className="text-primary font-heading text-xl md:text-2xl uppercase tracking-tighter leading-none block">
+              <span className="text-primary font-heading text-xl md:text-2xl uppercase tracking-widest leading-none block">
                 CID-Cell
               </span>
               <span className="text-primary font-bold text-[10px] md:text-xs uppercase tracking-widest bg-highlight-teal inline-block px-1 border border-primary mt-0.5 transform -rotate-1 self-start">
