@@ -10,7 +10,6 @@ const navLinks = [
   { name: 'Mentor', path: '/mentor/dashboard', authRequired: true, mentorRequired: true },
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
-  { name: 'Mentors', path: '/mentors' },
   { name: 'Roadmap', path: '/roadmap' },
     { name: 'Mentors', path: '/find-mentor', authRequired: true, studentRequired: true },
   { name: 'Events', path: '/events' },
