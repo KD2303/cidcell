@@ -110,6 +110,7 @@ const googleLogin = async (req, res) => {
                 skills: user.skills,
                 socialLinks: user.socialLinks,
                 profilePicture: user.profilePicture,
+                userType: user.userType,
             },
         });
     } catch (error) {

@@ -105,7 +105,7 @@ export default function EventDetail() {
                   {event.type}
                 </span>
               </div>
-              <h1 className="text-5xl md:text-7xl font-black text-primary tracking-tight uppercase leading-[0.85]">
+              <h1 className="text-5xl md:text-7xl font-black text-primary tracking-widest uppercase leading-[0.85]">
                 {event.title}
               </h1>
             </div>
@@ -155,10 +155,9 @@ export default function EventDetail() {
                </h2>
 
                <div className="prose prose-slate max-w-none">
-                 <div 
-                   className="text-slate-700 text-lg font-medium leading-relaxed"
-                   dangerouslySetInnerHTML={{ __html: event.description }}
-                 />
+                 <p className="text-slate-700 text-lg font-medium leading-relaxed whitespace-pre-wrap">
+                   {event.description}
+                 </p>
                </div>
                
                {event.whatsappGroupLink && isRegistered && (

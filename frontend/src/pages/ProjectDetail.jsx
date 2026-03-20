@@ -119,10 +119,9 @@ export default function ProjectDetail() {
                 <Info size={24} className="text-blue-600" /> Executive Summary
               </h2>
               <div className="prose prose-slate max-w-none">
-                <div 
-                  className="text-slate-600 text-lg font-medium leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: project.description }}
-                />
+                <p className="text-slate-600 text-lg font-medium leading-relaxed whitespace-pre-wrap">
+                  {project.description}
+                </p>
               </div>
             </div>
 

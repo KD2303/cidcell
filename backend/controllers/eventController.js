@@ -6,31 +6,9 @@ const EventRegistration = require('../models/EventRegistration');
 // @access  Public
 const getEvents = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 12; // Default 12 per page
-        const skip = (page - 1) * limit;
-
-        const isPaginated = req.query.page !== undefined; // Only paginate if page is explicitly provided
-
-        let query = Event.find({}).select('-whatsappGroupLink').sort({ date: 1 });
-        
-        if (isPaginated) {
-            query = query.skip(skip).limit(limit);
-        }
-
-        const events = await query;
-        
-        if (isPaginated) {
-            const total = await Event.countDocuments({});
-            return res.json({
-                events,
-                page,
-                pages: Math.ceil(total / limit),
-                total
-            });
-        }
-
-        res.json(events); // Fallback for backwards compatibility
+        // Exclude sensitive link from public list
+        const events = await Event.find({}).select('-whatsappGroupLink').sort({ date: 1 });
+        res.json(events);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
@@ -171,24 +149,11 @@ const registerForEvent = async (req, res) => {
     }
 };
 
-// @desc    Get all registrations for an event (Admin only)
-// @route   GET /api/events/:id/registrations
-const getEventRegistrations = async (req, res) => {
-    try {
-        const registrations = await EventRegistration.find({ eventId: req.params.id })
-            .populate('userId', 'name email sapId branch year section');
-        res.json(registrations);
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
-    }
-};
-
 module.exports = {
     getEvents,
     getEventById,
     createEvent,
     updateEvent,
     deleteEvent,
-    registerForEvent,
-    getEventRegistrations
+    registerForEvent
 };

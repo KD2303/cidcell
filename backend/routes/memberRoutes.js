@@ -4,13 +4,16 @@ const {
     getMembers,
     addMember,
     updateMember,
-    removeMember
+    removeMember,
+    reorderMembers
 } = require('../controllers/memberController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
     .get(getMembers)
     .post(protect, admin, addMember);
+
+router.post('/reorder', protect, admin, reorderMembers);
 
 router.route('/:id')
     .put(protect, admin, updateMember)

@@ -10,12 +10,15 @@ import Team from './pages/Team';
 import Contact from './pages/Contact';
 import Developers from './pages/Developers';
 import Roadmap from './pages/Roadmap';
+import MentorHub from './pages/FindMentor';
 import { AuthProvider } from './context/AuthContext';
 import Auth from './pages/Auth';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import ProjectDetail from './pages/ProjectDetail';
 import EventDetail from './pages/EventDetail';
+import Chat from './pages/Chat';
+import Dashboard from './pages/Dashboard';
 
 // Admin Imports
 import AdminLayout from './admin/AdminLayout';
@@ -24,6 +27,9 @@ import UserManagement from './admin/pages/UserManagement';
 import ProjectManagement from './admin/pages/ProjectManagement';
 import EventManagement from './admin/pages/EventManagement';
 import MemberManagement from './admin/pages/MemberManagement';
+import MentorDashboard from './mentor/pages/MentorDashboard';
+import MentorChat from './mentor/pages/MentorChat';
+import StudentChat from './student/pages/StudentChat';
 
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
@@ -43,6 +49,9 @@ const PrivateRoute = ({ children }) => {
 // Check if a user's profile meets ALL required fields
 const isProfileComplete = (user) => {
   if (!user) return false;
+  if (user.userType === 'mentor') {
+    return !!(user.domainOfExpertise && user.department && user.aboutMentor);
+  }
   return (
     user.branch &&
     user.batch &&
@@ -71,7 +80,19 @@ const AdminRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) return null;
-  if (!user || user.userType !== 'Admin') {
+  if (!user || user.userType?.toLowerCase() !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+// Component to protect routes that require mentor role
+const MentorRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return null;
+  if (!user || user.userType !== 'mentor') {
     return <Navigate to="/" replace />;
   }
 
@@ -95,10 +116,19 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/mentors" element={<MentorHub />} />
           <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/developers" element={<Developers />} />
           <Route path="/auth" element={<Auth />} />
+
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <OnboardingGuard>
+                <Dashboard />
+              </OnboardingGuard>
+            </PrivateRoute>
+          } />
 
           <Route path="/profile" element={
             <PrivateRoute>
@@ -112,6 +142,36 @@ function App() {
             <PrivateRoute>
               <Onboarding />
             </PrivateRoute>
+          } />
+
+          <Route path="/chat" element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>
+          } />
+
+          <Route path="/find-mentor" element={
+            <PrivateRoute>
+              <MentorHub />
+            </PrivateRoute>
+          } />
+
+          <Route path="/student/chat" element={
+            <PrivateRoute>
+              <StudentChat />
+            </PrivateRoute>
+          } />
+
+          {/* Mentor Routes */}
+          <Route path="/mentor/dashboard" element={
+            <MentorRoute>
+              <MentorDashboard />
+            </MentorRoute>
+          } />
+          <Route path="/mentor/chat" element={
+            <MentorRoute>
+              <MentorChat />
+            </MentorRoute>
           } />
 
           {/* Admin Routes */}

@@ -10,6 +10,8 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import SectionHeading from '../components/SectionHeading';
 import ScrollReveal from '../components/ScrollReveal';
 
@@ -22,16 +24,8 @@ const objectives = [
   { icon: BookOpen, text: 'Organize workshops, guest lectures, and mentorship programs for continuous skill development.' },
 ];
 
-const flowSteps = [
-  { step: '01', title: 'Orientation', desc: 'Students are introduced to CID-Cell, its activities, and semester-wise roadmap.' },
-  { step: '02', title: 'Skill Building', desc: 'Structured workshops and micro projects to build foundational programming and development skills.' },
-  { step: '03', title: 'Project Development', desc: 'Teams work on macro and capstone projects using industry-standard tools and methodologies.' },
-  { step: '04', title: 'Innovation Activities', desc: 'Hackathons, innovation sprints, coding challenges, and open-source contributions.' },
-  { step: '05', title: 'Industry Exposure', desc: 'Guest lectures, mentorship sessions, and collaborative initiatives with industry partners.' },
-  { step: '06', title: 'Placement Ready', desc: 'Portfolio-ready students with technical expertise, soft skills, and leadership experience.' },
-];
-
 export default function About() {
+  const { user } = useContext(AuthContext);
   return (
     <div className="bg-bg min-h-screen">
       {/* Hero */}
@@ -44,7 +38,7 @@ export default function About() {
           <span className="inline-flex items-center px-4 py-1.5 bg-primary text-white text-sm font-bold tracking-widest uppercase mb-6 shadow-neo transform -rotate-2">
             About Us
           </span>
-          <h1 className="font-heading text-5xl md:text-7xl lg:text-[80px] text-primary mb-6 uppercase leading-none tracking-tight drop-shadow-sm">
+          <h1 className="font-heading text-5xl md:text-7xl lg:text-[80px] text-primary mb-6 uppercase leading-none tracking-widest drop-shadow-sm">
             About <span className="px-3 bg-highlight-yellow text-primary inline-block transform rotate-2 border-4 border-primary shadow-neo">CID-Cell</span>
           </h1>
           <p className="text-primary text-lg md:text-xl font-bold max-w-2xl mx-auto border-l-4 border-primary pl-6 py-2 bg-white/50 backdrop-blur-sm shadow-sm md:shadow-none md:bg-transparent">
@@ -103,11 +97,10 @@ export default function About() {
               <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-highlight-pink border-4 border-primary shadow-neo transform rotate-6 hidden md:block z-0"></div>
               
               <div className="bg-highlight-blue border-4 border-primary p-8 lg:p-10 shadow-neo transform -rotate-1 hover:rotate-0 transition-neo relative z-10">
-                <h3 className="font-heading text-3xl md:text-4xl text-primary mb-8 uppercase tracking-normal">Purpose of CID-Cell</h3>
+                <h3 className="font-heading text-3xl md:text-4xl text-primary mb-8 uppercase tracking-widest">Purpose of CID-Cell</h3>
                 <ul className="space-y-5">
                   {[
                     'Create an innovation-driven learning ecosystem',
-                    'Provide structured project-based learning from Sem 1 to Sem 8',
                     'Bridge academic curriculum with industry requirements',
                     'Foster collaboration between students, faculty, and industry',
                     'Develop technical, leadership, and soft skills',
@@ -131,7 +124,7 @@ export default function About() {
       <section className="section-padding bg-highlight-cream border-b-4 border-primary relative overflow-hidden">
         {/* Large purely aesthetic background text */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full overflow-hidden flex justify-center pointer-events-none opacity-5 -z-0">
-          <span className="font-heading text-[20vw] text-primary whitespace-nowrap leading-none tracking-normal">
+          <span className="font-heading text-[20vw] text-primary whitespace-nowrap leading-none tracking-widest">
             VISION
           </span>
         </div>
@@ -143,7 +136,7 @@ export default function About() {
               <div className="w-16 h-16 bg-highlight-teal border-4 border-primary flex items-center justify-center mb-8 shadow-neo-sm transform -rotate-3">
                 <Eye size={32} className="text-primary" strokeWidth={3} />
               </div>
-              <h3 className="font-heading text-4xl text-primary mb-6 uppercase tracking-normal">Our Vision</h3>
+              <h3 className="font-heading text-4xl text-primary mb-6 uppercase tracking-widest">Our Vision</h3>
               <p className="text-primary font-bold leading-relaxed text-lg border-t-4 border-primary pt-6">
                 To establish a dynamic, innovation-driven ecosystem within the Department of Computer Science & Engineering
                 that empowers students to bridge the gap between academic learning and real-world industry requirements
@@ -155,7 +148,7 @@ export default function About() {
               <div className="w-16 h-16 bg-highlight-orange border-4 border-primary flex items-center justify-center mb-8 shadow-neo-sm transform rotate-3">
                 <Target size={32} className="text-primary" strokeWidth={3} />
               </div>
-              <h3 className="font-heading text-4xl text-primary mb-6 uppercase tracking-normal">Our Mission</h3>
+              <h3 className="font-heading text-4xl text-primary mb-6 uppercase tracking-widest">Our Mission</h3>
               <ul className="space-y-4 text-primary font-bold">
                 {[
                   'Facilitate project-based, hands-on learning experiences.',
@@ -203,38 +196,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Flowchart / Process */}
-      <section className="section-padding bg-primary text-white relative overflow-hidden border-b-4 border-primary">
-        {/* Massive background numbers overlay */}
-        <div className="absolute top-0 right-0 opacity-5 pointer-events-none -z-0 flex flex-col items-end leading-none overflow-hidden">
-          <span className="font-heading font-black text-[300px] text-white transform translate-x-20 -translate-y-20">1</span>
-          <span className="font-heading font-black text-[300px] text-white transform translate-x-10 -translate-y-40">2</span>
-          <span className="font-heading font-black text-[300px] text-white transform translate-x-0 -translate-y-60">3</span>
-        </div>
-
-        <div className="container-max mx-auto relative z-10">
-          <SectionHeading
-            subtitle="Process"
-            title="How CID-Cell Works"
-            description="A structured 6-step process that takes students from orientation to placement readiness."
-            light
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-            {flowSteps.map(({ step, title, desc }, idx) => (
-              <ScrollReveal key={step} delay={idx * 50} className="h-full">
-              <div
-                className="bg-primary border-4 border-white p-8 hover:bg-white hover:text-primary transition-colors group h-full shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2"
-              >
-                <span className="text-6xl font-heading font-black text-white/20 group-hover:text-primary/20 mb-6 block">{step}</span>
-                <h3 className="font-heading font-bold text-3xl mt-4 mb-4 uppercase tracking-wider">{title}</h3>
-                <p className="text-white/80 text-base leading-relaxed group-hover:text-primary/80 font-bold">{desc}</p>
-              </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="section-padding bg-highlight-green border-b-4 border-primary relative overflow-hidden">
         {/* Decorative elements */}
@@ -248,7 +209,7 @@ export default function About() {
           <p className="text-primary font-bold text-xl max-w-xl mx-auto mb-10 bg-white border-4 border-primary p-6 shadow-neo transform -rotate-2">
             Whether you're a first-year student or a final-year, there's a place for you in CID.
           </p>
-          <Link to="/contact" className="inline-flex items-center gap-3 bg-primary text-white font-heading uppercase tracking-widest text-xl px-10 py-5 border-4 border-primary shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo transform rotate-1 hover:rotate-0">
+          <Link to={user ? "/profile" : "/auth"} className="inline-flex items-center gap-3 bg-primary text-white font-heading uppercase tracking-widest text-xl px-10 py-5 border-4 border-primary shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo transform rotate-1 hover:rotate-0">
             Join Now <ArrowRight size={28} strokeWidth={3} />
           </Link>
         </div>

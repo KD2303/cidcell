@@ -104,9 +104,28 @@ const removeMember = async (req, res) => {
     }
 };
 
+// @desc    Reorder members
+// @route   POST /api/members/reorder
+// @access  Private/Admin
+const reorderMembers = async (req, res) => {
+    try {
+        const { memberOrders } = req.body; // Array of { id: string, order: number }
+        
+        const updatePromises = memberOrders.map(async (item) => {
+            return Member.findByIdAndUpdate(item.id, { order: item.order });
+        });
+        
+        await Promise.all(updatePromises);
+        res.json({ message: 'Members reordered successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error reordering members' });
+    }
+};
+
 module.exports = {
     getMembers,
     addMember,
     updateMember,
-    removeMember
+    removeMember,
+    reorderMembers
 };

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const SLIDES = [
   '/slideshow/1.webp',
@@ -13,6 +14,7 @@ const SLIDES = [
 ];
 
 export default function HeroSection() {
+  const { user } = useContext(AuthContext);
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const intervalRef = useRef(null);
@@ -75,7 +77,7 @@ export default function HeroSection() {
               </div>
             </div>
             
-            <h1 className="font-heading text-[2.8rem] sm:text-6xl md:text-7xl lg:text-[4rem] xl:text-[5rem] mb-3 md:mb-4 uppercase tracking-tighter leading-[0.85] text-black">
+            <h1 className="font-heading text-[2.8rem] sm:text-6xl md:text-7xl lg:text-[4rem] xl:text-[5rem] mb-3 md:mb-4 uppercase tracking-widest leading-[0.85] text-black">
               <span className="block mb-1 md:mb-2">Bridging</span>
               <span className="bg-highlight-yellow px-3 py-0 md:px-4 md:py-1 border-3 border-primary shadow-[6px_6px_0_0_#1a1a1a] transform -skew-x-6 inline-block mb-1 md:mb-2 mt-1 md:mt-2 text-black">ACADEMICS</span> <br />
               <span className="block mt-2 md:mt-3 text-black">WITH INDUSTRY</span>
@@ -86,7 +88,7 @@ export default function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/contact" className="bg-highlight-yellow text-primary font-heading font-black uppercase tracking-wider text-sm md:text-base py-3 px-6 md:px-8 border-3 border-primary shadow-[4px_4px_0_0_#1a1a1a] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center">
+              <Link to={user ? "/profile" : "/auth"} className="bg-highlight-yellow text-primary font-heading font-black uppercase tracking-wider text-sm md:text-base py-3 px-6 md:px-8 border-3 border-primary shadow-[4px_4px_0_0_#1a1a1a] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center">
                 JOIN CID NOW <span className="font-sans font-normal mx-3 opacity-50">|</span> <ArrowRight size={20} className="ml-1" strokeWidth={3} />
               </Link>
               <Link to="/projects" className="bg-white text-primary font-heading font-black uppercase tracking-wider text-sm md:text-base py-3 px-6 md:px-8 border-3 border-primary shadow-[4px_4px_0_0_#1a1a1a] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center">

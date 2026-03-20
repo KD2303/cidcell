@@ -17,7 +17,7 @@ import {
 import { AuthContext } from '../context/AuthContext';
 import ScrollReveal from '../components/ScrollReveal';
 
-const categories = ['All', 'web', 'ML', 'ai', 'Cyber Security', 'hardware', 'iot'];
+const categories = ['All', 'web', 'ML', 'ai', 'Cyber Security', 'iot'];
 
 export default function Projects() {
   const { user } = useContext(AuthContext);

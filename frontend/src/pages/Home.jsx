@@ -1,6 +1,5 @@
 import HeroSection from '../components/HeroSection';
 import AboutPreview from '../components/AboutPreview';
-import Timeline from '../components/Timeline';
 import VisionMission from '../components/VisionMission';
 import KeyActivities from '../components/KeyActivities';
 import Benefits from '../components/Benefits';
@@ -21,11 +20,7 @@ export default function Home() {
         <AboutPreview />
       </div>
 
-      <div className="relative bg-gradient-to-b from-white to-bg/80 transition-colors duration-1000">
-        <Timeline />
-      </div>
-
-      <div className="relative bg-gradient-to-b from-bg/80 to-white/50 transition-colors duration-1000">
+      <div className="relative bg-gradient-to-b from-white/50 to-white transition-colors duration-1000">
         <VisionMission />
       </div>
 

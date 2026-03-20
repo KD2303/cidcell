@@ -5,12 +5,15 @@ const {
     getUserById,
     updateUser,
     deleteUser,
+    getMentors
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/authMiddleware');
-const { validate, schemas } = require('../middleware/validate');
 
 router.route('/')
-    .get(protect, admin, validate(schemas.paginationSchema), getUsers);
+    .get(protect, getUsers);
+
+router.route('/mentors')
+    .get(protect, getMentors);
 
 router.route('/:id')
     .get(protect, admin, getUserById)

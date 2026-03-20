@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 export default function CTASection() {
+  const { user } = useContext(AuthContext);
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
 
@@ -51,14 +53,14 @@ export default function CTASection() {
           </div>
         </div>
         
-        <h2 className="font-heading text-5xl md:text-7xl lg:text-9xl font-black text-black mb-10 uppercase leading-[0.85] tracking-wider relative">
+        <h2 className="font-heading text-5xl md:text-7xl lg:text-9xl font-black text-black mb-10 uppercase leading-[0.85] tracking-widest relative">
           Ready to <br/><span className="text-white text-shadow-[4px_4px_0_#000] md:text-shadow-[8px_8px_0_#000] z-10 relative">Innovate?</span>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-1/2 bg-highlight-pink -z-10 transform -rotate-2 mix-blend-screen opacity-50"></div>
         </h2>
         
         <div className="max-w-3xl mx-auto mb-12 relative">
           <div className="absolute -inset-1 bg-black transform translate-x-3 translate-y-3 z-0"></div>
-          <p className="relative z-10 bg-white text-black font-bold text-lg md:text-2xl p-8 border-4 border-black leading-relaxed">
+          <p className="relative z-10 bg-white text-black font-bold text-lg md:text-2xl p-8 border-4 border-black leading-relaxed font-body">
             Join CID-Cell today and be part of a community that transforms ideas into reality.
             Collaborate, innovate, and build the future of technology.
           </p>
@@ -66,7 +68,7 @@ export default function CTASection() {
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
           <Link 
-            to="/contact" 
+            to={user ? "/profile" : "/auth"} 
             className="group relative px-10 py-5 bg-black text-white font-heading font-black text-2xl uppercase tracking-wider border-4 border-black shadow-neo-white hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center gap-3"
           >
             Get Started <ArrowRight size={32} className="group-hover:translate-x-2 transition-transform stroke-[4px]" />

@@ -5,30 +5,7 @@ const User = require('../models/User');
 // @access  Private/Admin
 const getUsers = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const skip = (page - 1) * limit;
-
-        const isPaginated = req.query.page !== undefined;
-
-        let query = User.find({}).sort({ createdAt: -1 });
-
-        if (isPaginated) {
-            query = query.skip(skip).limit(limit);
-        }
-
-        const users = await query;
-
-        if (isPaginated) {
-            const total = await User.countDocuments({});
-            return res.json({
-                users,
-                page,
-                pages: Math.ceil(total / limit),
-                total
-            });
-        }
-
+        const users = await User.find({}).sort({ createdAt: -1 });
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -40,14 +17,17 @@ const getUsers = async (req, res) => {
 // @access  Private/Admin
 const getUserById = async (req, res) => {
     try {
+        console.log('Fetching user by ID:', req.params.id);
         const user = await User.findById(req.params.id);
         if (user) {
             res.json(user);
         } else {
+            console.warn('User not found:', req.params.id);
             res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error fetching user:', req.params.id, error);
+        res.status(500).json({ message: error.message, stack: error.stack });
     }
 };
 
@@ -65,6 +45,15 @@ const updateUser = async (req, res) => {
             user.branch = req.body.branch || user.branch;
             user.batch = req.body.batch || user.batch;
             user.userType = req.body.userType || user.userType;
+            user.domainOfExpertise = req.body.domainOfExpertise || user.domainOfExpertise;
+            user.department = req.body.department || user.department;
+            if (typeof req.body.aboutMentor !== 'undefined') user.aboutMentor = req.body.aboutMentor;
+            
+            if (req.body.expertise) {
+                user.expertise = Array.isArray(req.body.expertise)
+                    ? req.body.expertise
+                    : req.body.expertise.split(',').map(s => s.trim()).filter(Boolean);
+            }
             
             // Handle skills (expecting array or comma-separated string)
             if (req.body.skills) {
@@ -111,9 +100,32 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// @desc    Get all mentors (publicly searchable by domain)
+// @route   GET /api/users/mentors
+// @access  Private
+const getMentors = async (req, res) => {
+    try {
+        const { domain } = req.query;
+        let query = { userType: 'mentor' };
+        
+        if (domain) {
+            query.domainOfExpertise = { $regex: domain, $options: 'i' };
+        }
+
+        const mentors = await User.find(query)
+            .select('username profilePicture domainOfExpertise department aboutMentor expertise')
+            .sort({ createdAt: -1 });
+            
+        res.json(mentors);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getUsers,
     getUserById,
     updateUser,
     deleteUser,
+    getMentors,
 };
