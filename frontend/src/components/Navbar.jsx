@@ -6,6 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Dashboard', path: '/dashboard', authRequired: true },
+  { name: 'Admin', path: '/admin/dashboard', authRequired: true, adminRequired: true },
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
   { name: 'Roadmap', path: '/roadmap' },
@@ -41,18 +42,18 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white border-b-4 border-primary shadow-sm py-1'
-          : 'bg-transparent border-b-4 border-transparent shadow-none py-3'
+        ? 'bg-white border-b-4 border-primary shadow-sm py-1'
+        : 'bg-transparent border-b-4 border-transparent shadow-none py-3'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group shrink-0 z-10">
-            <img 
-              src="/logo.png" 
-              alt="CID-Cell Logo" 
-              className="w-10 h-10 md:w-12 md:h-12 object-contain shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all" 
+            <img
+              src="/logo.png"
+              alt="CID-Cell Logo"
+              className="w-10 h-10 md:w-12 md:h-12 object-contain shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all"
             />
             <div className="hidden sm:flex flex-col justify-center">
               <span className="text-primary font-heading text-xl md:text-2xl uppercase tracking-tighter leading-none block">
@@ -67,7 +68,11 @@ export default function Navbar() {
           {/* Desktop nav - Centered */}
           <div className="hidden xl:flex flex-1 justify-center items-center px-4">
             <div className="flex items-center bg-white border-4 border-primary shadow-neo px-1 py-1">
-              {navLinks.filter(link => !link.authRequired || user).map((link) => (
+              {navLinks.filter(link => {
+                if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
+                if (link.authRequired && !user) return false;
+                return true;
+              }).map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
@@ -83,7 +88,7 @@ export default function Navbar() {
               ))}
             </div>
           </div>
-            
+
           {/* Actions - Right side */}
           <div className="hidden md:flex items-center gap-2 pl-2 z-10 shrink-0">
             <Link
@@ -128,7 +133,11 @@ export default function Navbar() {
         {isOpen && (
           <div className="absolute top-full left-0 w-full md:hidden px-4 pb-4 animate-fade-in-up bg-bg/95 backdrop-blur-sm border-b-2 border-primary shadow-neo h-screen sm:h-auto z-40">
             <div className="bg-white border-3 border-primary shadow-neo rounded-xl p-4 space-y-2 mt-4">
-              {navLinks.filter(link => !link.authRequired || user).map((link) => (
+              {navLinks.filter(link => {
+                if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
+                if (link.authRequired && !user) return false;
+                return true;
+              }).map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
