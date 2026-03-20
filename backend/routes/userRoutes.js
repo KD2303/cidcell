@@ -13,7 +13,7 @@ router.route('/')
     .get(protect, getUsers);
 
 router.route('/mentors')
-    .get(protect, getMentors);
+    .get(getMentors);
 
 router.route('/:id')
     .get(protect, admin, getUserById)
