@@ -11,6 +11,8 @@ const navLinks = [
   { name: 'Faculty Portal', path: '/faculty/dashboard', authRequired: true, facultyRequired: true },
   { name: 'About', path: '/about' },
   { name: 'Projects', path: '/projects' },
+  { name: 'Submit Project', path: '/projects/submit', authRequired: true, studentOrMentor: true },
+  { name: 'My Projects', path: '/projects/mine', authRequired: true, studentOrMentor: true },
   { name: 'Mentors', path: '/mentors' },
   { name: 'Roadmap', path: '/roadmap' },
   { name: 'Events', path: '/events' },
@@ -76,6 +78,7 @@ export default function Navbar() {
                 if (link.facultyRequired && user?.userType !== 'faculty') return false;
                 if (link.studentRequired && user?.userType !== 'student') return false;
                 if (link.hideForMentor && user?.userType === 'mentor') return false;
+                if (link.studentOrMentor && (!user || (user.userType !== 'student' && user.userType !== 'mentor'))) return false;
                 if (link.authRequired && !user) return false;
                 return true;
               }).map((link) => (
@@ -145,6 +148,7 @@ export default function Navbar() {
                 if (link.facultyRequired && user?.userType !== 'faculty') return false;
                 if (link.studentRequired && user?.userType !== 'student') return false;
                 if (link.hideForMentor && user?.userType === 'mentor') return false;
+                if (link.studentOrMentor && (!user || (user.userType !== 'student' && user.userType !== 'mentor'))) return false;
                 if (link.authRequired && !user) return false;
                 return true;
               }).map((link) => (

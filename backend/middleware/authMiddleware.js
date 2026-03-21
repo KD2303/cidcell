@@ -70,4 +70,21 @@ const isFaculty = (req, res, next) => {
     }
 };
 
-module.exports = { protect, admin, isFaculty, optionalProtect };
+const isMentor = (req, res, next) => {
+    if (req.user && req.user.userType === 'mentor') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Mentor access required' });
+    }
+};
+
+const isStudentOrMentor = (req, res, next) => {
+    const role = req.user?.userType;
+    if (role === 'student' || role === 'mentor') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Student or Mentor access required' });
+    }
+};
+
+module.exports = { protect, admin, isFaculty, isMentor, isStudentOrMentor, optionalProtect };

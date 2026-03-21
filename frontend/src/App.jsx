@@ -16,6 +16,8 @@ import Auth from './pages/Auth';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import ProjectDetail from './pages/ProjectDetail';
+import SubmitProject from './pages/SubmitProject';
+import MyProjects from './pages/MyProjects';
 import EventDetail from './pages/EventDetail';
 import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
@@ -128,6 +130,20 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/submit" element={
+            <PrivateRoute>
+              <OnboardingGuard>
+                <SubmitProject />
+              </OnboardingGuard>
+            </PrivateRoute>
+          } />
+          <Route path="/projects/mine" element={
+            <PrivateRoute>
+              <OnboardingGuard>
+                <MyProjects />
+              </OnboardingGuard>
+            </PrivateRoute>
+          } />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetail />} />

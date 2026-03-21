@@ -1,64 +1,71 @@
 const mongoose = require('mongoose');
 
+const contributorSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    joinedAt: { type: Date, default: Date.now },
+}, { _id: false });
+
+const mentorSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}, { _id: false });
+
 const projectSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
-        required: [true, 'Please add a project name'],
-        trim: true
-    },
-    theme: {
-        type: String,
-        required: [true, 'Please select a theme'],
-        enum: ['ML', 'web', 'ai', 'Cyber Security', 'hardware', 'iot'],
-        default: 'web'
+        required: [true, 'Please add a project title'],
+        trim: true,
     },
     description: {
         type: String,
-        required: [true, 'Please add a description']
+        required: [true, 'Please add a description'],
     },
-    techStack: {
-        type: [String],
-        default: []
-    },
-    github: {
+    type: {
         type: String,
-        trim: true
+        enum: ['independent', 'collaborative'],
+        required: [true, 'Please specify project type'],
     },
-    liveLink: {
-        type: String,
-        trim: true
-    },
-    mentor: {
-        type: String,
-        trim: true
-    },
-    members: {
-        type: [String],
-        default: []
-    },
-    status: {
-        type: String,
-        enum: ['Under Development', 'Completed', 'Archived', 'Proposed'],
-        default: 'Under Development'
-    },
-    year: {
-        type: String
-    },
-    imageUrl: {
-        type: String,
-        trim: true
-    },
+    techStack: [{ type: String }],
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
     },
-    isApproved: {
-        type: Boolean,
-        default: false
-    }
+
+    status: {
+        type: String,
+        enum: [
+            'draft',
+            'pending_mentor_review',
+            'pending_faculty_review',
+            'pending_admin_approval',
+            'active',
+            'rejected',
+            'completed',
+            'inactive',
+        ],
+        default: 'draft',
+    },
+
+    githubRepo: { type: String, default: '' },
+    deployedLink: { type: String, default: '' },
+    images: [{ type: String }],
+
+    contributors: [contributorSchema],
+    mentors: [mentorSchema],
+
+    facultyReviewer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    adminApprover: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+
+    // Feedback trail
+    mentorFeedback: { type: String, default: '' },
+    facultyFeedback: { type: String, default: '' },
+    adminFeedback: { type: String, default: '' },
+
+    // Auto-inactivity tracking
+    lastActivityAt: { type: Date, default: Date.now },
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 module.exports = mongoose.model('Project', projectSchema);

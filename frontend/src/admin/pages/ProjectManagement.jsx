@@ -1,451 +1,287 @@
 import React, { useState, useEffect } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Modal from '../components/Modal';
-import { 
-  Edit2, 
-  Trash2, 
-  Plus, 
-  Search, 
+import {
+  Trash2,
+  Search,
   X,
   AlertTriangle,
   CheckCircle,
+  XCircle,
   Clock,
-  Check,
-  Loader
+  Loader,
+  Github,
+  ExternalLink
 } from 'lucide-react';
 
+const API = import.meta.env.VITE_API_URL;
+const authHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+
+const statusColors = {
+  draft: 'bg-gray-100 text-gray-600',
+  pending_mentor_review: 'bg-yellow-100 text-yellow-700',
+  pending_faculty_review: 'bg-yellow-100 text-yellow-700',
+  pending_admin_approval: 'bg-orange-100 text-orange-700',
+  active: 'bg-green-100 text-green-700',
+  rejected: 'bg-red-100 text-red-700',
+  completed: 'bg-blue-100 text-blue-700',
+  inactive: 'bg-gray-100 text-gray-600',
+};
+
 const ProjectManagement = () => {
-  const [projects, setProjects] = useState([]);
+  const [activeTab, setActiveTab] = useState('pending');
+  const [allProjects, setAllProjects] = useState([]);
+  const [pendingProjects, setPendingProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    theme: 'web',
-    description: '',
-    techStack: [],
-    github: '',
-    liveLink: '',
-    mentor: '',
-    members: [],
-    status: 'Under Development',
-    year: new Date().getFullYear().toString(),
-    imageUrl: ''
-  });
-
-  const [newSkill, setNewSkill] = useState('');
-  const [newMember, setNewMember] = useState('');
-
+  const [feedback, setFeedback] = useState({});
   const [toast, setToast] = useState({ message: '', type: null });
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, id: null });
 
-  const themes = ['ML', 'web', 'ai', 'Cyber Security', 'hardware', 'iot'];
-  const statuses = ['Under Development', 'Completed', 'Archived', 'Proposed'];
-
-  useEffect(() => { fetchProjects(); }, []);
-
-  const fetchProjects = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/projects?all=true`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProjects(res.data);
-    } catch (err) { 
-        console.error(err); 
-        showToast('Failed to load projects', 'error');
-    } finally {
-        setLoading(false);
-    }
-  };
-
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
+  const showToast = (msg, type = 'success') => {
+    setToast({ message: msg, type });
     setTimeout(() => setToast({ message: '', type: null }), 3000);
   };
 
-  const handleOpenModal = (project = null) => {
-    if (project) {
-      setIsEditMode(true);
-      setSelectedId(project._id);
-      setFormData({
-        name: project.name,
-        theme: project.theme,
-        description: project.description,
-        techStack: project.techStack || [],
-        github: project.github || '',
-        liveLink: project.liveLink || '',
-        mentor: project.mentor || '',
-        members: project.members || [],
-        status: project.status || 'Under Development',
-        year: project.year || new Date().getFullYear().toString(),
-        imageUrl: project.imageUrl || ''
-      });
-    } else {
-      setIsEditMode(false);
-      setFormData({
-        name: '', theme: 'web', description: '', techStack: [], github: '', liveLink: '', mentor: '', members: [], status: 'Under Development', year: new Date().getFullYear().toString(), imageUrl: ''
-      });
-    }
-    setNewSkill('');
-    setNewMember('');
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const addSkill = () => {
-    if (newSkill.trim()) {
-      setFormData({ ...formData, techStack: [...formData.techStack, newSkill.trim()] });
-      setNewSkill('');
-    }
-  };
-
-  const removeSkill = (index) => {
-    setFormData({ ...formData, techStack: formData.techStack.filter((_, i) => i !== index) });
-  };
-
-  const addMember = () => {
-    if (newMember.trim()) {
-      setFormData({ ...formData, members: [...formData.members, newMember.trim()] });
-      setNewMember('');
-    }
-  };
-
-  const removeMember = (index) => {
-    setFormData({ ...formData, members: formData.members.filter((_, i) => i !== index) });
-  };
-
-  const handleApprove = async (id, currentStatus) => {
-    const token = localStorage.getItem('token');
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL}/projects/${id}/approve`, { 
-        isApproved: !currentStatus 
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProjects(projects.map(p => p._id === id ? { ...p, isApproved: !currentStatus } : p));
-      showToast(currentStatus ? 'Project set to Pending' : 'Project Approved Successfully');
-    } catch (err) {
-      showToast('Action failed', 'error');
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    try {
-      if (isEditMode) {
-        const res = await axios.put(`${import.meta.env.VITE_API_URL}/projects/${selectedId}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProjects(projects.map(p => p._id === selectedId ? res.data : p));
-        showToast('Project updated successfully');
-      } else {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProjects([...projects, res.data]);
-        showToast('Project created successfully');
-      }
-      setIsModalOpen(false);
-    } catch (err) { showToast('Error saving project', 'error'); }
-  };
-
-  const handleDelete = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${deleteConfirm.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProjects(projects.filter(p => p._id !== deleteConfirm.id));
-      showToast('Project deleted successfully');
-    } catch (err) { showToast('Delete failed', 'error'); }
-    finally { setDeleteConfirm({ isOpen: false, id: null }); }
-  };
-
-const handleDownloadCSV = () => {
-    const csvRows = [
-      ['Name', 'Status', 'Creator', 'Email', 'Tech Stack']
-    ];
-    projects.forEach(p => {
-      csvRows.push([
-        `"${p.name.replace(/"/g, '""')}"`,
-        p.isApproved ? 'Approved' : 'Pending',
-        `"${p.creatorName || (p.createdBy?.name || 'Unknown')}"`,
-        `"${p.creatorEmail || (p.createdBy?.email || '')}"`,
-        `"${(p.techStack || []).join(', ')}"`
+      const [allRes, pendingRes] = await Promise.all([
+        axios.get(`${API}/projects/all`, authHeaders()),
+        axios.get(`${API}/projects/review/admin`, authHeaders()),
       ]);
-    });
-    const csvString = csvRows.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvString], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Projects-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+      setAllProjects(allRes.data);
+      setPendingProjects(pendingRes.data);
+    } catch (err) {
+      showToast('Failed to fetch project data', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredProjects = projects.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleAdminReview = async (projectId, action) => {
+    try {
+      await axios.patch(`${API}/projects/${projectId}/admin-review`, {
+        action,
+        feedback: feedback[projectId] || '',
+      }, authHeaders());
+      showToast(`Project ${action === 'approve' ? 'approved' : 'rejected'}!`);
+      fetchData();
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Review failed', 'error');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API}/projects/${id}`, authHeaders());
+      showToast('Project deleted');
+      fetchData();
+    } catch {
+      showToast('Failed to delete', 'error');
+    } finally {
+      setDeleteConfirm({ isOpen: false, id: null });
+    }
+  };
+
+  const filteredAll = allProjects.filter(p =>
+    p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.createdBy?.username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-semibold text-slate-800">Projects</h1>
-            <p className="text-slate-500 text-sm mt-1">Review, approve, and manage cell project submissions.</p>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={handleDownloadCSV} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-sm transition-colors flex items-center gap-2">
-              Download CSV
-            </button>
-            <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm transition-colors flex items-center gap-2">
-              <Plus size={16} /> Add Project
-            </button>
-          </div>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input 
-            type="text" placeholder="Search projects by name..." 
-            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 pr-4 py-2 border rounded-lg w-full outline-none text-sm transition-all bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-gray-800">Project Management</h1>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-gray-200 pb-1">
+        <button
+          onClick={() => setActiveTab('pending')}
+          className={`px-4 py-2 text-sm font-semibold rounded-t transition-colors ${
+            activeTab === 'pending'
+              ? 'bg-orange-100 text-orange-700 border-b-2 border-orange-500'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Clock size={14} className="inline mr-1" />
+          Pending Approvals ({pendingProjects.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`px-4 py-2 text-sm font-semibold rounded-t transition-colors ${
+            activeTab === 'all'
+              ? 'bg-blue-100 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          All Projects ({allProjects.length})
+        </button>
       </div>
 
       {loading ? (
-          <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-              <Loader className="w-8 h-8 animate-spin text-indigo-600" />
-              <p className="text-slate-500 font-medium text-sm">Loading projects...</p>
-          </div>
+        <div className="flex justify-center py-12">
+          <Loader className="animate-spin text-indigo-600" size={28} />
+        </div>
+      ) : activeTab === 'pending' ? (
+        /* ── Pending Admin Approvals ── */
+        <div className="space-y-4">
+          {pendingProjects.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <CheckCircle size={40} className="mx-auto mb-3 text-green-300" />
+              <p className="text-sm font-medium">No projects waiting for your approval.</p>
+            </div>
+          ) : (
+            pendingProjects.map(project => (
+              <div key={project._id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div>
+                    <h3 className="font-bold text-gray-800 text-lg">{project.title}</h3>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-orange-100 text-orange-600 rounded">
+                        Awaiting Admin Approval
+                      </span>
+                      <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-600 rounded">
+                        {project.type}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 line-clamp-2 mb-2">{project.description}</p>
+                <p className="text-xs text-gray-400 mb-3">
+                  Submitted by: <span className="text-gray-700 font-medium">{project.createdBy?.username}</span> ({project.createdBy?.email})
+                </p>
+
+                <div className="flex gap-4 mb-4">
+                  {project.githubRepo && (
+                    <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[10px] font-black uppercase text-blue-600 hover:underline">
+                      <Github size={14} /> GitHub Repo
+                    </a>
+                  )}
+                  {project.deployedLink && (
+                    <a href={project.deployedLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[10px] font-black uppercase text-green-600 hover:underline">
+                      <ExternalLink size={14} /> Live Demo
+                    </a>
+                  )}
+                </div>
+
+                <textarea
+                  className="w-full p-2 border border-gray-300 rounded text-sm mb-3 outline-none focus:ring-2 focus:ring-blue-200"
+                  rows="2"
+                  placeholder="Optional feedback..."
+                  value={feedback[project._id] || ''}
+                  onChange={e => setFeedback({ ...feedback, [project._id]: e.target.value })}
+                />
+
+                <div className="flex gap-3">
+                  <button onClick={() => handleAdminReview(project._id, 'approve')} className="flex items-center gap-1 px-4 py-2 bg-green-500 text-white text-sm font-semibold rounded hover:bg-green-600 transition-colors">
+                    <CheckCircle size={16} /> Approve
+                  </button>
+                  <button onClick={() => handleAdminReview(project._id, 'reject')} className="flex items-center gap-1 px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded hover:bg-red-600 transition-colors">
+                    <XCircle size={16} /> Reject
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+        /* ── All Projects ── */
+        <div className="space-y-4">
+          {/* Search */}
+          <div className="relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by title or creator..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
+
+          {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
-                  <th className="px-5 py-4 w-[40%]">Project</th>
-                  <th className="px-5 py-4 text-center">Approval</th>
-                  <th className="px-5 py-4 text-center">Status</th>
-                  <th className="px-5 py-4 text-right">Actions</th>
+                <tr className="border-b border-gray-200 text-left text-xs uppercase text-gray-500">
+                  <th className="py-3 px-4">Title</th>
+                  <th className="py-3 px-4">Type</th>
+                  <th className="py-3 px-4">Creator</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredProjects.length > 0 ? filteredProjects.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4">
-                        <div className="font-semibold text-sm text-slate-800">{p.name}</div>
-                        <div className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider mt-0.5">{p.theme} &bull; {p.year}</div>
+              <tbody>
+                {filteredAll.map(project => (
+                  <tr key={project._id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-800">{project.title}</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-600 rounded">{project.type}</span>
                     </td>
-                    <td className="px-5 py-4 text-center">
-                        <button 
-                            onClick={() => handleApprove(p._id, p.isApproved)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all ${
-                            p.isApproved 
-                                ? 'bg-green-50 text-green-700 border-green-200' 
-                                : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600'
-                            }`}
-                        >
-                            {p.isApproved ? <><Check size={12}/> Approved</> : <><Clock size={12}/> Pending</>}
-                        </button>
+                    <td className="py-3 px-4 text-gray-600">{project.createdBy?.username || '—'}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded ${statusColors[project.status] || 'bg-gray-100'}`}>
+                        {project.status?.replace(/_/g, ' ')}
+                      </span>
                     </td>
-                    <td className="px-5 py-4 text-center">
-                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-slate-200">
-                            {p.status}
-                        </span>
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleOpenModal(p)} className="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
-                                <Edit2 className="w-3.5 h-3.5" /> Edit
-                            </button>
-                            <button onClick={() => setDeleteConfirm({ isOpen: true, id: p._id })} className="px-2.5 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-all bg-white text-rose-600 border-rose-200 hover:bg-rose-50">
-                                <Trash2 className="w-3.5 h-3.5" /> Delete
-                            </button>
-                        </div>
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => setDeleteConfirm({ isOpen: true, id: project._id })}
+                        className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="4" className="px-5 py-12 text-center text-slate-500">
-                        No projects found matching your search.
-                    </td>
-                  </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
+
+          {filteredAll.length === 0 && (
+            <div className="text-center py-8 text-gray-400 text-sm">No projects found.</div>
+          )}
         </div>
       )}
 
-      {/* Reworked Form Modal via Portal */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        title={isEditMode ? 'Edit Project' : 'Add New Project'}
-        footer={
-          <>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition-colors text-sm">Cancel</button>
-            <button form="projectForm" type="submit" className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 shadow-sm transition-colors text-sm">Save Project</button>
-          </>
-        }
-      >
-        <form id="projectForm" onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-5">
-            <h3 className="text-sm font-semibold text-indigo-600 uppercase tracking-wider border-b pb-2">Basic Information</h3>
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Project Name*</label>
-              <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-400" placeholder="Enter project name"/>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Theme</label>
-                <select value={formData.theme} onChange={e => setFormData({...formData, theme: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white text-slate-800">
-                  {themes.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Status</label>
-                <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white text-slate-800">
-                  {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Mentor Name</label>
-                <input type="text" value={formData.mentor} onChange={e => setFormData({...formData, mentor: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="Name of mentor"/>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Year</label>
-                <input type="text" value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="e.g. 2024"/>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Description*</label>
-                <div className="bg-white rounded-md h-[250px] mb-12">
-                  <ReactQuill 
-                    theme="snow" 
-                    value={formData.description} 
-                    onChange={(val) => setFormData({ ...formData, description: val })} 
-                    style={{ height: '200px' }} 
-                  />
-                </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-5">
-            <h3 className="text-sm font-semibold text-indigo-600 uppercase tracking-wider border-b pb-2">Technical Details</h3>
-            <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Tech Stack</label>
-                <div className="flex gap-2">
-                    <input 
-                        type="text" 
-                        value={newSkill} 
-                        onChange={e => setNewSkill(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                        className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" 
-                        placeholder="Add tech (React, AI, etc)"/>
-                    <button type="button" onClick={addSkill} className="p-2 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors">
-                        <Plus size={18} />
-                    </button>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-1">
-                    {formData.techStack.map((tech, i) => (
-                        <span key={i} className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg flex items-center gap-1.5 text-xs font-medium animate-fade-in transition-all">
-                            {tech}
-                            <button type="button" onClick={() => removeSkill(i)} className="hover:text-red-500"><X size={14}/></button>
-                        </span>
-                    ))}
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Team Members</label>
-                <div className="flex gap-2">
-                    <input 
-                        type="text" 
-                        value={newMember} 
-                        onChange={e => setNewMember(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addMember())}
-                        className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" 
-                        placeholder="Add member name"/>
-                    <button type="button" onClick={addMember} className="p-2 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors">
-                        <Plus size={18} />
-                    </button>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-1">
-                    {formData.members.map((member, i) => (
-                        <span key={i} className="px-2.5 py-1 bg-slate-50 text-slate-700 border border-slate-200 rounded-lg flex items-center gap-1.5 text-xs font-medium animate-fade-in transition-all">
-                            {member}
-                            <button type="button" onClick={() => removeMember(i)} className="hover:text-red-500"><X size={14}/></button>
-                        </span>
-                    ))}
-                </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-5">
-            <h3 className="text-sm font-semibold text-indigo-600 uppercase tracking-wider border-b pb-2">Links & Media</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">GitHub Link</label>
-                    <input type="text" value={formData.github} onChange={e => setFormData({...formData, github: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-400" placeholder="https://github.com/..."/>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Live Link</label>
-                    <input type="text" value={formData.liveLink} onChange={e => setFormData({...formData, liveLink: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-400" placeholder="https://project-demo.com"/>
-                </div>
-                <div className="col-span-1 md:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Image URL</label>
-                    <input type="text" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-400" placeholder="https://your-image-url.com"/>
-                </div>
-            </div>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Delete Confirmation via Portal */}
+      {/* Delete Confirmation Modal */}
       {deleteConfirm.isOpen && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm px-4">
-          <div className="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center border border-slate-200 animate-fade-in">
-            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="text-red-500 w-8 h-8" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="text-red-500" size={24} />
+              <h3 className="text-lg font-bold text-gray-800">Delete Project?</h3>
             </div>
-            <h3 className="font-semibold text-lg text-slate-800">Confirm Delete</h3>
-            <p className="text-slate-500 my-3 text-sm">Are you sure you want to delete this project? This action cannot be undone.</p>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setDeleteConfirm({ isOpen: false, id: null })} className="flex-1 px-4 py-2 border border-slate-200 rounded-lg font-medium text-slate-600 hover:bg-slate-50 text-sm transition-colors">Cancel</button>
-              <button onClick={handleDelete} className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium shadow-sm transition-all text-sm active:scale-95 hover:bg-red-700">Yes, Delete</button>
+            <p className="text-sm text-gray-600 mb-6">This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteConfirm({ isOpen: false, id: null })} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm.id)} className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
             </div>
           </div>
         </div>,
         document.body
       )}
 
-      {toast.message && (
-        <div className="fixed bottom-6 right-6 z-[9999] animate-fade-in">
-          <div className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-slate-800 text-white'}`}>
+      {/* Toast */}
+      {toast.message && ReactDOM.createPortal(
+        <div className="fixed bottom-6 right-6 z-[9999]">
+          <div className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
             {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
             <p>{toast.message}</p>
-            <button onClick={() => setToast({ message: '', type: null })} className="ml-2 text-white/70 hover:text-white transition-colors">
-                <X size={14} />
-            </button>
+            <button onClick={() => setToast({ message: '', type: null })}><X size={14} /></button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
