@@ -21,6 +21,7 @@ import MyProjects from './pages/MyProjects';
 import EventDetail from './pages/EventDetail';
 import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
+import NotFound from './pages/NotFound';
 
 // Admin Imports
 import AdminLayout from './admin/AdminLayout';
@@ -231,6 +232,7 @@ function App() {
             <Route path="events" element={<EventManagement />} />
             <Route path="members" element={<MemberManagement />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}
