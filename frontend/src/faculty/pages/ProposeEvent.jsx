@@ -38,7 +38,33 @@ const ProposeEvent = () => {
     price: 0,
   });
   const [toast, setToast] = useState({ message: '', type: null });
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      setFormData(prev => ({ ...prev, image: res.data.url }));
+      showToast('Image uploaded successfully');
+    } catch (err) {
+      showToast('Failed to upload image', 'error');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -155,8 +181,37 @@ const ProposeEvent = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-bold uppercase tracking-wide mb-1">Header Image URL</label>
-                <input type="text" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="https://example.com/image.jpg" />
+                <label className="block text-sm font-bold uppercase tracking-wide mb-1">Header Image</label>
+                <div className="flex flex-col gap-3 mt-1">
+                  {formData.image && (
+                    <div className="relative group w-full aspect-video border-2 border-primary rounded-lg overflow-hidden shadow-neo-sm">
+                      <img src={formData.image} alt="Event Preview" className="w-full h-full object-cover" />
+                      <button 
+                        type="button" 
+                        onClick={() => setFormData({ ...formData, image: '' })}
+                        className="absolute top-2 right-2 bg-highlight-pink border-2 border-primary text-primary p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-neo-sm"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+                  <div className="relative">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden" 
+                      id="propose-image-upload"
+                    />
+                    <label 
+                      htmlFor="propose-image-upload" 
+                      className={`w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer font-bold text-xs uppercase ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {uploadingImage ? 'Uploading...' : <><Plus size={16} /> {formData.image ? 'Change Image' : 'Upload Image'}</>}
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div>

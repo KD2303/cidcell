@@ -50,8 +50,34 @@ const EventManagement = () => {
     isScheduled: true
   });
 
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [toast, setToast] = useState({ message: '', type: null });
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, id: null });
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      setFormData(prev => ({ ...prev, image: res.data.url }));
+      showToast('Image uploaded successfully');
+    } catch (err) {
+      showToast('Failed to upload image', 'error');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const categories = [
     "trainig and mentorships",
@@ -482,8 +508,41 @@ const EventManagement = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Header Image URL</label>
-              <input type="text" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="https://example.com/image.jpg" />
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Header Image</label>
+              <div className="flex flex-col gap-3">
+                {formData.image && (
+                  <div className="relative group w-full aspect-video border-2 border-slate-200 rounded-lg overflow-hidden">
+                    <img src={formData.image} alt="Event Preview" className="w-full h-full object-cover" />
+                    {!isViewOnly && (
+                      <button 
+                        type="button" 
+                        onClick={() => setFormData({ ...formData, image: '' })}
+                        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                )}
+                {!isViewOnly && (
+                  <div className="relative">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden" 
+                      id="event-image-upload"
+                    />
+                    <label 
+                      htmlFor="event-image-upload" 
+                      className={`w-full flex items-center justify-center gap-2 px-4 py-2 border-2 border-slate-200 border-dashed rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm font-medium ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {uploadingImage ? 'Uploading...' : <><Plus size={16} /> {formData.image ? 'Change Image' : 'Upload Image'}</>}
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-1 pt-2">
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Description*</label>

@@ -70,12 +70,38 @@ export default function Onboarding() {
         domainOfExpertise: user?.domainOfExpertise || '',
         department: user?.department || '',
         aboutMentor: user?.aboutMentor || '',
-        expertise: user?.expertise?.join(', ') || ''
+        expertise: user?.expertise?.join(', ') || '',
+        profilePicture: user?.profilePicture || ''
     });
 
     const [customSkill, setCustomSkill] = useState('');
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [saving, setSaving] = useState(false);
     const availableBatches = generateBatches();
+
+    const handleProfilePictureUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingImage(true);
+        const uploadData = new FormData();
+        uploadData.append('image', file);
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setFormData(prev => ({ ...prev, profilePicture: res.data.url }));
+        } catch (err) {
+            alert('Failed to upload profile picture.');
+        } finally {
+            setUploadingImage(false);
+        }
+    };
 
     if (!user) return <Navigate to="/auth" />;
 
@@ -161,6 +187,46 @@ export default function Onboarding() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {/* ── Profile Picture ── */}
+                    <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
+                        <div className="absolute -top-3 left-4 bg-highlight-yellow border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform rotate-1">
+                            Profile Picture
+                        </div>
+                        <div className="flex flex-col items-center gap-4 mt-2">
+                            <div className="relative group">
+                                <img 
+                                    src={formData.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(resolvedName)}&background=random&size=128`} 
+                                    alt="Profile" 
+                                    className="w-24 h-24 rounded-full border-4 border-primary shadow-neo object-cover"
+                                />
+                                {uploadingImage && (
+                                    <div className="absolute inset-0 bg-white/50 flex items-center justify-center rounded-full border-4 border-primary">
+                                        <svg className="animate-spin w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="w-full max-w-xs">
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={handleProfilePictureUpload}
+                                    disabled={uploadingImage}
+                                    className="hidden" 
+                                    id="profile-picture-upload"
+                                />
+                                <label 
+                                    htmlFor="profile-picture-upload" 
+                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer font-bold text-xs uppercase ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    {uploadingImage ? 'Uploading...' : 'Upload New Picture'}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* ── Identity (read-only) ── */}
                     <div className="bg-white border-4 border-primary rounded-none p-5 shadow-neo relative">

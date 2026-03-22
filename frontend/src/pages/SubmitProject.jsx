@@ -20,6 +20,7 @@ export default function SubmitProject() {
 
   const [newSkill, setNewSkill] = useState('');
   const [newImage, setNewImage] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: null });
 
@@ -36,10 +37,28 @@ export default function SubmitProject() {
   };
   const removeSkill = (i) => setFormData(prev => ({ ...prev, techStack: prev.techStack.filter((_, idx) => idx !== i) }));
 
-  const addImage = () => {
-    if (newImage.trim()) {
-      setFormData(prev => ({ ...prev, images: [...prev.images, newImage.trim()] }));
-      setNewImage('');
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      setFormData(prev => ({ ...prev, images: [...prev.images, res.data.url] }));
+      showToast('Image uploaded successfully!');
+    } catch (err) {
+      showToast('Failed to upload image.', 'error');
+    } finally {
+      setUploadingImage(false);
     }
   };
   const removeImage = (i) => setFormData(prev => ({ ...prev, images: prev.images.filter((_, idx) => idx !== i) }));
@@ -167,21 +186,39 @@ export default function SubmitProject() {
                 </div>
               </div>
 
-              {/* Image URLs */}
+              {/* Project Images */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest">Project Images (URLs)</label>
+                <label className="text-[10px] font-black text-primary uppercase tracking-widest">Project Images</label>
                 <div className="flex gap-2">
-                  <input type="text" value={newImage} onChange={e => setNewImage(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addImage())} className="flex-1 px-3 py-2 border-2 border-primary focus:bg-slate-50 outline-none text-sm font-bold" placeholder="https://example.com/screenshot.png" />
-                  <button type="button" onClick={addImage} className="px-3 bg-white border-2 border-primary hover:bg-primary hover:text-white transition-all shadow-[2px_2px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-0.5">
-                    <Plus size={20} />
-                  </button>
+                  <div className="flex-1 relative">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden" 
+                      id="project-image-upload"
+                    />
+                    <label 
+                      htmlFor="project-image-upload" 
+                      className={`w-full flex items-center justify-center gap-2 px-3 py-2 border-2 border-primary border-dashed cursor-pointer hover:bg-slate-50 transition-colors text-sm font-bold ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {uploadingImage ? 'Uploading...' : <><Plus size={20} /> Add Image</>}
+                    </label>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {formData.images.map((img, i) => (
-                    <span key={i} className="px-2 py-1 bg-highlight-teal text-primary border-2 border-primary text-[10px] font-black flex items-center gap-2 max-w-xs truncate">
-                      {img}
-                      <button type="button" onClick={() => removeImage(i)}><X size={12} /></button>
-                    </span>
+                    <div key={i} className="relative group border-2 border-primary shadow-neo-sm overflow-hidden aspect-video">
+                      <img src={img} alt={`Project screenshot ${i + 1}`} className="w-full h-full object-cover" />
+                      <button 
+                        type="button" 
+                        onClick={() => removeImage(i)}
+                        className="absolute top-1 right-1 bg-highlight-pink border-2 border-primary p-1 text-primary opacity-0 group-hover:opacity-100 transition-opacity shadow-neo-sm"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>

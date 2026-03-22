@@ -20,6 +20,7 @@ const memberRoutes = require('./routes/memberRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const doubtRoutes = require('./routes/doubtRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
@@ -58,6 +59,7 @@ app.use('/api/members', memberRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/doubts', doubtRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/', (req, res) => {
