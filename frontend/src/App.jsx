@@ -19,6 +19,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import EventDetail from './pages/EventDetail';
 import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
+import DashboardLayout from './components/DashboardLayout';
 
 // Admin Imports
 import AdminLayout from './admin/AdminLayout';
@@ -103,94 +104,95 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
+  // Since DashboardLayout correctly renders Navbar & Footer for public routes
+  // and Sidebar for authenticated state, we wrap everything in it.
+  // Exception: /admin routes map to AdminLayout separately (if desired) 
+  // but if DashboardLayout is the global wrapper, we'll let DashboardLayout do the lifting.
   return (
-    <div className="min-h-screen flex flex-col">
-      {!isAdminRoute && <ScrollToTop />}
-      {!isAdminRoute && <Navbar />}
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/:id" element={<ProjectDetail />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/events/:id" element={<EventDetail />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/mentors" element={<MentorHub />} />
-          <Route path="/roadmap" element={<Roadmap />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/developers" element={<Developers />} />
-          <Route path="/auth" element={<Auth />} />
+    <Routes>
+      <Route element={<DashboardLayout />}>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/events/:id" element={<EventDetail />} />
+        <Route path="/team" element={<Team />} />
+        <Route path="/mentors" element={<MentorHub />} />
+        <Route path="/roadmap" element={<Roadmap />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/developers" element={<Developers />} />
+        <Route path="/auth" element={<Auth />} />
 
-          <Route path="/dashboard" element={
-            <PrivateRoute>
-              <OnboardingGuard>
-                <Dashboard />
-              </OnboardingGuard>
-            </PrivateRoute>
-          } />
+        {/* Protected Dashboard Routes */}
+        <Route path="/dashboard" element={
+          <PrivateRoute>
+            <OnboardingGuard>
+              <Dashboard />
+            </OnboardingGuard>
+          </PrivateRoute>
+        } />
 
-          <Route path="/profile" element={
-            <PrivateRoute>
-              <OnboardingGuard>
-                <Profile />
-              </OnboardingGuard>
-            </PrivateRoute>
-          } />
+        <Route path="/profile" element={
+          <PrivateRoute>
+            <OnboardingGuard>
+              <Profile />
+            </OnboardingGuard>
+          </PrivateRoute>
+        } />
 
-          <Route path="/onboarding" element={
-            <PrivateRoute>
-              <Onboarding />
-            </PrivateRoute>
-          } />
+        <Route path="/onboarding" element={
+          <PrivateRoute>
+            <Onboarding />
+          </PrivateRoute>
+        } />
 
-          <Route path="/chat" element={
-            <PrivateRoute>
-              <Chat />
-            </PrivateRoute>
-          } />
+        <Route path="/chat" element={
+          <PrivateRoute>
+            <Chat />
+          </PrivateRoute>
+        } />
 
-          <Route path="/find-mentor" element={
-            <PrivateRoute>
-              <MentorHub />
-            </PrivateRoute>
-          } />
+        <Route path="/find-mentor" element={
+          <PrivateRoute>
+            <MentorHub />
+          </PrivateRoute>
+        } />
 
-          <Route path="/student/chat" element={
-            <PrivateRoute>
-              <StudentChat />
-            </PrivateRoute>
-          } />
+        <Route path="/student/chat" element={
+          <PrivateRoute>
+            <StudentChat />
+          </PrivateRoute>
+        } />
 
-          {/* Mentor Routes */}
-          <Route path="/mentor/dashboard" element={
-            <MentorRoute>
-              <MentorDashboard />
-            </MentorRoute>
-          } />
-          <Route path="/mentor/chat" element={
-            <MentorRoute>
-              <MentorChat />
-            </MentorRoute>
-          } />
+        {/* Mentor Routes */}
+        <Route path="/mentor/dashboard" element={
+          <MentorRoute>
+            <MentorDashboard />
+          </MentorRoute>
+        } />
+        <Route path="/mentor/chat" element={
+          <MentorRoute>
+            <MentorChat />
+          </MentorRoute>
+        } />
+      </Route>
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<UserManagement />} />
-            <Route path="projects" element={<ProjectManagement />} />
-            <Route path="events" element={<EventManagement />} />
-            <Route path="members" element={<MemberManagement />} />
-          </Route>
-        </Routes>
-      </main>
-      {!isAdminRoute && <Footer />}
-    </div>
+      {/* Admin Routes */}
+      <Route path="/admin" element={
+        <AdminRoute>
+          <AdminLayout />
+        </AdminRoute>
+      }>
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="projects" element={<ProjectManagement />} />
+        <Route path="events" element={<EventManagement />} />
+        <Route path="members" element={<MemberManagement />} />
+      </Route>
+    </Routes>
   );
 }
 export default App;

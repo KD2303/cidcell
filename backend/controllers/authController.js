@@ -27,7 +27,12 @@ const googleLogin = async (req, res) => {
         }
 
         // Wait until env variable is definitely loaded/trimmed
-        const clientId = process.env.GOOGLE_CLIENT_ID.trim();
+        const clientId = process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.trim() : '';
+        
+        if (!clientId) {
+            console.error("Missing GOOGLE_CLIENT_ID in environment variables");
+            return res.status(500).json({ message: "Server misconfiguration: Missing Google Client ID" });
+        }
 
         // Verify the Google ID token
         const ticket = await client.verifyIdToken({
@@ -51,7 +56,11 @@ const googleLogin = async (req, res) => {
 
         if (!user) {
             isNewUser = true; // Mark as new so frontend can trigger Onboarding
-
+            // Auto-detect role
+            let inferredUserType = 'student';
+            if (email.endsWith('@mitsgwalior.in')) {
+                inferredUserType = 'teacher';
+            }
             // Handle MITS Identity Parsing
             // Rule: Enrollment is the first part of the Google Profile Name (e.g. "BTIT24O1058 HARSH MANMODE")
             // Actual Name is everything following that.
@@ -85,6 +94,7 @@ const googleLogin = async (req, res) => {
                 email,
                 googleId,
                 profilePicture: picture || '',
+                userType: inferredUserType,
             });
         } else if (!user.googleId) {
             // If user exists but googleId is not set (e.g., they registered via email earlier but now using Google)
@@ -111,6 +121,7 @@ const googleLogin = async (req, res) => {
                 socialLinks: user.socialLinks,
                 profilePicture: user.profilePicture,
                 userType: user.userType,
+                isMentor: user.isMentor,
             },
         });
     } catch (error) {

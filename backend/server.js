@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 const http = require('http'); // Import HTTP for Socket.io
 const { Server } = require('socket.io'); // Import Socket.io
 const connectDB = require('./config/db');
@@ -26,7 +27,7 @@ const server = http.createServer(app); // Create HTTP server
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "*", // Adjust for production security
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true
   }
@@ -37,9 +38,15 @@ io.use(socketAuthMiddleware);
 io.on('connection', socketHandler(io));
 
 // Middlewares
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+}));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Adjust dynamically for prod vs local
+  credentials: true
+}));
 app.use(express.json());
+app.use(mongoSanitize()); // Prevent NoSQL injection
 
 // Global Rate Limiting
 const limiter = rateLimit({

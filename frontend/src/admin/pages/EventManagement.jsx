@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ReactDOM from 'react-dom';
@@ -205,7 +205,7 @@ const EventManagement = () => {
                 <Plus size={16} /> Create Event
               </button>
             </div>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text" placeholder="Filter events by title..."
               value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
@@ -416,3 +416,4 @@ const EventManagement = () => {
 };
 
 export default EventManagement;
+

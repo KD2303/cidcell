@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import { 
   Github, 
   ExternalLink, 
@@ -121,7 +122,7 @@ export default function ProjectDetail() {
               <div className="prose prose-slate max-w-none">
                 <div 
                   className="text-slate-600 text-lg leading-relaxed space-y-4"
-                  dangerouslySetInnerHTML={{ __html: project.description }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.description) }}     
                 />
               </div>
             </div>

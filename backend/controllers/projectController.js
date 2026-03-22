@@ -54,8 +54,8 @@ const createProject = async (req, res) => {
             year,
             imageUrl,
             createdBy: req.user._id,
-            // Automatically approve if it's an admin creating it
-            isApproved: req.user.userType === 'Admin'
+            // Automatically approve if it's an admin or teacher creating it
+            isApproved: ['admin', 'teacher'].includes(req.user.userType?.toLowerCase())
         });
 
         const createdProject = await project.save();
@@ -96,9 +96,10 @@ const updateProject = async (req, res) => {
             project.status = req.body.status || project.status;
             project.year = req.body.year || project.year;
             project.imageUrl = req.body.imageUrl || project.imageUrl;
-            
-            // Allow admin to toggle approval
-            if (req.user.userType === 'Admin' && req.body.isApproved !== undefined) {
+
+            // Allow admin or teacher to toggle approval
+            const userType = req.user.userType?.toLowerCase();
+            if (['admin', 'teacher'].includes(userType) && req.body.isApproved !== undefined) {
                 project.isApproved = req.body.isApproved;
             }
 

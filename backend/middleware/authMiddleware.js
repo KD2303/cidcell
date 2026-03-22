@@ -34,10 +34,21 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-    if (req.user && req.user.userType === 'Admin') {
+    // Note: Checking lowercase match for compatibility with models.
+    const type = req.user?.userType?.toLowerCase();
+    if (req.user && (type === 'admin')) {
         next();
     } else {
-        res.status(401).json({ message: 'Not authorized as an admin' });
+        res.status(401).json({ message: 'Not authorized as an admin' });        
+    }
+};
+
+const adminOrTeacher = (req, res, next) => {
+    const type = req.user?.userType?.toLowerCase();
+    if (req.user && (type === 'admin' || type === 'teacher')) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized as an admin or teacher' });        
     }
 };
 
@@ -62,4 +73,4 @@ const optionalProtect = async (req, res, next) => {
     }
 };
 
-module.exports = { protect, admin, optionalProtect };
+module.exports = { protect, admin, adminOrTeacher, optionalProtect };
