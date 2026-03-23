@@ -27,10 +27,11 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const app = express();
 const server = http.createServer(app); // Create HTTP server
 
-// Build allowed origins list from CLIENT_URL env var (comma-separated) + localhost fallback
+// Build allowed origins list — hardcoded production + env var (comma-separated) + localhost fallback
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://cidcell.vercel.app', // production
   ...(process.env.CLIENT_URL
     ? process.env.CLIENT_URL.split(',').map((u) => u.trim())
     : []),
