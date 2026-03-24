@@ -49,6 +49,7 @@ export default function Navbar() {
   // Notifications State
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [chatUnread, setChatUnread] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
@@ -90,6 +91,21 @@ export default function Navbar() {
     }
   }, [user]);
 
+  // Fetch chat unread total
+  useEffect(() => {
+    if (user) {
+      axios.get(`${API}/chat/unread-counts`, authHeaders())
+        .then(res => {
+          const dmTotal = Object.values(res.data.dms || {}).reduce((a, b) => a + b, 0);
+          const projTotal = Object.values(res.data.projects || {}).reduce((a, b) => a + b, 0);
+          setChatUnread(dmTotal + projTotal);
+        })
+        .catch(() => {});
+    } else {
+      setChatUnread(0);
+    }
+  }, [user]);
+
   // Listen for real-time notifications
   useEffect(() => {
     if (socket) {
@@ -98,7 +114,19 @@ export default function Navbar() {
         setUnreadCount(prev => prev + 1);
       };
       socket.on('new_notification', handleNewNotif);
-      return () => socket.off('new_notification', handleNewNotif);
+
+      // Bump chat unread on new DMs (when not on /chat page)
+      const handleNewDM = () => {
+        if (!window.location.pathname.startsWith('/chat')) {
+          setChatUnread(prev => prev + 1);
+        }
+      };
+      socket.on('receive_message', handleNewDM);
+
+      return () => {
+        socket.off('new_notification', handleNewNotif);
+        socket.off('receive_message', handleNewDM);
+      };
     }
   }, [socket]);
 
@@ -236,10 +264,16 @@ export default function Navbar() {
                 {/* Chat Icon */}
                 <Link 
                   to="/chat" 
+                  onClick={() => setChatUnread(0)}
                   className="relative p-2 bg-white text-primary rounded-full border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-highlight-blue transition-all -translate-y-0.5"
                   title="Messages"
                 >
                   <MessageSquare size={18} strokeWidth={2.5} />
+                  {chatUnread > 0 && 
+                    <span className="absolute -top-2 -right-2 w-5 h-5 bg-highlight-pink text-primary text-[10px] font-black flex items-center justify-center rounded-full border-2 border-primary shadow-neo-sm">
+                      {chatUnread > 9 ? '9+' : chatUnread}
+                    </span>
+                  }
                 </Link>
 
                 {/* Notification Bell */}

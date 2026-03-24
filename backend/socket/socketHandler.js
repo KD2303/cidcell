@@ -1,8 +1,6 @@
 const Message = require('../models/Message');
 const User = require('../models/User');
-
-// Simple online users store (Map: userId -> Set of socketIds)
-const onlineUsers = new Map();
+const { onlineUsers } = require('./onlineStore');
 
 const socketHandler = (io) => {
     return (socket) => {
@@ -131,50 +129,6 @@ const socketHandler = (io) => {
             socket.to(`doubt_${sessionId}`).emit('receive_doubt_message', message);
         });
 
-        // --- Project Chat Events ---
-        socket.on('join_project_room', (data) => {
-            const { projectId } = data;
-            if (projectId) socket.join(`project_${projectId}`);
-        });
-
-        socket.on('leave_project_room', (data) => {
-            const { projectId } = data;
-            if (projectId) socket.leave(`project_${projectId}`);
-        });
-
-        socket.on('send_project_message', async (data, callback) => {
-            try {
-                const { projectId, text, chatType, recipientId } = data;
-                if (!projectId || !text) return;
-                
-                const ProjectMessage = require('../models/ProjectMessage');
-                const newMessage = await ProjectMessage.create({
-                    projectId,
-                    senderId: userId,
-                    chatType: chatType || 'group',
-                    recipientId: recipientId || null,
-                    text
-                });
-
-                const populatedMessage = await ProjectMessage.findById(newMessage._id).populate('senderId', 'username profilePicture');
-
-                if (chatType === 'private' && recipientId) {
-                    io.to(String(recipientId)).emit('receive_project_message', populatedMessage);
-                    // Also emit to sender so other tabs update
-                    if (String(recipientId) !== String(userId)) {
-                        io.to(String(userId)).emit('receive_project_message', populatedMessage);
-                    }
-                } else {
-                    io.to(`project_${projectId}`).emit('receive_project_message', populatedMessage);
-                }
-                
-                if (callback) callback({ success: true, data: populatedMessage });
-            } catch (err) {
-                console.error('Project Message Error:', err);
-                if (callback) callback({ success: false, error: err.message });
-            }
-        });
-
         // --- Disconnect ---
         socket.on('disconnect', () => {
             const sockets = onlineUsers.get(userId);
@@ -189,4 +143,56 @@ const socketHandler = (io) => {
     };
 };
 
-module.exports = socketHandler;
+// --- /project-chat Namespace ---
+const setupProjectChatNamespace = (io, socketAuthMiddleware) => {
+    const projectChatNsp = io.of('/project-chat');
+    projectChatNsp.use(socketAuthMiddleware);
+
+    projectChatNsp.on('connection', (socket) => {
+        const userId = socket.user.id;
+
+        socket.on('join_project_room', (data) => {
+            const { projectId } = data;
+            if (projectId) socket.join(`project_${projectId}`);
+        });
+
+        socket.on('leave_project_room', (data) => {
+            const { projectId } = data;
+            if (projectId) socket.leave(`project_${projectId}`);
+        });
+
+        socket.on('send_project_message', async (data, callback) => {
+            try {
+                const { projectId, text } = data;
+                if (!projectId || !text) return;
+
+                const ProjectMessage = require('../models/ProjectMessage');
+                const newMessage = await ProjectMessage.create({
+                    projectId,
+                    senderId: userId,
+                    text
+                });
+
+                const populatedMessage = await ProjectMessage.findById(newMessage._id)
+                    .populate('senderId', 'username profilePicture');
+
+                // Group-only broadcast — no private chat branch
+                projectChatNsp.to(`project_${projectId}`)
+                    .emit('receive_project_message', populatedMessage);
+
+                if (callback) callback({ success: true, data: populatedMessage });
+            } catch (err) {
+                console.error('Project Message Error:', err);
+                if (callback) callback({ success: false, error: err.message });
+            }
+        });
+
+        socket.on('disconnect', () => {
+            // Project namespace disconnect — no special cleanup needed
+        });
+    });
+
+    return projectChatNsp;
+};
+
+module.exports = { socketHandler, setupProjectChatNamespace };

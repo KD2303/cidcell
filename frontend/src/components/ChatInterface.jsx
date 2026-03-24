@@ -161,7 +161,7 @@ export default function ChatInterface({
                                                         : 'bg-white rounded-2xl rounded-tl-none mr-auto'}
                                                 `}>
                                                     <p className="text-sm md:text-base font-bold text-primary leading-relaxed whitespace-pre-wrap break-words break-all m-0">
-                                                        {msg.content}
+                                                        {msg.text}
                                                     </p>
                                                     <div className={`mt-2 text-[9px] font-black uppercase tracking-wider flex items-center gap-1 ${isSelf ? 'justify-end text-primary/60' : 'justify-start text-primary/40'}`}>
                                                         <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>

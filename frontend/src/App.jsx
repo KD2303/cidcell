@@ -19,7 +19,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import SubmitProject from './pages/SubmitProject';
 import MyProjects from './pages/MyProjects';
 import EventDetail from './pages/EventDetail';
-import Chat from './pages/Chat';
+import ChatHub from './pages/ChatHub';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 import ProjectChat from './pages/ProjectChat';
@@ -32,8 +32,6 @@ import ProjectManagement from './admin/pages/ProjectManagement';
 import EventManagement from './admin/pages/EventManagement';
 import MemberManagement from './admin/pages/MemberManagement';
 import MentorDashboard from './mentor/pages/MentorDashboard';
-import MentorChat from './mentor/pages/MentorChat';
-import StudentChat from './student/pages/StudentChat';
 
 // Faculty Imports
 import FacultyDashboard from './faculty/pages/FacultyDashboard';
@@ -187,7 +185,9 @@ function App() {
 
           <Route path="/chat" element={
             <PrivateRoute>
-              <Chat />
+              <OnboardingGuard>
+                <ChatHub />
+              </OnboardingGuard>
             </PrivateRoute>
           } />
 
@@ -198,9 +198,7 @@ function App() {
           } />
 
           <Route path="/student/chat" element={
-            <PrivateRoute>
-              <StudentChat />
-            </PrivateRoute>
+            <Navigate to="/chat" replace />
           } />
 
           {/* Mentor Routes */}
@@ -210,9 +208,7 @@ function App() {
             </MentorRoute>
           } />
           <Route path="/mentor/chat" element={
-            <MentorRoute>
-              <MentorChat />
-            </MentorRoute>
+            <Navigate to="/chat" replace />
           } />
 
           {/* Faculty Routes */}

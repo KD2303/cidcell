@@ -9,7 +9,7 @@ const connectDB = require('./config/db');
 
 // Socket Logic
 const socketAuthMiddleware = require('./middleware/socketAuthMiddleware');
-const socketHandler = require('./socket/socketHandler');
+const { socketHandler, setupProjectChatNamespace } = require('./socket/socketHandler');
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
@@ -62,9 +62,12 @@ const io = new Server(server, {
 
 app.set('io', io); // Make io accessible in controllers via req.app.get('io')
 
-// Use Socket.io Middleware and Handler
+// Use Socket.io Middleware and Handler — default namespace (DM + Doubt)
 io.use(socketAuthMiddleware);
 io.on('connection', socketHandler(io));
+
+// Set up /project-chat namespace (group-only project chat)
+setupProjectChatNamespace(io, socketAuthMiddleware);
 
 // Middlewares
 app.use(helmet());
@@ -91,6 +94,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/join-requests', joinRequestRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/project-messages', require('./routes/projectMessageRoutes'));
+app.use('/api/chat', require('./routes/chatHubRoutes'));
 
 // Auto-inactivity cleanup (runs every 12 hours)
 setInterval(async () => {

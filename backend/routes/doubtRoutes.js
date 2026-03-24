@@ -12,7 +12,8 @@ router.post('/sessions', writeLimiter, protect, async (req, res) => {
         
         let existingSession = await DoubtSession.findOne({
             mentorId,
-            studentId: req.user._id
+            studentId: req.user._id,
+            domain
         });
 
         if (existingSession) {
@@ -93,15 +94,15 @@ router.get('/sessions/:id/messages', chatLimiter, protect, async (req, res) => {
 // Send a message to a session (write — rate limited)
 router.post('/sessions/:id/messages', writeLimiter, protect, async (req, res) => {
     try {
-        const { content, senderType } = req.body;
+        const { text, senderType } = req.body;
         const newMessage = await DoubtMessage.create({
             sessionId: req.params.id,
             senderId: req.user._id,
             senderType,
-            content
+            text
         });
         await DoubtSession.findByIdAndUpdate(req.params.id, { 
-            lastMessage: content,
+            lastMessage: text,
             updatedAt: Date.now()
         });
         res.status(201).json(newMessage);

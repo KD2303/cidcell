@@ -1,7 +1,7 @@
 const ProjectMessage = require('../models/ProjectMessage');
 const Project = require('../models/Project');
 
-// @desc    Get all messages for a specific project
+// @desc    Get all messages for a specific project (group only)
 // @route   GET /api/project-messages/:projectId
 // @access  Private (Contributors and Creator only)
 const getProjectMessages = async (req, res) => {
@@ -23,24 +23,7 @@ const getProjectMessages = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized to view this chat' });
         }
 
-        const { chatType = 'group', recipientId } = req.query;
-        let query = { projectId, chatType };
-
-        if (chatType === 'private') {
-            if (!recipientId) return res.status(400).json({ message: 'Recipient ID is required for private chats' });
-            
-            // For private chats, sender and recipient can be either one of the two parties
-            query = {
-                projectId,
-                chatType: 'private',
-                $or: [
-                    { senderId: req.user._id, recipientId },
-                    { senderId: recipientId, recipientId: req.user._id }
-                ]
-            };
-        }
-
-        const messages = await ProjectMessage.find(query)
+        const messages = await ProjectMessage.find({ projectId })
             .populate('senderId', 'username profilePicture')
             .sort({ createdAt: 1 }); // Oldest first for chat history
 

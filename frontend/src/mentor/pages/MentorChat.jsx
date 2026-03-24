@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ChatInterface from '../../components/ChatInterface';
 
 const MentorChat = () => {
-    const { user } = useContext(AuthContext);
+    const { user, socket } = useContext(AuthContext);
     const token = localStorage.getItem('token');
     const [sessions, setSessions] = useState([]);
     const [activeSession, setActiveSession] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [socket, setSocket] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const chatContainerRef = useRef(null);
@@ -34,23 +32,22 @@ const MentorChat = () => {
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        if (!token) return;
-        const newSocket = io(API_URL.replace('/api', ''), { auth: { token } });
-        setSocket(newSocket);
+        if (!socket) return;
 
-        newSocket.on('receive_doubt_message', (message) => {
+        const handleDoubtMessage = (message) => {
             setMessages(prev => [...prev, message]);
             setSessions(prev => prev.map(s => 
                 s._id === message.sessionId 
-                    ? { ...s, lastMessage: message.content, updatedAt: message.timestamp } 
+                    ? { ...s, lastMessage: message.text, updatedAt: message.timestamp } 
                     : s
             ).sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-            
             scrollToBottom(true);
-        });
+        };
 
-        return () => newSocket.close();
-    }, [API_URL, token]);
+        socket.on('receive_doubt_message', handleDoubtMessage);
+
+        return () => socket.off('receive_doubt_message', handleDoubtMessage);
+    }, [socket]);
 
     useEffect(() => {
         const fetchSessions = async () => {
@@ -111,7 +108,7 @@ const MentorChat = () => {
 
         try {
             const res = await axios.post(`${API_URL}/doubts/sessions/${activeSession._id}/messages`, {
-                content: newMessage,
+                text: newMessage,
                 senderType: 'mentor'
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -123,7 +120,7 @@ const MentorChat = () => {
             
             setSessions(prev => prev.map(s => 
                 s._id === activeSession._id 
-                    ? { ...s, lastMessage: savedMessage.content, updatedAt: savedMessage.timestamp } 
+                    ? { ...s, lastMessage: savedMessage.text, updatedAt: savedMessage.timestamp } 
                     : s
             ).sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
             
