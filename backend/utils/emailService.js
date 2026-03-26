@@ -2,7 +2,9 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS
@@ -401,6 +403,56 @@ class EmailService {
         .greeting { font-size: 22px; }
         .welcome-title { font-size: 18px; }
     }
+
+    /* ── DARK MODE (System & Manual Toggle) ── */
+    @media (prefers-color-scheme: dark) {
+        body:not(.force-light) { background-color: #121212 !important; }
+        body:not(.force-light) .email-container { background: #1A1A1A !important; border-color: #333333 !important; box-shadow: 8px 8px 0px 0px #333333 !important; }
+        body:not(.force-light) .content { background: #1A1A1A !important; }
+        body:not(.force-light) .greeting { color: #FFFDF5 !important; }
+        body:not(.force-light) .sub-text { color: #BBBBBB !important; }
+        body:not(.force-light) .details-card { border-color: #333333 !important; box-shadow: 6px 6px 0 #333333 !important; background: #242424 !important; }
+        body:not(.force-light) .details-card-header { background: #333333 !important; color: #FFDE59 !important; }
+        body:not(.force-light) .details-content { background: #242424 !important; }
+        body:not(.force-light) .detail-item-box { background: #1A1A1A !important; border-color: #333333 !important; box-shadow: 3px 3px 0 #333333 !important; }
+        body:not(.force-light) .detail-value { color: #FFFDF5 !important; }
+        body:not(.force-light) .detail-label { color: #888888 !important; }
+        body:not(.force-light) .details-card-footer { background: #1A1A1A !important; border-top-color: #333333 !important; }
+        body:not(.force-light) .feature-box { background: #242424 !important; border-color: #333333 !important; box-shadow: 3px 3px 0 #333333 !important; }
+        body:not(.force-light) .feature-text { color: #FFFDF5 !important; }
+        body:not(.force-light) .features-label { color: #888888 !important; }
+        body:not(.force-light) .support-card { background: #242424 !important; border-color: #333333 !important; box-shadow: 4px 4px 0 #333333 !important; }
+        body:not(.force-light) .support-card-action { color: #FFFDF5 !important; }
+        body:not(.force-light) .support-title { color: #888888 !important; }
+        body:not(.force-light) .footer-inst { color: #888888 !important; }
+        body:not(.force-light) .header { background: #0D0D0D !important; border-bottom-color: #333333 !important; }
+        body:not(.force-light) .footer { background: #0D0D0D !important; border-top-color: #333333 !important; }
+        body:not(.force-light) .cta-button { box-shadow: 6px 6px 0 #333333 !important; }
+    }
+
+    /* Force Dark Class (Used for Manual Toggle in Preview) */
+    body.force-dark { background-color: #121212 !important; }
+    body.force-dark .email-container { background: #1A1A1A !important; border-color: #333333 !important; box-shadow: 8px 8px 0px 0px #333333 !important; }
+    body.force-dark .content { background: #1A1A1A !important; }
+    body.force-dark .greeting { color: #FFFDF5 !important; }
+    body.force-dark .sub-text { color: #BBBBBB !important; }
+    body.force-dark .details-card { border-color: #333333 !important; box-shadow: 6px 6px 0 #333333 !important; background: #242424 !important; }
+    body.force-dark .details-card-header { background: #333333 !important; color: #FFDE59 !important; }
+    body.force-dark .details-content { background: #242424 !important; }
+    body.force-dark .detail-item-box { background: #1A1A1A !important; border-color: #333333 !important; box-shadow: 3px 3px 0 #333333 !important; }
+    body.force-dark .detail-value { color: #FFFDF5 !important; }
+    body.force-dark .detail-label { color: #888888 !important; }
+    body.force-dark .details-card-footer { background: #1A1A1A !important; border-top-color: #333333 !important; }
+    body.force-dark .feature-box { background: #242424 !important; border-color: #333333 !important; box-shadow: 3px 3px 0 #333333 !important; }
+    body.force-dark .feature-text { color: #FFFDF5 !important; }
+    body.force-dark .features-label { color: #888888 !important; }
+    body.force-dark .support-card { background: #242424 !important; border-color: #333333 !important; box-shadow: 4px 4px 0 #333333 !important; }
+    body.force-dark .support-card-action { color: #FFFDF5 !important; }
+    body.force-dark .support-title { color: #888888 !important; }
+    body.force-dark .footer-inst { color: #888888 !important; }
+    body.force-dark .header { background: #0D0D0D !important; border-bottom-color: #333333 !important; }
+    body.force-dark .footer { background: #0D0D0D !important; border-top-color: #333333 !important; }
+    body.force-dark .cta-button { box-shadow: 6px 6px 0 #333333 !important; }
 </style>`;
     }
 
@@ -410,7 +462,7 @@ class EmailService {
 <div class="hazard-bar"></div>
 <div class="header">
     <div class="logo-container">
-        <img src="cid:logo" alt="CID Cell Logo" class="logo">
+        <img src="https://raw.githubusercontent.com/KD2303/cidcell/main/frontend/public/logo.png" alt="CID Cell Logo" class="logo">
     </div>
     <div class="college-name">Madhav Institute of Technology &amp; Science</div>
     <div>
@@ -570,24 +622,14 @@ class EmailService {
     // ─── SEND WELCOME EMAIL ──────────────────────────────────────────────────────
     async sendWelcomeEmail(user) {
         try {
-            if (!user || !user.email) throw new Error('User object with email is required');
+            console.log(`📤 Initiating welcome email for: ${user.email}...`);
 
             const mailOptions = {
                 from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
                 to: user.email,
-                subject: '🎉 Welcome to CID Cell — Access Granted!',
-                html: this.generateWelcomeTemplate(user),
-                attachments: [{
-                    filename: 'logo.png',
-                    path: path.join(__dirname, '../assets/logo.png'),
-                    cid: 'logo'
-                }],
-                priority: 'high',
-                headers: {
-                    'X-Priority': '1',
-                    'X-MSMail-Priority': 'High',
-                    'Importance': 'high'
-                }
+                subject: '🔥 Welcome to CID Cell — Access Your Portal',
+                text: `Hello ${user.username}, welcome to CID Cell MITS! Your account is officially verified. Access the portal at: https://cid-cell-mits.vercel.app`,
+                html: this.generateWelcomeTemplate(user)
             };
 
             const result = await transporter.sendMail(mailOptions);
@@ -618,7 +660,21 @@ class EmailService {
             enrollmentNo: 'BTIT24O1058'
         };
         let html = this.generateWelcomeTemplate(dummyUser);
-        html = html.replace('cid:logo', '/api/auth/logo-preview');
+        
+        // Add Toggle Controls ONLY for browser preview
+        const controls = `
+        <div id="theme-controls" style="position:fixed; top:20px; right:20px; z-index:99999; display:flex; gap:10px;">
+            <button onclick="console.log('Toggling theme...'); document.body.classList.toggle('force-dark'); this.innerText = document.body.classList.contains('force-dark') ? 'SWITCH TO LIGHT' : 'SWITCH TO DARK';" 
+                style="padding:14px 24px; font-family:'Anton', sans-serif; background:#FFDE59; color:#1A1A1A; border:3px solid #000; box-shadow:6px 6px 0 #000; cursor:pointer; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:1px; outline:none; transition:all 0.1s active:translate-y-1 active:translate-x-1 active:shadow-none;">
+                SWITCH TO DARK
+            </button>
+        </div>
+        `;
+        
+        // Use a more robust regex to replace <body> to ensure it works even if attributes are present
+        html = html.replace(/<body([^>]*)>/i, (match, attrs) => {
+            return `<body${attrs} class="preview-mode">${controls}`;
+        });
         return html;
     }
 }

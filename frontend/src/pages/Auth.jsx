@@ -28,30 +28,30 @@ const Auth = () => {
     };
 
     return (
-        <div className="min-h-screen bg-bg flex items-center justify-center px-4 pt-28 md:pt-32 pb-10 overflow-hidden relative">
+        <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] mt-16 md:mt-20 bg-bg flex items-center justify-center px-4 py-6 relative overflow-hidden">
 
             {/* Split layout container */}
-            <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
+            <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center relative z-10">
 
                 {/* Left Side: Branding / Info (Visible on large screens) */}
-                <div className="hidden lg:flex flex-col items-start justify-center relative">
+                <div className="hidden lg:flex flex-col items-start justify-center relative lg:-mt-16 xl:-mt-20">
                     {/* Decorative objects inside left side */}
                     <div className="absolute -top-6 -left-8 w-24 h-24 bg-highlight-yellow border-4 border-primary shadow-neo transform rotate-12 -z-10" />
                     <div className="absolute bottom-4 right-12 w-20 h-20 bg-highlight-pink border-4 border-primary shadow-neo rounded-full -rotate-6 -z-10" />
 
-                    <div className="bg-white border-4 border-primary p-4 shadow-neo transform -rotate-2 hover:rotate-0 transition-neo mb-8">
-                        <img src="/logo.png" alt="CID-Cell Logo" className="w-24 h-24 object-contain" />
+                    <div className="bg-white border-4 border-primary p-3 shadow-neo transform -rotate-2 hover:rotate-0 transition-neo mb-5">
+                        <img src="/logo.png" alt="CID-Cell Logo" className="w-16 h-16 object-contain" />
                     </div>
 
-                    <h1 className="font-heading text-[60px] xl:text-[80px] uppercase text-primary leading-[0.9] tracking-widest mb-6 relative">
+                    <h1 className="font-heading text-[36px] xl:text-[48px] uppercase text-primary leading-tight tracking-widest mb-4 relative">
                         Collaborative <br />
-                        <span className="bg-highlight-teal inline-block px-4 py-1 transform -skew-x-3 my-2 border-4 border-primary shadow-neo">
+                        <span className="bg-highlight-teal inline-block px-3 py-0.5 transform -skew-x-3 my-1 border-4 border-primary shadow-neo">
                             Innovation
                         </span> <br />
                         &amp; Development
                     </h1>
 
-                    <p className="font-bold text-lg xl:text-xl text-primary/80 normal-case max-w-md border-l-4 border-primary pl-6 mb-10">
+                    <p className="font-bold text-base text-primary/80 normal-case max-w-md border-l-4 border-primary pl-5 mb-6">
                         The official student hub of MITS Gwalior. Sign in to collaborate on projects, track roadmaps, and build the future.
                     </p>
 
@@ -96,15 +96,15 @@ const Auth = () => {
                     <div className="bg-white border-4 border-primary shadow-neo-lg relative overflow-hidden group">
                     <div className="h-4 bg-highlight-yellow border-b-4 border-primary w-full" />
 
-                    <div className="p-6 md:p-8 space-y-6 md:space-y-8">
-                        <div className="space-y-4">
-                            <div className="inline-block bg-highlight-purple border-4 border-primary px-4 py-1.5 shadow-neo transform -skew-x-3 -rotate-1">
+                    <div className="p-5 md:p-6 space-y-4 md:space-y-5">
+                        <div className="space-y-3">
+                            <div className="inline-block bg-highlight-purple border-4 border-primary px-4 py-1 shadow-neo transform -skew-x-3 -rotate-1">
                                 <span className="font-heading uppercase text-sm tracking-widest text-primary">Member Portal</span>
                             </div>
-                            <h2 className="font-heading text-4xl md:text-5xl uppercase tracking-widest text-primary leading-none">
+                            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-widest text-primary leading-none">
                                 Sign In To<br />Your Account
                             </h2>
-                            <p className="font-bold text-sm md:text-base text-primary/80 uppercase tracking-wide">
+                            <p className="font-bold text-sm text-primary/80 uppercase tracking-wide">
                                 Use your official college Google account to continue.
                             </p>
                         </div>
@@ -120,7 +120,7 @@ const Auth = () => {
                         </div>
 
                         {/* Login Action Area */}
-                        <div className="flex flex-col items-center gap-4 bg-bg border-4 border-primary p-6 shadow-neo-sm transform rotate-1">
+                        <div className="flex flex-col items-center gap-3 bg-bg border-4 border-primary p-4 shadow-neo-sm transform rotate-1">
                             <div className="w-full flex justify-center bg-white border-4 border-primary p-2 shadow-neo hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none transition-all">
                                 <GoogleLogin
                                     onSuccess={handleGoogleSuccess}

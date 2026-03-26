@@ -70,7 +70,18 @@ io.on('connection', socketHandler(io));
 setupProjectChatNamespace(io, socketAuthMiddleware);
 
 // Middlewares
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "img-src": ["'self'", "data:", "https://raw.githubusercontent.com", "https://res.cloudinary.com", "https://lh3.googleusercontent.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"],
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "script-src": ["'self'", "'unsafe-inline'"],
+      "script-src-attr": ["'self'", "'unsafe-inline'"]
+    },
+  },
+}));
 app.use(cors(corsOptions));
 app.options('/*path', cors(corsOptions)); // Handle preflight for all routes (Express v5 wildcard syntax)
 app.use(express.json());

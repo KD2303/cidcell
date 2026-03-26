@@ -1,44 +1,48 @@
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+import { Github, Linkedin, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="bg-black text-white border-t-3 border-black relative overflow-hidden">
       {/* Decorative Strip */}
-      <div 
+      <div
         className="h-4 w-full bg-highlight-yellow opacity-100 mb-12"
         style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 2px, transparent 2px, transparent 8px)' }}
-      >
-      </div>
+      ></div>
 
       <div className="container-max mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-4 mb-6 group">
-              <div className="w-12 h-12 bg-white border-3 border-white text-black flex items-center justify-center shadow-[4px_4px_0px_#FFF] group-hover:-rotate-6 transition-transform">
-                <span className="font-heading font-black text-lg">CID</span>
+            <div className="flex gap-6 mb-6 shrink-0">
+              <div className="w-16 h-16">
+                <img src="/logo.png" alt="CID-Cell Logo" className="w-full h-full object-contain" />
               </div>
-              <div>
-                <span className="font-heading font-black text-2xl block leading-none tracking-tight group-hover:text-highlight-yellow transition-colors">CID-Cell</span>
-                <span className="text-highlight-yellow text-xs uppercase font-bold tracking-widest bg-white/10 px-1">CSE Dept</span>
+              <div className="w-16 h-16">
+                <img src="/sdc.png" alt="SDC Club Logo" className="w-full h-full object-contain" />
               </div>
-            </Link>
-            <p className="text-sm leading-relaxed mb-8 font-medium text-gray-300 border-l-2 border-highlight-purple pl-4">
-              Collaborative Innovation & Development Cell — bridging
+            </div>
+            <div className="mb-6">
+              <span className="font-heading font-black text-2xl block leading-none tracking-tight text-white hover:text-highlight-yellow transition-colors">CID-Cell</span>
+              <span className="text-highlight-yellow text-xs uppercase font-bold tracking-widest bg-white/10 px-1 inline-block mt-1">CSE Dept · SDC Club</span>
+            </div>
+            <p className="text-sm leading-relaxed mb-8 font-medium text-gray-400 border-l-2 border-highlight-purple pl-4">
+              Collaborative Innovation & Development Cell under the Software Development Club — bridging
               academic learning with industry requirements through hands-on
-              projects, mentorship, and innovation.
+              projects and mentorship.
             </p>
             <div className="flex gap-4">
               {[
-                { icon: Github, href: 'https://github.com/KD2303/cidcell' },
-                { icon: Linkedin, href: '#' },
-                { icon: Twitter, href: '#' },
+                { icon: Github, href: 'https://github.com/CID-CELL' },
+                { icon: Linkedin, href: 'https://www.linkedin.com/company/cidcellmits/' },
+                { icon: Instagram, href: 'https://www.instagram.com/cidc_mitsgwalior' },
                 { icon: Mail, href: 'mailto:cidc@college.edu' },
               ].map(({ icon: Icon, href }, i) => (
                 <a
                   key={i}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-white border-2 border-white text-black flex items-center justify-center hover:bg-highlight-yellow hover:-translate-y-1 transition-all font-bold shadow-[2px_2px_0px_rgba(255,255,255,0.5)] hover:shadow-none"
                 >
                   <Icon size={18} strokeWidth={2.5} />
@@ -94,18 +98,17 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="text-highlight-pink shrink-0 mt-0.5" size={18} />
                 <span className="text-gray-300">
-                  Room 304, CSE Block, <br />
-                  College of Engineering, <br />
-                  Tech City, State - 500001
+                  CSE Dept, MITS Gwalior - Gola ka Mandir, Gwalior - 474005, <br />
+                  Madhya Pradesh, India
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-highlight-pink shrink-0" size={18} />
-                <span className="text-gray-300">+91 98765 43210</span>
+                <span className="text-gray-300">0751-240-9354</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-highlight-pink shrink-0" size={18} />
-                <span className="text-gray-300">cidc@college.edu</span>
+                <span className="text-gray-300">cidcellmits@gmail.com</span>
               </li>
             </ul>
           </div>
