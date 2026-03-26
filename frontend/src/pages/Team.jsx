@@ -6,12 +6,31 @@ import ScrollReveal from '../components/ScrollReveal';
 
 // ── Mentorship (Static) ──────────────────────────────────────────────────
 const facultyCoordinator = [
-  { name: 'Dr. Jane Teacher', role: 'Faculty Coordinator', accent: 'bg-highlight-green' },
+  { 
+    name: 'Dr. Jane Teacher', 
+    role: 'Faculty Coordinator', 
+    accent: 'bg-highlight-green',
+    bio: 'Oversees the strategic alignment of CID-Cell with the department\'s academic goals, ensuring students receive the necessary faculty support and resources for their professional growth.'
+  },
 ];
 
 const mentors = [
-  { name: 'Dr. Manish Dixit', role: 'Faculty Mentor', accent: 'bg-highlight-blue', image: '/manishsir.jpg.jpeg', imgClass: 'object-cover object-top' },
-  { name: 'Atul Chauhan', role: 'Co-Mentor', accent: 'bg-highlight-orange', image: '/atul2.jpeg', imgClass: 'object-cover object-top' },
+  { 
+    name: 'Dr. Manish Dixit', 
+    role: 'Faculty Mentor', 
+    accent: 'bg-highlight-blue', 
+    image: '/manishsir.jpg.jpeg', 
+    imgClass: 'object-cover object-top',
+    bio: 'A visionary educator with over two decades of experience, dedicated to fostering innovation and technical excellence. As the primary mentor, he guides the cell\'s foundational strategies.'
+  },
+  { 
+    name: 'Atul Chauhan', 
+    role: 'Co-Mentor', 
+    accent: 'bg-highlight-orange', 
+    image: '/atul2.jpeg', 
+    imgClass: 'object-cover object-top',
+    bio: 'Brings industry-aligned perspective and practical engineering wisdom to the team, helping students bridge the gap between theoretical concepts and real-world implementation.'
+  },
 ];
 
 const staticSubTeams = [
@@ -84,42 +103,49 @@ function LeaderCard({ person, delay, isDynamic = false }) {
   const imageUrl = isDynamic ? person.user?.profilePicture : person.image;
 
   return (
-    <ScrollReveal delay={delay} className="h-full w-full max-w-[280px] mx-auto text-center">
+    <ScrollReveal delay={delay} className="h-full w-full max-w-[450px] mx-auto text-center">
       <div
-        className={`${accent} border-3 border-black p-8 shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200 flex flex-col items-center h-full relative overflow-hidden group z-10`}
+        className={`${accent} border-3 border-black p-8 md:p-10 shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200 flex flex-col items-center h-full relative overflow-hidden group z-10`}
       >
-        <div className="absolute top-0 right-0 w-16 h-16 bg-black/5 rounded-bl-full -mr-4 -mt-4 transition-transform duration-500 group-hover:scale-[2.5]"></div>
-        <div className="w-32 h-32 bg-white border-3 border-black shadow-small flex items-center justify-center mb-6 transform -rotate-2 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110 z-10 overflow-hidden">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-black/5 rounded-bl-full -mr-6 -mt-6 transition-transform duration-500 group-hover:scale-[3]"></div>
+        <div className="w-40 h-40 md:w-48 md:h-48 bg-white border-3 border-black shadow-neo-sm flex items-center justify-center mb-8 transform -rotate-1 transition-transform duration-300 group-hover:rotate-2 group-hover:scale-105 z-10 overflow-hidden">
           {imageUrl ? (
             <img src={imageUrl} alt={name} className={`w-full h-full ${person.imgClass || 'object-cover'}`} />
           ) : (
-            <span className="font-heading font-black text-4xl text-black">
+            <span className="font-heading font-black text-5xl text-black">
               {getInitials(name)}
             </span>
           )}
         </div>
-        <h3 className="font-heading font-bold text-2xl text-black uppercase leading-tight mb-1 z-10">
+        <h3 className="font-heading font-bold text-3xl md:text-4xl text-black uppercase leading-tight mb-2 z-10">
           {name}
         </h3>
-        <p className="inline-block bg-black text-white px-3 py-1 text-[10px] font-bold uppercase transform rotate-1 z-10 mb-3">
+        <p className="inline-block bg-black text-white px-4 py-1.5 text-xs font-bold uppercase transform rotate-1 z-10 mb-6">
           {role}
         </p>
+        
+        {person.bio && (
+          <p className="text-sm md:text-base font-medium text-black/80 leading-relaxed mb-8 z-10 max-w-[320px] mx-auto italic">
+            "{person.bio}"
+          </p>
+        )}
+
         {person.domain && (
-          <p className="text-[10px] font-black text-black/40 uppercase tracking-widest z-10 mb-4">
+          <p className="text-xs font-black text-black/40 uppercase tracking-widest z-10 mb-4">
             {person.domain}
           </p>
         )}
 
         {((isDynamic && person.user?.socialLinks) || (!isDynamic && (person.linkedin || person.github || person.leetcode))) && (
-          <div className="flex gap-3 mt-auto z-10 pt-4 border-t border-black/5 w-full justify-center">
+          <div className="flex gap-4 mt-auto z-10 pt-6 border-t-2 border-black/10 w-full justify-center">
             {(isDynamic ? person.user.socialLinks.linkedin : person.linkedin) && (
-              <a href={isDynamic ? person.user.socialLinks.linkedin : person.linkedin} target="_blank" className="text-black hover:scale-110 transition-transform"><Linkedin size={16} /></a>
+              <a href={isDynamic ? person.user.socialLinks.linkedin : person.linkedin} target="_blank" className="text-black hover:scale-125 transition-transform"><Linkedin size={20} /></a>
             )}
             {(isDynamic ? person.user.socialLinks.github : person.github) && (
-              <a href={isDynamic ? person.user.socialLinks.github : person.github} target="_blank" className="text-black hover:scale-110 transition-transform"><Github size={16} /></a>
+              <a href={isDynamic ? person.user.socialLinks.github : person.github} target="_blank" className="text-black hover:scale-125 transition-transform"><Github size={20} /></a>
             )}
             {(isDynamic ? person.user.socialLinks.leetcode : person.leetcode) && (
-              <a href={isDynamic ? person.user.socialLinks.leetcode : person.leetcode} target="_blank" className="text-black hover:scale-110 transition-transform font-black text-[10px] bg-black text-white px-1 leading-none rounded">LC</a>
+              <a href={isDynamic ? person.user.socialLinks.leetcode : person.leetcode} target="_blank" className="text-black hover:scale-125 transition-transform font-black text-xs bg-black text-white px-1.5 leading-none rounded">LC</a>
             )}
           </div>
         )}
@@ -302,7 +328,7 @@ export default function Team() {
                 <h3 className="font-heading text-2xl md:text-3xl font-black text-black uppercase px-4 text-center">Mentors</h3>
                 <div className="h-1 bg-black flex-grow"></div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+              <div className="grid sm:grid-cols-2 gap-12 max-w-5xl mx-auto">
                 {mentors.map((person, i) => (
                   <LeaderCard key={person.name} person={person} delay={i * 120} />
                 ))}
@@ -316,7 +342,7 @@ export default function Team() {
       <section className="section-padding bg-highlight-cream border-b-3 border-black">
         <div className="container-max mx-auto">
           <SectionHeading subtitle="Leadership" title="Student Board" />
-          <div className="grid sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {teamData.board.map((person, i) => (
               <LeaderCard key={person._id} person={person} delay={i * 120} isDynamic={true} />
             ))}
