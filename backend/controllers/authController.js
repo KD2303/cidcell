@@ -1,6 +1,9 @@
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const emailService = require('../utils/emailService');
+const path = require('path');
+
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -78,6 +81,9 @@ const googleLogin = async (req, res) => {
                 username = googleName.toUpperCase();
             }
 
+            const ADMIN_EMAILS = ['24it10ha60@mitsgwl.ac.in'];
+            const assignedRole = ADMIN_EMAILS.includes(email) ? 'admin' : 'student';
+
             // Create new user if they don't exist
             user = await User.create({
                 username: username,
@@ -85,12 +91,32 @@ const googleLogin = async (req, res) => {
                 email,
                 googleId,
                 profilePicture: picture || '',
+                userType: assignedRole,
             });
-        } else if (!user.googleId) {
-            // If user exists but googleId is not set (e.g., they registered via email earlier but now using Google)
-            user.googleId = googleId;
-            if (!user.profilePicture) user.profilePicture = picture || '';
-            await user.save();
+
+            // Send welcome email (non-blocking)
+            emailService.sendWelcomeEmail(user).catch(err => {
+                console.error('Failed to send welcome email:', err);
+            });
+        } else {
+
+            let shouldSave = false;
+            const ADMIN_EMAILS = ['24it10ha60@mitsgwl.ac.in'];
+
+            // Promote to admin if email matches and they aren't already an admin
+            if (ADMIN_EMAILS.includes(email) && user.userType !== 'admin') {
+                user.userType = 'admin';
+                shouldSave = true;
+            }
+
+            // If user exists but googleId is not set
+            if (!user.googleId) {
+                user.googleId = googleId;
+                if (!user.profilePicture) user.profilePicture = picture || '';
+                shouldSave = true;
+            }
+
+            if (shouldSave) await user.save();
         }
 
         // Generate JWT token for session
@@ -191,8 +217,29 @@ const updateProfile = async (req, res) => {
     }
 };
 
+/**
+ * @desc    Preview the welcome email template in the browser
+ * @route   GET /api/auth/template-preview
+ * @access  Public
+ */
+const previewEmailTemplate = (req, res) => {
+    const html = emailService.getPreviewHtml();
+    res.send(html);
+};
+
+/**
+ * @desc    Serve the logo file for the browser preview
+ * @route   GET /api/auth/logo-preview
+ * @access  Public
+ */
+const previewLogo = (req, res) => {
+    res.sendFile(path.join(__dirname, '../assets/logo.png'));
+};
+
 module.exports = {
     googleLogin,
     getProfile,
-    updateProfile
+    updateProfile,
+    previewEmailTemplate,
+    previewLogo
 };
