@@ -49,30 +49,19 @@ const MemberManagement = () => {
 
   const teams = ['Student Board', 'Core Team', 'Sub-Teams'];
   const designations = [
-    'Technical Lead',
-    'Domain Head',
-    'Core Member',
-    'Executive Member',
-    'Lead Developer',
-    'Developer',
-    'UI/UX Designer',
-    'Coordinator',
-    'Representative',
-    'Other'
+    'Lead',
+    'Member'
   ];
   const domains = [
-    'Frontend Architecture',
-    'Backend & Systems',
-    'UI/UX Design',
-    'AI/ML & Data Science',
-    'Cloud & DevOps',
-    'Mobile Development',
-    'Cybersecurity',
-    'Competitive Programming',
-    'Marketing & Content',
-    'Public Relations',
-    'Event Management',
-    'General Management'
+    'Frontend',
+    'Backend',
+    'Graphic',
+    'Videography',
+    'Management',
+    'Content Writing',
+    'AI/ML',
+    'App Development',
+    'Data Science'
   ];
 
   useEffect(() => {

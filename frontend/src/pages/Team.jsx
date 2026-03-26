@@ -15,6 +15,7 @@ const mentors = [
 ];
 
 const staticSubTeams = [
+  /*
   // Frontend
   { name: 'Krish Dargar', team: 'Sub-Teams', domain: 'Frontend', linkedin: 'https://www.linkedin.com/in/krish-dargar-101774324/', github: 'https://github.com/KD2303' },
   { name: 'Anurag Mishra', team: 'Sub-Teams', domain: 'Frontend', linkedin: 'https://www.linkedin.com/in/anuragmishra5159/', github: 'https://github.com/anuragmishra5159' },
@@ -47,11 +48,13 @@ const staticSubTeams = [
   { name: 'Astha Saini', team: 'Sub-Teams', domain: 'Data Science', linkedin: 'https://www.linkedin.com/in/astha-saini-662369363/', github: 'https://github.com/asthasaini2605' },
   { name: 'Alakh Gupta', team: 'Sub-Teams', domain: 'Data Science', linkedin: 'https://www.linkedin.com/in/alakh-gupta-475368311/', github: 'https://github.com/Alakh-gupta' },
   { name: 'Hariom Gourh', team: 'Sub-Teams', domain: 'Data Science', linkedin: 'https://www.linkedin.com/in/hariomgourh', github: 'https://github.com/HariomGourh' },
+  */
 ];
 
 const staticCoreTeam = [];
 
 const staticStudentBoard = [
+  /*
   {
     team: 'Student Board',
     designation: 'Chairman',
@@ -64,6 +67,7 @@ const staticStudentBoard = [
       }
     }
   }
+  */
 ];
 
 function getInitials(name) {
@@ -132,37 +136,44 @@ function MemberCard({ member, accentClass, delay }) {
 
   return (
     <ScrollReveal delay={delay} className="h-full">
-      <div className="bg-white border-3 border-black p-3.5 shadow-neo hover:-translate-y-1 hover:shadow-neo-lg transition-all duration-200 flex items-center gap-4 h-full relative group">
+      <div className="bg-white border-3 border-black p-5 shadow-neo hover:-translate-y-1 hover:shadow-neo-lg transition-all duration-200 flex items-center gap-6 h-full relative group">
         <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 ${accentClass} transition-opacity duration-200`}></div>
         
-        {/* Avatar */}
         <div
-          className={`w-14 h-14 ${accentClass} border-2 border-black flex items-center justify-center transform -rotate-2 group-hover:rotate-2 transition-transform duration-300 shrink-0 z-10`}
+          className={`w-20 h-20 ${accentClass} border-2 border-black flex items-center justify-center transform -rotate-2 group-hover:rotate-2 transition-transform duration-300 shrink-0 z-10 overflow-hidden shadow-neo-sm`}
         >
-          <span className="font-heading font-black text-xl text-black leading-none">
-            {getInitials(name)}
-          </span>
+          {member.user?.profilePicture ? (
+            <img 
+              src={member.user.profilePicture} 
+              alt={name} 
+              className="w-full h-full object-cover" 
+            />
+          ) : (
+            <span className="font-heading font-black text-2xl text-black leading-none">
+              {getInitials(name)}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col flex-grow text-left overflow-hidden z-10">
-          <h4 className="font-heading font-bold text-base md:text-lg text-black uppercase leading-tight truncate">
+          <h4 className="font-heading font-bold text-xl md:text-2xl text-black uppercase leading-tight truncate">
             {name}
           </h4>
-          <div className="flex flex-col gap-0.5 mb-2">
-            <p className="text-[9px] font-black text-slate-800 uppercase tracking-tighter">{member.designation}</p>
-            {member.domain && <p className="text-[8px] font-bold text-slate-400 uppercase">{member.domain}</p>}
+          <div className="flex flex-col gap-1 mb-3">
+            <p className="inline-block bg-black text-white px-2 py-0.5 text-[10px] font-bold uppercase transform -rotate-1 self-start">{member.designation}</p>
+            {member.domain && <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{member.domain}</p>}
           </div>
 
           <div className="flex items-center justify-between mt-auto">
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {linkedin && (
                 <a
                   href={linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-black transition-all"
+                  className="text-gray-400 hover:text-black transition-all hover:scale-110"
                 >
-                  <Linkedin size={14} />
+                  <Linkedin size={18} />
                 </a>
               )}
               {github && (
@@ -170,9 +181,9 @@ function MemberCard({ member, accentClass, delay }) {
                   href={github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-black transition-all"
+                  className="text-gray-400 hover:text-black transition-all hover:scale-110"
                 >
-                  <Github size={14} />
+                  <Github size={18} />
                 </a>
               )}
               {leetcode && (
@@ -180,14 +191,14 @@ function MemberCard({ member, accentClass, delay }) {
                   href={leetcode}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-bold transition-all text-[8px] font-black border-2 border-slate-100 px-1 rounded bg-slate-50"
+                  className="text-gray-400 hover:text-bold transition-all text-[10px] font-black border-2 border-slate-100 px-1.5 rounded bg-slate-50 hover:bg-highlight-yellow hover:border-black transition-all"
                 >
                   LC
                 </a>
               )}
             </div>
             {member.user?.email && (
-              <span className="text-[8px] font-medium text-slate-300 truncate max-w-[80px]">
+              <span className="text-[10px] font-bold text-slate-300 truncate max-w-[120px] uppercase tracking-tighter">
                 {member.user.email}
               </span>
             )}
@@ -401,11 +412,11 @@ export default function Team() {
                   
                   <div className="flex items-center gap-4 mb-8 relative z-10">
                     <h3 className="font-heading text-3xl md:text-4xl font-black text-black uppercase tracking-widest">
-                      {domain} Team
+                      {domain.toLowerCase().endsWith('team') ? domain : `${domain} Team`}
                     </h3>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 relative z-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-8 relative z-10">
                     {members.map((member, mi) => (
                       <MemberCard
                         key={member._id || mi}

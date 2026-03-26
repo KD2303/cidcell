@@ -203,7 +203,7 @@ const AdminLayout = () => {
     return (
         <div className="admin-panel min-h-screen flex flex-col font-sans transition-colors duration-300 bg-bg">
             {/* Header */}
-            <header className="h-20 border-b-4 border-primary fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 lg:px-8 bg-white overflow-hidden">
+            <header className="h-20 border-b-4 border-primary fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 lg:px-8 bg-white">
                 <div className="flex items-center gap-2 sm:gap-4 flex-none">
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -281,15 +281,14 @@ const AdminLayout = () => {
                     </div>
 
                     <div className="relative" ref={teamDropdownRef} onMouseEnter={() => handleMouseEnter("team")} onMouseLeave={() => handleMouseLeave("team")}>
-                        <button className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${showTeamDropdown ? "bg-slate-100 text-indigo-600" : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"}`}>
+                        <button className={`flex items-center gap-1 px-4 py-2 border-2 rounded-xl text-xs font-black uppercase transition-all ${showTeamDropdown ? "bg-highlight-pink border-primary shadow-neo-mini" : "border-transparent text-primary hover:bg-highlight-yellow hover:border-primary hover:shadow-neo-mini"}`}>
                             Team <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showTeamDropdown ? "rotate-180" : ""}`} />
                         </button>
                         {showTeamDropdown && (
-                            <div className="absolute top-full left-0 w-52 rounded-xl shadow-xl border overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-200 mt-1 bg-white border-slate-200">
-                                <div className="absolute -top-4 left-0 right-0 h-4 bg-transparent" />
+                            <div className="absolute top-full left-0 w-52 bg-white border-3 border-primary shadow-neo rounded-xl overflow-hidden z-[60] mt-2">
                                 <div className="py-1">
                                     {teamOptions.map((opt, i) => (
-                                        <button key={i} onClick={() => handleDropdownItemClick(opt.path)} className="w-full text-left px-4 py-2.5 text-sm transition-colors text-slate-600 hover:bg-slate-50 hover:text-indigo-600">
+                                        <button key={i} onClick={() => handleDropdownItemClick(opt.path)} className="w-full text-left px-5 py-3 text-[10px] font-black uppercase transition-colors text-primary border-b-2 border-slate-100 last:border-0 hover:bg-highlight-pink">
                                             {opt.label}
                                         </button>
                                     ))}
@@ -414,12 +413,12 @@ const AdminLayout = () => {
                 </div>
             </header>
 
-            <div className="flex-1 flex flex-col pt-16 min-h-screen relative bg-slate-50">
+            <div className="flex-1 flex flex-col pt-20 min-h-screen relative bg-slate-50">
                 <div className="flex flex-1">
                     <aside
                         className={`
-                            fixed lg:sticky top-16 left-0 z-40 
-                            h-[calc(100vh-64px)] transition-all duration-300 ease-in-out
+                            fixed lg:sticky top-20 left-0 z-40 
+                            h-[calc(100vh-80px)] transition-all duration-300 ease-in-out
                             ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
                             ${isMobile ? "w-72 shadow-2xl" : isSidebarOpen ? "w-72 border-r" : "w-0 overflow-hidden"}
                             bg-white border-slate-200
