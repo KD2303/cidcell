@@ -48,6 +48,32 @@ const MemberManagement = () => {
   const [draggedMember, setDraggedMember] = useState(null);
 
   const teams = ['Student Board', 'Core Team', 'Sub-Teams'];
+  const designations = [
+    'Technical Lead',
+    'Domain Head',
+    'Core Member',
+    'Executive Member',
+    'Lead Developer',
+    'Developer',
+    'UI/UX Designer',
+    'Coordinator',
+    'Representative',
+    'Other'
+  ];
+  const domains = [
+    'Frontend Architecture',
+    'Backend & Systems',
+    'UI/UX Design',
+    'AI/ML & Data Science',
+    'Cloud & DevOps',
+    'Mobile Development',
+    'Cybersecurity',
+    'Competitive Programming',
+    'Marketing & Content',
+    'Public Relations',
+    'Event Management',
+    'General Management'
+  ];
 
   useEffect(() => {
     fetchData();
@@ -428,26 +454,28 @@ const MemberManagement = () => {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Designation (e.g. Technical Lead)</label>
-                    <input 
-                        type="text" 
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Designation</label>
+                    <select 
                         required 
                         value={formData.designation} 
                         onChange={e => setFormData({...formData, designation: e.target.value})} 
-                        placeholder="e.g. Lead Developer"
                         className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium"
-                    />
+                    >
+                        <option value="" disabled>Select Designation</option>
+                        {designations.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Domain Group (e.g. UI/UX, AI/ML)</label>
-                    <input 
-                        type="text" 
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Domain Group</label>
+                    <select 
                         value={formData.domain} 
                         onChange={e => setFormData({...formData, domain: e.target.value})} 
-                        placeholder="e.g. Frontend Architecture"
                         className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium"
-                    />
+                    >
+                        <option value="" disabled>Select Domain Group</option>
+                        {domains.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
                 </div>
             </div>
         </form>

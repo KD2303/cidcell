@@ -26,9 +26,9 @@ const AdminDashboard = () => {
 
             const [usersRes, projectsRes, membersRes, eventsRes] = await Promise.all([
                 axios.get(`${BASE_URL}/users`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${BASE_URL}/projects`),
-                axios.get(`${BASE_URL}/members`),
-                axios.get(`${BASE_URL}/events`)
+                axios.get(`${BASE_URL}/projects`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${BASE_URL}/members`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${BASE_URL}/events`, { headers: { Authorization: `Bearer ${token}` } })
             ]);
 
             setStats({
