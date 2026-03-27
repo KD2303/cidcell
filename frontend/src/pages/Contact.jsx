@@ -76,15 +76,7 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 bg-highlight-orange/10 p-4 border-3 border-black shadow-small">
-                  <div className="w-10 h-10 bg-white border-3 border-black flex items-center justify-center shrink-0">
-                    <Phone size={20} className="text-black" strokeWidth={2.5} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-black uppercase text-xs mb-1">Phone</h4>
-                    <p className="text-black font-medium text-sm">0751-240-9354</p>
-                  </div>
-                </div>
+                
               </div>
 
               {/* Department Contacts */}
