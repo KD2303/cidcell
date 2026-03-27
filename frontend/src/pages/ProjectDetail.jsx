@@ -312,8 +312,13 @@ export default function ProjectDetail() {
                   {project.status?.replace(/_/g, ' ')}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase leading-none">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-primary uppercase leading-tight tracking-tight mb-4 flex flex-wrap items-center gap-4">
                 {project.title}
+                {project.githubRepo?.toLowerCase().includes('github.com/cid-cell') && (
+                  <span className="bg-highlight-yellow text-primary border-3 border-primary px-3 py-1 text-[10px] md:text-xs font-black uppercase shadow-neo-sm flex items-center gap-2">
+                     <Github size={14} /> CID-CELL OFFICIAL
+                  </span>
+                )}
               </h1>
             </div>
 
@@ -457,13 +462,26 @@ export default function ProjectDetail() {
 
             {/* ── Join Request Section ── */}
             {canRequestJoin && (
-              <div>
+              <div className="space-y-4">
                 {/* Never requested OR rejected + can re-apply */}
                 {(joinStatus === null || canReapply) && (
-                  <button onClick={() => setShowJoinModal(true)}
-                    className="w-full py-4 bg-highlight-green border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
-                    <Send size={16} /> Request to Join This Project
-                  </button>
+                  <>
+                    {project.githubRepo && (
+                      <a
+                        href={project.githubRepo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-4 bg-primary text-white border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-3"
+                      >
+                        <Github size={20} /> 
+                        {project.githubRepo.toLowerCase().includes('github.com/cid-cell') ? 'Contribute to Org' : 'View Core Source'}
+                      </a>
+                    )}
+                    <button onClick={() => setShowJoinModal(true)}
+                      className="w-full py-4 bg-highlight-green border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
+                      <Send size={16} /> Request to Join This Project
+                    </button>
+                  </>
                 )}
 
                 {/* Pending */}

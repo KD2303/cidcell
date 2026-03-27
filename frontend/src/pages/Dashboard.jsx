@@ -140,8 +140,6 @@ const Dashboard = () => {
                 <div className="bg-white border-2 md:border-4 border-primary shadow-neo p-3 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-12 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-highlight-yellow/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                     
-                    <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
-                        <div className="relative shrink-0">
                             <img
                                 src={user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.username}&background=random&size=128`}
                                 alt="Profile"
@@ -151,7 +149,7 @@ const Dashboard = () => {
 
                         <div className="text-left space-y-1 md:space-y-2">
                             <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
-                                <h1 className="text-xl md:text-5xl font-black text-primary uppercase leading-none tracking-widest">
+                                <h1 className="text-xl md:text-4xl font-black text-primary uppercase leading-none tracking-widest">
                                     {user?.username}
                                 </h1>
                                 <span className="w-fit bg-highlight-purple text-primary border-2 border-primary px-2 py-0.5 font-black uppercase text-[8px] md:text-[10px] shadow-neo-sm">
@@ -165,6 +163,20 @@ const Dashboard = () => {
                                 <span className="bg-bg border-2 border-primary/10 px-2.5 py-1 rounded-lg text-[9px] md:text-xs font-bold text-primary/40 lowercase leading-none">
                                     {user?.email}
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* GitHub Org Spotlight */}
+                    <div className="hidden lg:flex items-center gap-6 bg-primary text-white p-4 rounded-2xl border-2 border-white/20 shadow-neo-mini group/org cursor-pointer" onClick={() => window.open('https://github.com/CID-CELL', '_blank')}>
+                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary group-hover/org:bg-highlight-yellow transition-colors">
+                            <Github size={24} />
+                        </div>
+                        <div className="space-y-0.5">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-highlight-yellow">Verified Organization</h4>
+                            <p className="text-xs font-black uppercase">CID-CELL Open Source</p>
+                            <div className="flex items-center gap-2 opacity-60">
+                                <span className="text-[8px] font-bold uppercase transition-transform group-hover/org:translate-x-1">Explore Repos →</span>
                             </div>
                         </div>
                     </div>
@@ -470,6 +482,17 @@ const Dashboard = () => {
                                 )) : (
                                     <div className="col-span-full text-center py-10 opacity-30 font-black uppercase text-xs">Skills needed to match roadmaps</div>
                                 )}
+                                {/* Contribution Guide Spotlight */}
+                                <div className="bg-primary text-white border-3 border-primary p-6 rounded-3xl shadow-neo group cursor-pointer hover:bg-highlight-orange transition-colors" onClick={() => window.open('https://github.com/CID-CELL', '_blank')}>
+                                    <div className="w-14 h-14 bg-white border-3 border-primary rounded-2xl flex items-center justify-center shadow-neo mb-4 group-hover:rotate-12 transition-transform text-primary">
+                                        <Zap size={24} />
+                                    </div>
+                                    <h4 className="font-black uppercase text-sm mb-2 group-hover:text-primary transition-colors">How to Contribute</h4>
+                                    <p className="text-[10px] font-black uppercase text-white/40 mb-4 group-hover:text-primary transition-colors">Start your open source journey with CID-CELL projects</p>
+                                    <div className="flex items-center gap-2 font-black uppercase text-[10px] border-b-2 border-white group-hover:border-primary group-hover:text-primary transition-colors pb-0.5 w-fit">
+                                        Open Guide <ArrowRight size={12} />
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

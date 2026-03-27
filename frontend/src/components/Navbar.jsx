@@ -260,6 +260,16 @@ export default function Navbar() {
 
           {/* Actions - Right side */}
           <div className="hidden md:flex items-center gap-2 pl-2 z-10 shrink-0">
+            {/* GitHub Org External Link */}
+            <a 
+              href="https://github.com/CID-CELL" 
+              target="_blank" 
+              className="p-2 bg-primary text-white rounded-full border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-highlight-yellow hover:text-primary transition-all -translate-y-0.5"
+              title="CID-CELL GitHub Organization"
+            >
+              <Github size={18} strokeWidth={2.5} />
+            </a>
+
             {user ? (
               <div className="flex items-center gap-3 ml-2">
                 {/* Chat Icon */}
