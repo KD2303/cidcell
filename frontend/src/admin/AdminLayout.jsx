@@ -201,7 +201,7 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="admin-panel min-h-screen flex flex-col font-sans transition-colors duration-300 bg-bg">
+        <div className="admin-panel dashboard-theme min-h-screen flex flex-col font-sans transition-colors duration-300 bg-bg">
             {/* Header */}
             <header className="h-20 border-b-4 border-primary fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 lg:px-8 bg-white">
                 <div className="flex items-center gap-2 sm:gap-4 flex-none">

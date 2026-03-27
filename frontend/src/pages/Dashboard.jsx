@@ -124,7 +124,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-transparent pt-32 md:pt-40 pb-16 md:pb-24 px-4 md:px-8 font-sans relative overflow-hidden">
+        <div className="dashboard-theme min-h-screen bg-transparent pt-32 md:pt-40 pb-16 md:pb-24 px-4 md:px-8 font-sans relative overflow-hidden">
             {/* Background Decor */}
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] flex flex-wrap justify-around items-center gap-20 p-20 z-0">
                 <Plus size={120} strokeWidth={1} />

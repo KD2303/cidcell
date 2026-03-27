@@ -81,6 +81,7 @@ app.use(helmet({
       "script-src-attr": ["'self'", "'unsafe-inline'"]
     },
   },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
 }));
 app.use(cors(corsOptions));
 app.options('/*path', cors(corsOptions)); // Handle preflight for all routes (Express v5 wildcard syntax)

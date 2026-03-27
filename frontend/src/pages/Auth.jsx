@@ -126,6 +126,7 @@ const Auth = () => {
                                     onSuccess={handleGoogleSuccess}
                                     onError={handleGoogleError}
                                     useOneTap
+                                    use_fedcm_for_prompt={false}
                                     theme="outline"
                                     size="large"
                                     width="280"

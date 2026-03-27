@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Instagram, Globe, Clock, ExternalLink } from 'lucide-react';
+import { Mail, MapPin, Send, Github, Linkedin, Instagram, Globe, Clock, ExternalLink } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function Contact() {
