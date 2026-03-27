@@ -157,6 +157,12 @@ export default function Projects() {
                       <div className="absolute top-4 right-4 bg-white border-2 border-primary px-2 py-0.5 text-[9px] font-black uppercase shadow-neo-sm">
                         {project.type}
                       </div>
+
+                      {project.githubRepo?.toLowerCase().includes('github.com/cid-cell') && (
+                        <div className="absolute top-4 left-4 bg-highlight-yellow border-2 border-primary px-2 py-0.5 text-[9px] font-black uppercase shadow-neo-sm flex items-center gap-1 z-20">
+                          <Github size={10} /> CID-CELL ORG
+                        </div>
+                      )}
                     </div>
 
                     {/* Card Body */}
