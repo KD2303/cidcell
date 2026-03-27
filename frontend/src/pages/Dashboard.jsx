@@ -11,6 +11,7 @@ import {
     Trophy,
     Star,
     Zap,
+    Plus,
     Loader,
     Image as ImageIcon,
     Globe,
@@ -139,7 +140,8 @@ const Dashboard = () => {
                 {/* 1. TOP PROFILE BANNER - Balanced Layout */}
                 <div className="bg-white border-2 md:border-4 border-primary shadow-neo p-3 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-12 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-highlight-yellow/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-                    
+                    <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                        <div className="relative shrink-0">
                             <img
                                 src={user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.username}&background=random&size=128`}
                                 alt="Profile"
