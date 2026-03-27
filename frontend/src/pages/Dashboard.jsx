@@ -73,6 +73,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [recentProjects, setRecentProjects] = useState([]);
     const [myProjects, setMyProjects] = useState([]);
+    const [myEvents, setMyEvents] = useState([]);
     const [upcomingEvents, setUpcomingEvents] = useState([]);
     const [mentors, setMentors] = useState([]);
     const [activeTab, setActiveTab] = useState('projects');
@@ -85,12 +86,13 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const [projectsRes, eventsRes, membersRes, myProjectsRes, mentorsRes] = await Promise.all([
+                const [projectsRes, eventsRes, membersRes, myProjectsRes, mentorsRes, myEventsRes] = await Promise.all([
                     axios.get(`${API_URL}/projects`),
                     axios.get(`${API_URL}/events`),
                     axios.get(`${API_URL}/members`),
                     axios.get(`${API_URL}/projects/mine/all`, authHeaders()),
-                    axios.get(`${API_URL}/users/mentors`)
+                    axios.get(`${API_URL}/users/mentors`),
+                    axios.get(`${API_URL}/events/my-registrations`, authHeaders())
                 ]);
                 setStats({
                     totalProjects: projectsRes.data.length,
@@ -103,6 +105,7 @@ const Dashboard = () => {
                 setRecentProjects(projectsRes.data.slice(0, 1));
                 setUpcomingEvents(eventsRes.data.slice(0, 1));
                 setMyProjects(myProjectsRes.data);
+                setMyEvents(myEventsRes.data);
                 setMentors(mentorsRes.data);
             } catch (err) { console.error("Dashboard fetch error:", err); }
             finally { setLoading(false); }
@@ -194,7 +197,7 @@ const Dashboard = () => {
                 {/* 2. STATS GRID - Functional Counts */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     {[
-                        { label: "Events", value: upcomingEvents.length, icon: Calendar, color: "bg-highlight-yellow" },
+                        { label: "RSVP'd Events", value: myEvents.length, icon: Calendar, color: "bg-highlight-yellow" },
                         { label: "Community Projects", value: stats.totalProjects, icon: Folder, color: "bg-highlight-blue" },
                         { label: "Available Mentors", value: stats.totalMentors, icon: Users, color: "bg-highlight-green" },
                         { label: "My Projects", value: myProjects.length, icon: Target, color: "bg-highlight-purple" }
@@ -328,9 +331,10 @@ const Dashboard = () => {
                             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest pl-1">Everything you're building & exploring</p>
                         </div>
                         {/* Tab Switcher */}
-                        <div className="flex bg-white border-3 border-primary p-1.5 rounded-2xl shadow-neo-sm">
+                        <div className="flex bg-white border-3 border-primary p-1.5 rounded-2xl shadow-neo-sm overflow-x-auto">
                             {[
                                 { id: 'projects', label: 'Projects', icon: Folder },
+                                { id: 'events', label: 'Events', icon: Calendar },
                                 { id: 'mentors', label: 'Mentors', icon: Users },
                                 { id: 'roadmaps', label: 'Roadmaps', icon: Target }
                             ].map(tab => (
@@ -378,6 +382,38 @@ const Dashboard = () => {
                                         <div className="space-y-1">
                                             <p className="font-black uppercase text-sm text-primary/40">No projects started yet</p>
                                             <button onClick={() => navigate('/projects/submit')} className="text-primary font-black uppercase text-[10px] hover:underline">Start your first project →</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Tab Content: Events */}
+                        {activeTab === 'events' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+                                {myEvents.length > 0 ? myEvents.map(event => (
+                                    <div key={event._id} className="bg-white border-3 border-primary p-5 rounded-2xl shadow-neo-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all cursor-pointer flex flex-col" onClick={() => navigate(`/events/${event._id}`)}>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="w-10 h-10 bg-highlight-yellow border-2 border-primary rounded-xl flex items-center justify-center shadow-neo-mini">
+                                                <Calendar size={18} />
+                                            </div>
+                                            <span className="text-[9px] font-black uppercase px-2 py-1 rounded border-2 border-primary bg-highlight-green shadow-[2px_2px_0_#1A1A1A]">Registered</span>
+                                        </div>
+                                        <h4 className="font-black uppercase text-sm mb-2 leading-tight">{event.title}</h4>
+                                        <div className="flex flex-col gap-1 mt-auto border-l-2 border-highlight-yellow pl-3">
+                                            <span className="text-[10px] font-bold text-primary/60 uppercase">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}</span>
+                                            <span className="text-[10px] font-bold text-primary/60 uppercase">{event.time || 'TBD'}</span>
+                                            <span className="text-[10px] font-bold text-primary/60 uppercase truncate">{event.location}</span>
+                                        </div>
+                                    </div>
+                                )) : (
+                                    <div className="col-span-full py-12 flex flex-col items-center justify-center gap-4 text-center">
+                                        <div className="w-20 h-20 bg-slate-50 border-3 border-dashed border-primary/20 rounded-full flex items-center justify-center">
+                                            <Calendar className="opacity-10" size={40} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="font-black uppercase text-sm text-primary/40">Not attending any events yet</p>
+                                            <button onClick={() => navigate('/events')} className="text-primary font-black uppercase text-[10px] hover:underline">Explore upcoming events →</button>
                                         </div>
                                     </div>
                                 )}

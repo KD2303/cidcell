@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { 
   Calendar, 
@@ -11,13 +11,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal';
 import { formatTime12h } from '../utils/formatTime';
+import { AuthContext } from '../context/AuthContext';
 
 const categories = ['All', 'trainig and mentorships', 'tech', 'cultural', 'sports', 'educational', 'special'];
 
 export default function Events() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [active, setActive] = useState('All');
   const [events, setEvents] = useState([]);
+  const [registeredEventIds, setRegisteredEventIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +32,15 @@ export default function Events() {
       setLoading(true);
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/events`);
       setEvents(res.data.filter(ev => ev.isScheduled));
+
+      if (localStorage.getItem('token')) {
+        const token = localStorage.getItem('token');
+        const regRes = await axios.get(`${import.meta.env.VITE_API_URL}/events/my-registrations`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const regIds = new Set(regRes.data.map(e => e._id));
+        setRegisteredEventIds(regIds);
+      }
     } catch (err) {
       console.error("Error fetching events:", err);
     } finally {
@@ -114,9 +126,14 @@ export default function Events() {
                              <ImageIcon size={40} />
                           </div>
                         )}
-                        {isFull && (
-                          <span className="absolute top-4 right-4 text-[10px] font-black uppercase px-2 py-1 border-2 border-primary bg-white text-red-500 shadow-neo-sm">
+                        {isFull && !registeredEventIds.has(event._id) && (
+                          <span className="absolute top-4 right-4 text-[10px] font-black uppercase px-2 py-1 border-2 border-primary bg-white text-red-500 shadow-neo-sm z-10">
                             Housefull
+                          </span>
+                        )}
+                        {registeredEventIds.has(event._id) && (
+                          <span className="absolute top-4 right-4 text-[10px] font-black uppercase px-3 py-1.5 border-2 border-primary bg-highlight-green text-primary shadow-neo-sm z-10">
+                            Registered
                           </span>
                         )}
                       </div>

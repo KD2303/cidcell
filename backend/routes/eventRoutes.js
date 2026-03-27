@@ -13,6 +13,7 @@ const {
     getProposals,
     approveProposal,
     rejectProposal,
+    getMyRegistrations,
 } = require('../controllers/eventController');
 const { protect, admin, isFaculty, optionalProtect } = require('../middleware/authMiddleware');
 const { readLimiter, writeLimiter } = require('../middleware/rateLimiters');
@@ -27,6 +28,8 @@ router.get('/my-proposals',                       protect, isFaculty, getMyPropo
 router.get('/proposals',                          protect, admin, getProposals);
 router.patch('/proposals/:id/approve',            writeLimiter, protect, admin, approveProposal);
 router.patch('/proposals/:id/reject',             writeLimiter, protect, admin, rejectProposal);
+
+router.get('/my-registrations', readLimiter, protect, getMyRegistrations);
 
 // --- Generic event routes ---
 router.route('/:id')
