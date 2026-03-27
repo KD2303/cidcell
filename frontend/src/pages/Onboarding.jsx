@@ -3,6 +3,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { CheckCircle2, ChevronDown, LogOut } from 'lucide-react';
+import { compressImage } from '../utils/compressImage';
 
 export const branches = [
     "Artificial Intelligence and Data Science",
@@ -104,10 +105,11 @@ export default function Onboarding() {
         if (!file) return;
 
         setUploadingImage(true);
-        const uploadData = new FormData();
-        uploadData.append('image', file);
-
         try {
+            // Compress avatar to a small 800x800 square
+            const compressedFile = await compressImage(file, 800, 800, 0.7);
+            const uploadData = new FormData();
+            uploadData.append('image', compressedFile);
             const token = localStorage.getItem('token');
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
                 headers: { 

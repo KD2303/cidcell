@@ -62,8 +62,28 @@ const sendEventApprovalEmail = async (organizerEmail, eventName) => {
     }
 };
 
+const sendEventRegistrationEmail = async (userEmail, userName, eventName, date, time) => {
+    try {
+        const mailOptions = {
+            from: process.env.MAIL_USER,
+            to: userEmail,
+            subject: `RSVP Confirmed: ${eventName}`,
+            html: `<h3>Hello ${userName},</h3>
+                   <p>Your registration for the event <b>${eventName}</b> has been successfully confirmed!</p>
+                   <p><b>Date:</b> ${date}<br><b>Time:</b> ${time || 'TBD'}</p>
+                   <p>You can manage your registrations from your CID Cell dashboard.</p>
+                   <p>Regards,<br>CID-Cell Team</p>`
+        };
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to ${userEmail} regarding registration for ${eventName}`);
+    } catch (error) {
+        console.error("Error sending registration email:", error);
+    }
+};
+
 module.exports = {
     sendJoinRequestStatusEmail,
     sendDoubtSessionRequestEmail,
-    sendEventApprovalEmail
+    sendEventApprovalEmail,
+    sendEventRegistrationEmail
 };

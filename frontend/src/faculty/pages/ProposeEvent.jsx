@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { AlertTriangle, CheckCircle, X } from 'lucide-react';
+import { compressImage } from '../../utils/compressImage';
 
 const categories = [
   "trainig and mentorships",
@@ -48,10 +49,10 @@ const ProposeEvent = () => {
     if (!file) return;
 
     setUploadingImage(true);
-    const uploadData = new FormData();
-    uploadData.append('image', file);
-
     try {
+      const compressedFile = await compressImage(file, 1200, 1200, 0.75);
+      const uploadData = new FormData();
+      uploadData.append('image', compressedFile);
       const token = localStorage.getItem('token');
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
         headers: { 

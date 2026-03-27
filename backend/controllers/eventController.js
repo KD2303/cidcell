@@ -173,6 +173,17 @@ const registerForEvent = async (req, res) => {
             return res.status(400).json({ message: 'Event is full' });
         }
 
+        // Send email confirmation
+        if (req.user.email) {
+            emailService.sendEventRegistrationEmail(
+                req.user.email, 
+                req.user.username || req.user.name || 'Student', 
+                event.title, 
+                event.date, 
+                event.time
+            );
+        }
+
         res.status(201).json({ message: 'Registered successfully', whatsappLink: event.whatsappGroupLink });
     } catch (error) {
         res.status(500).json({ message: error.message || 'Registration failed' });
@@ -262,6 +273,26 @@ const rejectProposal = async (req, res) => {
     }
 };
 
+// @desc    Get logged in user's event registrations
+// @route   GET /api/events/my-registrations
+// @access  Private
+const getMyRegistrations = async (req, res) => {
+    try {
+        const registrations = await EventRegistration.find({ userId: req.user._id })
+            .populate('eventId')
+            .sort({ registrationDate: -1 });
+        
+        // Return only the events, filtering out nulls
+        const events = registrations
+            .filter(reg => reg.eventId !== null)
+            .map(reg => reg.eventId);
+            
+        res.json(events);
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Error fetching registrations' });
+    }
+};
+
 module.exports = {
     getEvents,
     getEventById,
@@ -274,4 +305,5 @@ module.exports = {
     getProposals,
     approveProposal,
     rejectProposal,
+    getMyRegistrations,
 };

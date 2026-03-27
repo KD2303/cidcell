@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Plus, X, AlertTriangle, CheckCircle, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { compressImage } from '../utils/compressImage';
 
 export default function SubmitProject() {
   const { user } = useContext(AuthContext);
@@ -42,10 +43,10 @@ export default function SubmitProject() {
     if (!file) return;
 
     setUploadingImage(true);
-    const uploadData = new FormData();
-    uploadData.append('image', file);
-
     try {
+      const compressedFile = await compressImage(file, 1200, 1200, 0.75);
+      const uploadData = new FormData();
+      uploadData.append('image', compressedFile);
       const token = localStorage.getItem('token');
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
         headers: { 

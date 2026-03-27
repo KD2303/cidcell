@@ -172,7 +172,7 @@ export default function Profile() {
               alt={displayName}
               className="w-24 h-24 rounded-full border-4 border-primary shadow-neo object-cover"
             />
-            <span className="mt-3 bg-highlight-purple text-primary border-2 border-primary shadow-neo-sm px-3 py-1 font-heading uppercase text-xs font-black">
+            <span className="mt-4 bg-highlight-purple text-primary border-2 border-primary shadow-neo-sm px-4 py-1.5 font-heading uppercase text-xs md:text-sm font-black tracking-widest">
               {user.userType || 'Student'}
             </span>
           </div>
@@ -186,17 +186,17 @@ export default function Profile() {
               {user.email}
             </p>
             {enrollmentNo && (
-              <span className="inline-block bg-highlight-yellow border-2 border-primary font-heading text-xs font-black px-3 py-1 shadow-neo-sm mb-3 mr-2">
+              <span className="inline-block bg-highlight-yellow border-2 border-primary font-heading text-xs md:text-sm font-black px-4 py-1.5 shadow-neo-sm mb-4 mr-2 tracking-widest">
                 {enrollmentNo}
               </span>
             )}
             {/* Branch + Batch pills */}
             {user.userType !== 'mentor' && (
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-              <span className="bg-highlight-blue/30 border border-primary/30 font-body text-xs px-2 py-1 rounded-full">
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <span className="bg-highlight-blue/30 border border-primary/30 font-body text-xs md:text-sm px-3 py-1.5 rounded-full font-medium">
                 {user.branch || 'No branch'}
               </span>
-              <span className="bg-highlight-blue/30 border border-primary/30 font-body text-xs px-2 py-1 rounded-full">
+              <span className="bg-highlight-blue/30 border border-primary/30 font-body text-xs md:text-sm px-3 py-1.5 rounded-full font-medium">
                 {user.batch || 'No batch'}
               </span>
             </div>
@@ -204,19 +204,19 @@ export default function Profile() {
           </div>
 
           {/* RIGHT — Action buttons */}
-          <div className="flex flex-col gap-2 lg:flex-shrink-0">
+          <div className="flex flex-col gap-3 md:gap-4 lg:flex-shrink-0 mt-4 lg:mt-0">
             <button
               onClick={() => navigate('/onboarding')}
-              className="bg-highlight-yellow border-2 border-primary font-heading uppercase text-xs font-black px-4 py-2 shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
+              className="bg-highlight-yellow border-2 border-primary font-heading uppercase text-sm md:text-base font-black px-6 py-2.5 md:py-3 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-3 tracking-widest"
             >
-              <Pencil size={14} />
+              <Pencil size={18} />
               Edit Profile
             </button>
             <button
               onClick={handleLogout}
-              className="bg-highlight-pink border-2 border-primary font-heading uppercase text-xs font-black px-4 py-2 shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
+              className="bg-highlight-pink border-2 border-primary font-heading uppercase text-sm md:text-base font-black px-6 py-2.5 md:py-3 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-3 tracking-widest"
             >
-              <LogOut size={14} />
+              <LogOut size={18} />
               Logout
             </button>
           </div>

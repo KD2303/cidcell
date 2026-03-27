@@ -20,6 +20,7 @@ import {
   Loader
 } from 'lucide-react';
 import { formatTime12h } from '../../utils/formatTime';
+import { compressImage } from '../../utils/compressImage';
 
 const EventManagement = () => {
   const [events, setEvents] = useState([]);
@@ -61,10 +62,10 @@ const EventManagement = () => {
     if (!file) return;
 
     setUploadingImage(true);
-    const uploadData = new FormData();
-    uploadData.append('image', file);
-
     try {
+      const compressedFile = await compressImage(file, 1200, 1200, 0.75);
+      const uploadData = new FormData();
+      uploadData.append('image', compressedFile);
       const token = localStorage.getItem('token');
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
         headers: { 
