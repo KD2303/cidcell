@@ -2,10 +2,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 
 const Auth = () => {
-    const { loginWithGoogle } = useContext(AuthContext);
+    const { loginWithGoogle, authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/profile';
@@ -29,6 +29,16 @@ const Auth = () => {
 
     return (
         <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] mt-16 md:mt-20 bg-bg flex items-center justify-center px-4 py-6 relative overflow-hidden">
+
+            {/* Full-screen loading overlay while backend round-trip is in progress */}
+            {authLoading && (
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" strokeWidth={3} />
+                    <p className="font-heading text-sm uppercase tracking-widest text-primary animate-pulse">
+                        Authenticating…
+                    </p>
+                </div>
+            )}
 
             {/* Split layout container */}
             <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center relative z-10">
@@ -70,7 +80,7 @@ const Auth = () => {
 
                 {/* Right Side: Authentication Card */}
                 <div className="w-full max-w-md mx-auto lg:ml-auto relative">
-                    
+
                     {/* Floating decoration for mobile/tablet */}
                     <div className="absolute -top-12 -right-4 w-16 h-16 bg-highlight-yellow border-4 border-primary shadow-neo lg:hidden transform rotate-12" />
                     <div className="absolute top-1/2 -left-6 w-12 h-12 bg-highlight-purple border-4 border-primary shadow-neo lg:hidden transform -rotate-6" />
@@ -122,19 +132,27 @@ const Auth = () => {
                         {/* Login Action Area */}
                         <div className="flex flex-col items-center gap-3 bg-bg border-4 border-primary p-4 shadow-neo-sm transform rotate-1">
                             <div className="w-full flex justify-center bg-white border-4 border-primary p-2 shadow-neo hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none transition-all">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={handleGoogleError}
-                                    useOneTap
-                                    theme="outline"
-                                    size="large"
-                                    width="280"
-                                    text="continue_with"
-                                />
+                                {authLoading ? (
+                                    /* Skeleton placeholder matching the Google button size so layout doesn't shift */
+                                    <div className="flex items-center gap-3 px-4 py-2 opacity-60">
+                                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                        <span className="font-bold text-sm text-primary uppercase tracking-widest">Verifying…</span>
+                                    </div>
+                                ) : (
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={handleGoogleError}
+                                        useOneTap={false}
+                                        theme="outline"
+                                        size="large"
+                                        width="280"
+                                        text="continue_with"
+                                    />
+                                )}
                             </div>
                             <p className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-highlight-teal border-2 border-primary animate-pulse"></span>
-                                Awaiting Authentication
+                                <span className={`w-2 h-2 rounded-full border-2 border-primary ${authLoading ? 'bg-highlight-orange animate-pulse' : 'bg-highlight-teal animate-pulse'}`}></span>
+                                {authLoading ? 'Authentication in progress' : 'Awaiting Authentication'}
                             </p>
                         </div>
 
