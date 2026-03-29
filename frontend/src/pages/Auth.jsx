@@ -1,4 +1,3 @@
-```jsx
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useContext } from 'react';
@@ -36,7 +35,7 @@ const Auth = () => {
                 <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
                     <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" strokeWidth={3} />
                     <p className="font-heading text-sm uppercase tracking-widest text-primary animate-pulse">
-                        Authenticating…
+                        Authenticating...
                     </p>
                 </div>
             )}
@@ -94,7 +93,7 @@ const Auth = () => {
                                     CID-Cell
                                 </span>
                                 <span className="font-black text-xs uppercase tracking-widest bg-highlight-teal inline-block px-3 py-1 border-2 border-primary transform rotate-1 mt-2 shadow-neo-sm">
-                                    MITS Gwalior · CSE Dept
+                                    MITS Gwalior . CSE Dept
                                 </span>
                             </div>
                         </div>
@@ -135,7 +134,7 @@ const Auth = () => {
                                         <div className="flex items-center gap-3 px-4 py-2 opacity-60">
                                             <Loader2 className="w-5 h-5 animate-spin text-primary" />
                                             <span className="font-bold text-sm text-primary uppercase tracking-widest">
-                                                Verifying…
+                                                Verifying...
                                             </span>
                                         </div>
                                     ) : (
@@ -148,6 +147,7 @@ const Auth = () => {
                                             size="large"
                                             width="280"
                                             text="continue_with"
+                                            border_radius="0"
                                         />
                                     )}
                                 </div>
@@ -181,4 +181,4 @@ const Auth = () => {
 };
 
 export default Auth;
-```
+
