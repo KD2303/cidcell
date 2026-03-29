@@ -71,7 +71,7 @@ const FacultyDashboard = () => {
   const rejected = proposals.filter(p => p.status === 'rejected').length;
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="dashboard-theme min-h-screen bg-bg">
       <div className="container-max mx-auto section-padding">
 
         <h1 className="mb-2">Faculty Portal</h1>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import { Github, Linkedin, Instagram, Mail, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -101,10 +101,6 @@ export default function Footer() {
                   CSE Dept, MITS Gwalior - Gola ka Mandir, Gwalior - 474005, <br />
                   Madhya Pradesh, India
                 </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-highlight-pink shrink-0" size={18} />
-                <span className="text-gray-300">0751-240-9354</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-highlight-pink shrink-0" size={18} />
