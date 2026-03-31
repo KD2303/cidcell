@@ -149,12 +149,15 @@ export default function Navbar() {
     } catch (err) { console.error(err); }
   };
 
+  const [mobileExpanded, setMobileExpanded] = useState(null);
+
   // Disable scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      setMobileExpanded(null); // Reset when closing
     }
     return () => {
       document.body.style.overflow = 'unset';
@@ -431,31 +434,37 @@ export default function Navbar() {
                     return true;
                   });
                   if (visibleChildren.length === 0) return null;
+                  
+                  const isExpanded = mobileExpanded === link.name;
+
                   return (
-                    <div key={link.name} className="space-y-2 mt-4 bg-slate-50 border-3 border-transparent rounded-xl p-2 pb-3">
-                       <button
-                         onClick={() => setMobileDropdowns(prev => ({...prev, [link.name]: !prev[link.name]}))}
-                         className="w-full px-4 py-1 font-bold uppercase text-primary text-xs flex items-center gap-2"
+                    <div key={link.name} className={`space-y-2 mt-2 bg-slate-50 border-3 transition-all rounded-xl p-2 pb-3 ${isExpanded ? 'border-primary' : 'border-transparent'}`}>
+                       <button 
+                         onClick={() => setMobileExpanded(isExpanded ? null : link.name)}
+                         className="w-full px-4 py-2 font-black uppercase text-primary text-xs flex items-center justify-between gap-2 hover:bg-slate-100 rounded-lg transition-colors"
                        >
-                          <ChevronDown size={14} className={`transition-transform duration-200 ${mobileDropdowns[link.name] ? 'rotate-180' : ''}`} /> {link.name}
+                          <span className="flex items-center gap-2">{link.name}</span>
+                          <ChevronDown size={14} className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                        </button>
-                       <div className="space-y-2">
-                         {mobileDropdowns[link.name] && visibleChildren.map(child => (
-                             <NavLink
-                               key={child.name}
-                               to={child.path}
-                               onClick={() => setIsOpen(false)}
-                               className={({ isActive }) =>
-                                 `block px-4 py-3 font-bold uppercase border-2 transition-all rounded-lg ml-2 text-xs transition-opacity duration-300 ${isActive
-                                   ? 'bg-highlight-purple border-primary shadow-neo-sm'
-                                   : 'border-transparent hover:bg-highlight-blue hover:border-primary bg-white'
-                                 }`
-                               }
-                             >
-                               {child.name}
-                             </NavLink>
-                         ))}
-                       </div>
+                       {isExpanded && (
+                         <div className="space-y-2 animate-fade-in-down">
+                           {visibleChildren.map(child => (
+                               <NavLink
+                                 key={child.name}
+                                 to={child.path}
+                                 onClick={() => setIsOpen(false)}
+                                 className={({ isActive }) =>
+                                   `block px-4 py-3 font-bold uppercase border-2 transition-all rounded-lg ml-2 text-[10px] ${isActive
+                                     ? 'bg-highlight-purple border-primary shadow-neo-sm'
+                                     : 'border-white hover:bg-highlight-blue hover:border-primary bg-white'
+                                   }`
+                                 }
+                               >
+                                 {child.name}
+                               </NavLink>
+                           ))}
+                         </div>
+                       )}
                     </div>
                   );
                 }

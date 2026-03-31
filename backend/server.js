@@ -25,6 +25,7 @@ const joinRequestRoutes = require('./routes/joinRequestRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Render, Heroku, etc)
 const server = http.createServer(app); // Create HTTP server
 
 // Build allowed origins list — hardcoded production + env var (comma-separated) + localhost fallback

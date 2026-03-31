@@ -94,6 +94,5 @@ userSchema.pre('save', function (next) {
 
 // ── Query Indexes ─────────────────────────────────────────────────────────────
 userSchema.index({ userType: 1 });           // Used by /users/mentors, /users/faculty
-userSchema.index({ email: 1 }, { unique: true }); // enforce at index level too
 
 module.exports = mongoose.model('User', userSchema);

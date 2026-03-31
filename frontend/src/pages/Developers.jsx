@@ -2,15 +2,7 @@ import { Github, Linkedin, ExternalLink } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
 
 const developers = [
-  {
-    name: 'Anurag Mishra',
-    role: 'Full Stack Developer',
-    github: 'https://github.com/anuragmishra5159',
-    linkedin: 'https://www.linkedin.com/in/anuragmishra5159/',
-    image: 'https://github.com/anuragmishra5159.png', 
-    bio: 'Passionate full-stack developer focusing on React and modern web technologies.',
-    color: 'bg-highlight-blue',
-  },
+
   {
     name: 'Krish Dargar',
     role: 'Full Stack Developer',
@@ -21,12 +13,21 @@ const developers = [
     color: 'bg-highlight-teal',
   },
   {
+    name: 'Anurag Mishra',
+    role: 'Full Stack Developer',
+    github: 'https://github.com/anuragmishra5159',
+    linkedin: 'https://www.linkedin.com/in/anuragmishra5159/',
+    image: 'https://github.com/anuragmishra5159.png',
+    bio: 'Passionate full-stack developer focusing on React and modern web technologies.',
+    color: 'bg-highlight-blue',
+  },
+  {
     name: 'Harsh Manmode',
-    role: 'Developer',
+    role: 'Backend Developer',
     github: 'https://github.com/Harsh-2006-git',
     linkedin: 'https://www.linkedin.com/in/harsh-manmode-2a0b91325/',
-    image: 'https://github.com/Harsh-2006-git.png',
-    bio: 'Dedicated developer passionate about crafting robust web applications.',
+    image: 'https://avatars.githubusercontent.com/u/192864282',
+    bio: 'Specialist in Node.js and database architecture, building robust and secure server-side solutions.',
     color: 'bg-highlight-yellow',
   },
   {
@@ -52,7 +53,7 @@ export default function Developers() {
       <div className="relative z-10 container-max mx-auto px-4">
         <SectionHeading title="Site Developers" subtitle="Meet the creators of this platform" isCenter />
       </div>
-      
+
       <div className="container-max mx-auto mt-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
           {developers.map((dev, idx) => (
@@ -62,21 +63,21 @@ export default function Developers() {
             >
               {/* Header Box */}
               <div className={`h-32 ${dev.color} border-b-4 border-primary flex items-center justify-center relative overflow-hidden`}>
-                 <div className="absolute inset-0 opacity-10 bg-[linear-gradient(#000_2px,transparent_2px),linear-gradient(90deg,#000_2px,transparent_2px)] bg-[size:20px_20px]"></div>
+                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(#000_2px,transparent_2px),linear-gradient(90deg,#000_2px,transparent_2px)] bg-[size:20px_20px]"></div>
               </div>
 
               {/* Adjusted Content Box: increased top padding, converted to centered flex layout */}
               <div className="px-6 pb-10 relative bg-white pt-20 flex flex-col items-center text-center">
-                 {/* Image wrapped in an inset to perfectly center horizontally without conflicting transforms */}
-                 <div className="absolute -top-16 inset-x-0 w-full flex justify-center pointer-events-none">
-                    <img
-                        src={dev.image}
-                        alt={dev.name}
-                        className="w-32 h-32 border-4 border-primary shadow-neo object-cover bg-white z-10 relative transform -rotate-3 group-hover:rotate-0 transition-neo pointer-events-auto"
-                        onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=' + dev.name + '&background=random&color=white&size=128&bold=true'; }}
-                    />
+                {/* Image wrapped in an inset to perfectly center horizontally without conflicting transforms */}
+                <div className="absolute -top-16 inset-x-0 w-full flex justify-center pointer-events-none">
+                  <img
+                    src={dev.image}
+                    alt={dev.name}
+                    className="w-32 h-32 border-4 border-primary shadow-neo object-cover bg-white z-10 relative transform -rotate-3 group-hover:rotate-0 transition-neo pointer-events-auto"
+                    onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=' + dev.name + '&background=random&color=white&size=128&bold=true'; }}
+                  />
                 </div>
-                
+
                 <div className="mt-4">
                   <h3 className="font-heading font-black text-3xl md:text-4xl uppercase tracking-wider text-primary mb-3">
                     {dev.name}
@@ -120,8 +121,8 @@ export default function Developers() {
         <div className="mt-32 max-w-3xl mx-auto bg-highlight-green border-4 border-primary p-8 md:p-12 shadow-neo relative transform -rotate-1 hover:rotate-0 transition-neo">
           <div className="absolute -top-6 -right-6 w-12 h-12 bg-highlight-pink border-4 border-primary shadow-neo rounded-full z-10 transform translate-x-2 -translate-y-2"></div>
           <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-highlight-yellow border-4 border-primary shadow-neo z-10 transform rotate-12"></div>
-          
-          <h4 className="font-heading text-4xl md:text-5xl uppercase tracking-widest text-primary mb-4 leading-none">Want to <br/> Contribute?</h4>
+
+          <h4 className="font-heading text-4xl md:text-5xl uppercase tracking-widest text-primary mb-4 leading-none">Want to <br /> Contribute?</h4>
           <p className="text-primary font-bold text-lg mb-8 max-w-xl">
             CID-Cell is an open community. Whether you're interested in making modifications to this site, or starting a new project, we're always looking for collaborators.
           </p>
