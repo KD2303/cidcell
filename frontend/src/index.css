@@ -4,104 +4,108 @@
 
 @layer base {
   body {
-    @apply bg-bg text-primary antialiased font-body min-h-screen;
+    @apply bg-bg text-primary antialiased font-body min-h-screen selection:bg-accent selection:text-white;
     font-family: var(--font-body);
     background-image: 
-      radial-gradient(circle at 2px 2px, rgba(26, 26, 26, 0.05) 1px, transparent 0);
-    background-size: 24px 24px;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading uppercase tracking-widest leading-tight;
-    letter-spacing: 0.05em;
+      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+    background-size: 32px 32px;
   }
   
-  .dashboard-theme h1, 
-  .dashboard-theme h2, 
-  .dashboard-theme h3, 
-  .dashboard-theme h4, 
-  .dashboard-theme h5, 
-  .dashboard-theme h6 {
-    letter-spacing: 0.15em !important;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight leading-tight text-white;
   }
-  /* Custom override for admin panel removed to match main project theme */
-  /* .admin-panel h1, .admin-panel h2, .admin-panel h3, .admin-panel h4, .admin-panel h5, .admin-panel h6 {
-    @apply font-sans normal-case tracking-normal leading-normal;
-  } */
 }
 
 @layer components {
   .section-padding {
     @apply py-20 md:py-32;
   }
+  
   .container-max {
-    @apply max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto;
   }
-  .neo-card {
-    @apply bg-white border-2 lg:border-3 border-primary rounded-neo shadow-neo transition-all duration-300;
+  
+  /* Glassmorphism Utilities */
+  .glass-panel {
+    @apply bg-surface backdrop-blur-md border border-border rounded-xl shadow-glass transition-all duration-300;
   }
-  .neo-card:hover {
-    @apply shadow-none translate-x-[4px] translate-y-[4px];
+  
+  .glass-panel:hover {
+    @apply bg-surfaceHover border-accent/30 shadow-glass-hover;
   }
+  
+  .glass-card {
+    @apply bg-surface backdrop-blur-lg border border-border rounded-2xl shadow-glass transition-all duration-500 hover:-translate-y-1 relative overflow-hidden;
+  }
+  
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-glass opacity-0 transition-opacity duration-500 z-0 pointer-events-none;
+  }
+  
+  .glass-card:hover::before {
+    @apply opacity-100;
+  }
+  
+  .glass-card:hover {
+    @apply border-accent/50 shadow-glow-purple;
+  }
+
+  /* Minimalist Button Styles */
   .btn-neo {
-    @apply px-6 py-3 bg-highlight-yellow border-2 lg:border-3 border-primary rounded-xl font-black text-primary shadow-neo transition-all duration-200 inline-flex items-center justify-center gap-3 uppercase tracking-widest cursor-pointer select-none text-xs;
+    @apply px-6 py-3 bg-accent text-white rounded-pill font-bold transition-all duration-300 shadow-glow-purple inline-flex items-center justify-center gap-2 tracking-widest uppercase cursor-pointer select-none text-[10px] relative overflow-hidden z-10 hover:bg-accent/90 active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent/50;
   }
-  .btn-neo:hover {
-    @apply shadow-none translate-x-[3px] translate-y-[3px] bg-highlight-orange;
-  }
+  
   .btn-neo-secondary {
-    @apply px-6 py-3 bg-white border-2 lg:border-3 border-primary rounded-xl font-black text-primary shadow-neo transition-all duration-200 inline-flex items-center justify-center gap-3 uppercase tracking-widest cursor-pointer select-none text-xs;
+    @apply px-6 py-3 bg-white/[0.05] border border-white/20 text-slate-300 rounded-pill font-bold transition-all duration-300 hover:bg-white/10 hover:border-white/40 hover:text-white inline-flex items-center justify-center gap-2 tracking-widest uppercase cursor-pointer select-none text-[10px] focus:outline-none focus:ring-2 focus:ring-border active:scale-95 shadow-glass;
   }
-  .btn-neo-secondary:hover {
-    @apply shadow-none translate-x-[3px] translate-y-[3px] bg-highlight-blue;
+
+  .btn-glass-accent {
+    @apply px-6 py-3 bg-white/[0.06] border border-accent/40 text-white rounded-xl font-bold transition-all duration-300 hover:bg-accent/10 hover:border-accent hover:shadow-glow-purple inline-flex items-center justify-center gap-2 tracking-widest uppercase cursor-pointer select-none text-[10px] focus:outline-none focus:ring-2 focus:ring-accent/50 active:scale-95;
   }
+
+  .btn-glass-danger {
+    @apply px-6 py-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl font-bold transition-all duration-300 hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)] inline-flex items-center justify-center gap-2 tracking-widest uppercase cursor-pointer select-none text-[10px] focus:outline-none focus:ring-2 focus:ring-red-500/50 active:scale-95;
+  }
+  
   .neo-badge {
-    @apply px-3 py-1 bg-white border-2 border-primary rounded-full text-xs font-bold uppercase shadow-neo-sm inline-block;
+    @apply px-3 py-1 bg-white/5 border border-accent/30 text-accent rounded-pill text-[9px] font-bold tracking-widest uppercase backdrop-blur-md shadow-inner;
   }
-  .bg-hazard {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      #FFD700,
-      #FFD700 15px,
-      #1a1a1a 15px,
-      #1a1a1a 30px
-    );
+  
+  /* Glowing Orb Utility */
+  .glowing-orb {
+    @apply absolute rounded-full blur-[100px] pointer-events-none opacity-50;
   }
 }
 
+/* Custom Scrollbar - Dark Theme */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-bg border-l-2 border-primary;
+  @apply bg-bg;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary rounded-full border-2 border-bg;
+  @apply bg-surface rounded-full border border-border;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-border;
 }
 
-/* Admin Global Scrollbar for Modals and Lists */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
-  border-left: none;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border: none;
-  border-radius: 10px;
+  @apply bg-border rounded-full;
 }
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  @apply bg-secondary;
 }
 
-.custom-scrollbar-dark::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-}
-.custom-scrollbar-dark:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-}
-
+/* Animations */
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
@@ -114,7 +118,7 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -125,7 +129,7 @@
 @keyframes fade-in-down {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -134,9 +138,18 @@
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.3s ease-out forwards;
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in-down {
-  animation: fade-in-down 0.2s ease-out forwards;
+  animation: fade-in-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Spline Watermark Hider */
+a[href*="spline.design"] { 
+  display: none !important; 
+  opacity: 0 !important; 
+  visibility: hidden !important; 
+  z-index: -999 !important; 
+  pointer-events: none !important; 
 }

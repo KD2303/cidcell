@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, MapPin, Send, Github, Linkedin, Instagram, Globe, Clock, ExternalLink } from 'lucide-react';
+import { Mail, MapPin, Send, Github, Linkedin, Instagram, Globe, Clock, ExternalLink, Activity } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function Contact() {
@@ -18,243 +18,259 @@ export default function Contact() {
   };
 
   return (
-    <>
+    <div className="bg-bg min-h-screen text-white pt-32 relative overflow-hidden">
+      {/* Abstract Background */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/15 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-accent-blue/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+      
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-highlight-cream border-b-3 border-black relative overflow-hidden">
+      <section className="pb-16 relative overflow-hidden border-b border-border">
         <div className="container-max mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <span className="inline-block px-4 py-1 bg-black text-white text-sm font-bold uppercase mb-4 shadow-neo transform -rotate-2">
-            Reach Out
-          </span>
-          <h1 className="font-heading text-5xl md:text-7xl font-black text-black mb-6 uppercase leading-none">
-            Get in <span className="p-1 md:p-2 bg-highlight-orange text-black inline-block transform rotate-1 border-3 border-black shadow-small">Touch</span>
+          <div className="inline-flex px-4 py-1.5 glass-panel rounded-full border border-accent/20 mb-6 items-center gap-2 shadow-glow-purple">
+             <Activity size={14} className="text-accent" />
+             <span className="font-semibold uppercase tracking-[0.2em] text-xs text-secondary">Network Communications</span>
+          </div>
+          <h1 className="font-heading text-5xl md:text-7xl lg:text-[6rem] font-black text-white mb-6 uppercase leading-none drop-shadow-2xl">
+            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400 filter drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]">Touch</span>
           </h1>
-          <p className="text-black text-xl font-medium max-w-2xl mx-auto border-l-4 border-black pl-4">
-            Contact Madhav Institute of Technology & Science for academic, administrative, or research inquiries.
+          <p className="text-slate-300 text-lg md:text-xl font-medium max-w-2xl mx-auto glass-panel p-4 border-l-2 border-accent leading-relaxed inline-block">
+            Contact the Institute for academic, administrative, or research inquiries.
           </p>
         </div>
       </section>
 
       {/* Main Info Section */}
-      <section className="section-padding bg-white border-b-3 border-black">
-        <div className="container-max mx-auto">
-          <div className="grid lg:grid-cols-5 gap-12">
+      <section className="section-padding relative z-10">
+        <div className="container-max mx-auto px-4">
+          <div className="grid lg:grid-cols-5 gap-10">
             {/* Contact Info Sidebar */}
-            <ScrollReveal className="lg:col-span-2 space-y-8">
-              <div>
-                <h3 className="font-heading font-black text-3xl text-black mb-4 uppercase">
+            <ScrollReveal className="lg:col-span-2 space-y-6">
+              
+              <div className="glass-panel p-8 border border-white/10 shadow-glass">
+                <h3 className="font-heading font-black text-2xl text-white mb-4 uppercase tracking-widest">
                   Main Campus
                 </h3>
-                <p className="text-black font-medium leading-relaxed mb-6 border-l-4 border-highlight-blue pl-4">
+                <p className="text-slate-400 font-medium leading-relaxed mb-6 border-l-2 border-accent-blue pl-4 text-sm">
                   Our flagship campus is conveniently located in the heart of Gwalior, offering state-of-the-art facilities in a modern academic environment.
                 </p>
-              </div>
 
-              {/* Primary Contacts */}
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 bg-highlight-blue/10 p-4 border-3 border-black shadow-small">
-                  <div className="w-10 h-10 bg-white border-3 border-black flex items-center justify-center shrink-0">
-                    <MapPin size={20} className="text-black" strokeWidth={2.5} />
+                {/* Primary Contacts */}
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 bg-surface p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-accent-blue/10 border border-accent-blue/30 flex items-center justify-center shrink-0">
+                      <MapPin size={18} className="text-accent-blue" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-300 uppercase tracking-widest text-[10px] mb-1">Address</h4>
+                      <p className="text-white text-xs font-medium leading-relaxed">
+                        CSE Dept, MITS Gwalior<br/>
+                        Gola ka Mandir, Gwalior - 474005<br />
+                        Madhya Pradesh, India
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-black uppercase text-xs mb-1">Address</h4>
-                    <p className="text-black text-sm font-medium leading-tight">
-                      CSE Dept, MITS Gwalior - Gola ka Mandir, Gwalior - 474005,<br />
-                      Madhya Pradesh, India
-                    </p>
+
+                  <div className="flex items-start gap-4 bg-surface p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center shrink-0">
+                      <Mail size={18} className="text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-300 uppercase tracking-widest text-[10px] mb-1">Email</h4>
+                      <a href="mailto:director@mitsgwalior.in" className="text-white font-medium text-xs hover:text-accent transition-colors underline decoration-1 underline-offset-4">
+                        director@mitsgwalior.in
+                      </a>
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex items-start gap-4 bg-highlight-green/10 p-4 border-3 border-black shadow-small">
-                  <div className="w-10 h-10 bg-white border-3 border-black flex items-center justify-center shrink-0">
-                    <Mail size={20} className="text-black" strokeWidth={2.5} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-black uppercase text-xs mb-1">Email</h4>
-                    <a href="mailto:director@mitsgwalior.in" className="text-black font-medium text-sm hover:text-highlight-purple transition-colors underline decoration-2 underline-offset-2">
-                      director@mitsgwalior.in
-                    </a>
-                  </div>
-                </div>
-
-                
               </div>
 
               {/* Department Contacts */}
-              <div className="bg-highlight-pink/5 border-3 border-black p-6 shadow-small">
-                <h4 className="font-heading font-black text-xl text-black mb-4 uppercase inline-block border-b-2 border-black pb-1">Department Contacts</h4>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-gray-500">Admissions & Student Services</p>
-                    <p className="font-bold text-black">+91 9343250503</p>
+              <div className="glass-panel p-8 border border-white/10 shadow-glass relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-magenta/10 rounded-full blur-[40px] pointer-events-none"></div>
+                
+                <h4 className="font-heading font-black text-lg text-white mb-6 uppercase tracking-widest border-b border-border pb-3">Directory</h4>
+                <div className="space-y-5">
+                  <div className="flex justify-between items-center group/item hover:bg-white/5 p-2 rounded-lg -mx-2 transition-colors cursor-default">
+                    <p className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Admissions</p>
+                    <p className="text-xs font-bold text-white bg-surface px-2 py-1 rounded border border-border group-hover/item:border-accent-magenta/50 transition-colors">+91 9343250503</p>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-gray-500">Registrar Office</p>
-                    <p className="font-bold text-black">+91 6267473144</p>
+                  <div className="flex justify-between items-center group/item hover:bg-white/5 p-2 rounded-lg -mx-2 transition-colors cursor-default">
+                    <p className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Registrar</p>
+                    <p className="text-xs font-bold text-white bg-surface px-2 py-1 rounded border border-border group-hover/item:border-accent-magenta/50 transition-colors">+91 6267473144</p>
                   </div>
-
                 </div>
               </div>
 
               {/* Office Hours */}
-              <div className="bg-black text-white p-6 shadow-small transform -rotate-1">
-                <div className="flex items-center gap-2 mb-4">
-                  <Clock className="text-highlight-yellow" size={18} />
-                  <h4 className="font-heading font-black text-lg uppercase">Office Hours</h4>
+              <div className="bg-gradient-to-br from-surface to-bg p-8 border border-white/10 rounded-2xl shadow-glass flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute top-1/2 left-0 w-full h-full bg-blue-500/5 blur-[50px] -translate-y-1/2"></div>
+                <div className="flex items-center gap-3 mb-6 relative z-10">
+                  <div className="w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400">
+                    <Clock size={16} />
+                  </div>
+                  <h4 className="font-heading font-black text-lg uppercase tracking-widest">Office Hours</h4>
                 </div>
-                <ul className="text-xs space-y-2 font-bold uppercase tracking-wider">
-                  <li className="flex justify-between">
-                    <span>Mon - Fri</span>
-                    <span className="text-highlight-yellow">8:00 AM - 6:00 PM</span>
+                <ul className="text-xs space-y-3 font-bold uppercase tracking-wider relative z-10">
+                  <li className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-slate-400">Mon - Fri</span>
+                    <span className="text-white bg-black px-2 py-1 border border-border rounded">8:00 AM - 6:00 PM</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Saturday</span>
-                    <span className="text-highlight-yellow">9:00 AM - 1:00 PM</span>
+                  <li className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-slate-400">Saturday</span>
+                    <span className="text-white bg-black px-2 py-1 border border-border rounded">9:00 AM - 1:00 PM</span>
                   </li>
-                  <li className="flex justify-between text-gray-400">
+                  <li className="flex justify-between items-center pt-1 text-slate-500">
                     <span>Sunday</span>
-                    <span>Closed</span>
+                    <span className="line-through">Closed</span>
                   </li>
                 </ul>
               </div>
             </ScrollReveal>
 
             {/* Contact Form & Social */}
-            <ScrollReveal className="lg:col-span-3 space-y-12" delay={200}>
-              <div className="bg-highlight-cream border-3 border-black p-8 lg:p-10 shadow-neo transform rotate-1">
-                <h3 className="font-heading font-black text-3xl text-black mb-2 uppercase">Send a Message</h3>
-                <p className="text-black font-medium mb-8 border-b-2 border-black pb-4">Fill in the form below for any specific requests or feedback.</p>
+            <ScrollReveal className="lg:col-span-3 space-y-6" delay={200}>
+              <div className="glass-panel border-l-2 border-l-accent border-r border-r-white/10 border-y border-y-white/10 p-8 lg:p-12 shadow-glow-purple relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 blur-[60px] pointer-events-none"></div>
 
-                {submitted && (
-                  <div className="mb-8 p-4 bg-highlight-green border-3 border-black text-black font-bold shadow-small flex items-center gap-3">
-                    <span className="text-xl">👍</span> Message sent successfully. We will get back to you soon.
+                <h3 className="font-heading font-black text-3xl text-white mb-2 uppercase tracking-widest">Send a Message</h3>
+                <p className="text-slate-400 text-sm font-medium mb-10">Fill in the secure form below for any specific requests or feedback.</p>
+
+                {submitted ? (
+                  <div className="mb-8 p-5 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 font-bold backdrop-blur-md flex items-center gap-4 animate-fade-in">
+                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                      <Send size={18} />
+                    </div>
+                    Encrypted message transmitted successfully over the network.
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Full Name *</label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={form.name}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
+                          placeholder="ENTER NAME"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Email Node *</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={form.email}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
+                          placeholder="USER@NETWORK.COM"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Transmission Data *</label>
+                      <textarea
+                        name="message"
+                        value={form.message}
+                        onChange={handleChange}
+                        required
+                        rows={5}
+                        className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium resize-none"
+                        placeholder="ENTER MESSAGE PROTOCOL..."
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-4 rounded-xl bg-accent text-white font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] hover:bg-accent/90 transition-all flex items-center justify-center gap-3"
+                    >
+                      <Send size={16} />
+                      Transmit Data
+                    </button>
+                  </form>
                 )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-[10px] font-black text-black uppercase mb-1.5 tracking-widest">Full Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-white border-3 border-black focus:shadow-neo outline-none transition-all font-bold placeholder:text-gray-400 text-sm"
-                        placeholder=" YOUR NAME"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-black text-black uppercase mb-1.5 tracking-widest">Email Address</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-white border-3 border-black focus:shadow-neo outline-none transition-all font-bold placeholder:text-gray-400 text-sm"
-                        placeholder=" YOU@EMAIL.COM"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-black text-black uppercase mb-1.5 tracking-widest">Message</label>
-                    <textarea
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      required
-                      rows={5}
-                      className="w-full px-4 py-3 bg-white border-3 border-black focus:shadow-neo outline-none transition-all font-bold placeholder:text-gray-400 resize-none text-sm"
-                      placeholder=" HOW CAN WE HELP YOU?"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-4 bg-black text-white font-black uppercase tracking-wider text-lg border-3 border-transparent hover:bg-white hover:text-black hover:border-black hover:shadow-neo transition-all flex items-center justify-center gap-2"
-                  >
-                    <Send size={18} strokeWidth={3} />
-                    Send Message
-                  </button>
-                </form>
               </div>
 
-              {/* Online Resources Card */}
+              {/* Grid links row */}
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white border-3 border-black p-6 shadow-small">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Globe size={18} className="text-highlight-teal" />
-                    <h4 className="font-heading font-black text-lg uppercase">Online Resources</h4>
+                <div className="glass-panel p-6 border border-white/10 hover:border-accent-cyan/40 transition-colors group">
+                  <div className="flex items-center gap-3 mb-5">
+                    <Globe size={18} className="text-accent-cyan group-hover:animate-spin" />
+                    <h4 className="font-heading font-black text-sm uppercase tracking-widest">Network Links</h4>
                   </div>
                   <ul className="space-y-3">
                     {[
-                      { name: 'Main Website', url: 'https://web.mitsgwalior.in' },
-                      { name: 'IMS Portal (MITS)', url: 'https://ims.mitsgwalior.in' },
-                      { name: 'IUMS Portal (MITS-DU)', url: 'https://iums.mitsgwalior.in' },
+                      { name: 'Root Hub', url: 'https://web.mitsgwalior.in' },
+                      { name: 'IMS Link', url: 'https://ims.mitsgwalior.in' },
+                      { name: 'IUMS Server', url: 'https://iums.mitsgwalior.in' },
                     ].map((link) => (
                       <li key={link.name}>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between group hover:bg-highlight-teal transition-all p-2 -m-2 border-2 border-transparent hover:border-black">
-                          <span className="text-xs font-bold uppercase text-black">{link.name}</span>
-                          <ExternalLink size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between hover:bg-white/5 p-2 rounded-lg transition-colors border border-transparent hover:border-white/10">
+                          <span className="text-[11px] font-bold uppercase text-slate-300">{link.name}</span>
+                          <ExternalLink size={14} className="text-slate-500" />
                         </a>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="bg-white border-3 border-black p-6 shadow-small">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Instagram size={18} className="text-highlight-pink" />
-                    <h4 className="font-heading font-black text-lg uppercase">Social Connect</h4>
+                <div className="glass-panel p-6 border border-white/10 hover:border-accent-magenta/40 transition-colors">
+                  <div className="flex items-center gap-3 mb-5">
+                    <Instagram size={18} className="text-accent-magenta" />
+                    <h4 className="font-heading font-black text-sm uppercase tracking-widest">Social Nodes</h4>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {[
-                      { icon: Github, href: 'https://github.com/CID-CELL', label: 'GitHub', color: 'bg-black text-white' },
-                      { icon: Linkedin, href: 'https://www.linkedin.com/company/cidcellmits/', label: 'LinkedIn', color: 'bg-highlight-blue' },
-                      { icon: Instagram, href: 'https://www.instagram.com/cidc_mitsgwalior', label: 'Instagram', color: 'bg-highlight-pink' },
-                      { icon: Mail, href: 'mailto:director@mitsgwalior.in', label: 'Email', color: 'bg-highlight-orange' },
+                      { icon: Github, href: 'https://github.com/CID-CELL', label: 'GitHub', color: 'hover:text-white hover:border-white hover:bg-white/10 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]' },
+                      { icon: Linkedin, href: 'https://www.linkedin.com/company/cidcellmits/', label: 'LinkedIn', color: 'hover:text-blue-400 hover:border-blue-400 hover:bg-blue-400/10 hover:shadow-[0_0_10px_rgba(59,130,246,0.3)]' },
+                      { icon: Instagram, href: 'https://www.instagram.com/cidc_mitsgwalior', label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-400 hover:bg-pink-400/10 hover:shadow-[0_0_10px_rgba(236,72,153,0.3)]' },
+                      { icon: Mail, href: 'mailto:director@mitsgwalior.in', label: 'Email', color: 'hover:text-orange-400 hover:border-orange-400 hover:bg-orange-400/10 hover:shadow-[0_0_10px_rgba(249,115,22,0.3)]' },
                     ].map(({ icon: Icon, href, label, color }) => (
                       <a
                         key={label}
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`w-10 h-10 border-2 border-black flex items-center justify-center transform hover:-translate-y-1 transition-all shadow-neo-sm ${color}`}
+                        className={`w-11 h-11 bg-surface border border-white/10 rounded-full flex items-center justify-center text-slate-400 transition-all ${color}`}
                         title={label}
                       >
-                        <Icon size={18} strokeWidth={2.5} />
+                        <Icon size={18} />
                       </a>
                     ))}
                   </div>
-                  <p className="text-[10px] font-bold text-gray-500 uppercase mt-4 tracking-widest">Official CID-Cell Handles</p>
                 </div>
               </div>
+
             </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Map Section */}
-      <section className="relative border-b-3 border-black">
-        <div className="border-b-3 border-black px-6 py-4 bg-highlight-yellow flex items-center gap-3">
-          <MapPin size={22} strokeWidth={2.5} />
-          <span className="font-heading font-black text-lg uppercase">Madhav Institute of Technology and Science, Gwalior</span>
+      <section className="relative h-[480px] w-full mt-10 filter grayscale contrast-125 opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
+        <div className="absolute top-0 left-0 w-full h-full bg-bg/50 pointer-events-none z-10"></div>
+        <div className="absolute top-4 left-4 md:top-8 md:left-8 z-20 glass-panel border border-white/10 p-4 flex items-center gap-3 shadow-glass backdrop-blur-xl">
+          <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center text-accent">
+            <MapPin size={16} />
+          </div>
+          <span className="font-heading font-black text-xs md:text-sm uppercase tracking-widest text-white">MITS Gwalior</span>
         </div>
-        <div className="w-full h-[480px]">
-          <iframe
-            title="MITS Gwalior Location"
-            src="https://maps.google.com/maps?q=Madhav+Institute+of+Technology+%26+Science,+Gwalior&hl=en&z=16&output=embed"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
+        <iframe
+          title="MITS Gwalior Location"
+          src="https://maps.google.com/maps?q=Madhav+Institute+of+Technology+%26+Science,+Gwalior&hl=en&z=16&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="relative z-0"
+        />
       </section>
-    </>
+    </div>
   );
 }

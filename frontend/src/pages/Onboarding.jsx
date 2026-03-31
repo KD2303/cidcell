@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { CheckCircle2, ChevronDown, LogOut } from 'lucide-react';
+import { CheckCircle2, ChevronDown, LogOut, ChevronRight, UploadCloud, X, Plus } from 'lucide-react';
 import { compressImage } from '../utils/compressImage';
 
 export const branches = [
@@ -153,7 +153,7 @@ export default function Onboarding() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (user?.userType !== 'mentor' && formData.skills.length === 0) {
-            alert('Please add at least one skill before saving.');
+            alert('Please add at least one capability before synchronization.');
             return;
         }
         setSaving(true);
@@ -170,98 +170,114 @@ export default function Onboarding() {
             }
         } catch (error) {
             console.error('Error saving profile:', error);
-            alert('Failed to save profile. Please try again.');
+            alert('Failed to synchronize profile. Please try again.');
         } finally {
             setSaving(false);
         }
     };
 
     /* ── shared input / select class ── */
-    const inputCls = "w-full border-2 border-primary rounded-lg px-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary bg-white font-body";
+    const inputCls = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-accent/50 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all placeholder:text-slate-500 backdrop-blur-md font-body";
 
     return (
-        <div className="min-h-screen bg-bg font-body" style={{ paddingTop: '72px' }}>
-            <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-5">
+        <div className="min-h-screen bg-bg relative overflow-hidden font-body pt-32 pb-20">
+            {/* Abstract Background Elements */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-blue/10 rounded-full blur-[100px] pointer-events-none -z-10 animate-pulse-slow"></div>
+
+            <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-8">
 
                 {/* Page header */}
-                <div className="flex items-start justify-between gap-4">
-                    <div className="relative">
-                        <div className="absolute -top-1 -right-2 w-full h-full bg-highlight-yellow border-2 border-primary -z-10 transform skew-x-6"></div>
-                        <span className="text-xl sm:text-2xl font-black uppercase text-primary border-b-4 border-primary inline-block pb-0.5 font-heading leading-tight bg-white px-2">
-                            {isEditing ? 'Edit Profile' : 'Complete Profile'}
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-6 relative">
+                    <div className="absolute -left-10 top-0 w-20 h-20 bg-accent/20 blur-[30px] rounded-full"></div>
+                    <div>
+                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent mb-2 block relative z-10">
+                            Initialization Sequence
                         </span>
-                        <p className="text-gray-500 text-sm font-semibold mt-3 normal-case pl-1">
+                        <h1 className="text-3xl sm:text-4xl font-black uppercase text-white tracking-widest font-heading leading-none drop-shadow-xl relative z-10">
+                            {isEditing ? 'Configure Profile' : 'Node Calibration'}
+                        </h1>
+                        <p className="text-slate-400 text-sm font-medium mt-3 font-body relative z-10">
                             {isEditing
-                                ? 'Update your professional details.'
-                                : `Welcome, ${resolvedName}! Set up your cell profile.`}
+                                ? 'Update your professional telemetry data.'
+                                : `Welcome, ${resolvedName}. Please set your parameters to integrate with the network.`}
                         </p>
                     </div>
+
                     {/* Sign out & go back button */}
                     <button
                         type="button"
                         onClick={() => { logout(); navigate('/auth'); }}
-                        className="shrink-0 flex items-center gap-1.5 border-2 border-primary bg-highlight-pink rounded-none px-4 py-2 text-xs font-black hover:bg-white transition-all shadow-neo-sm font-heading uppercase"
-                        title="Sign out and go back"
+                        className="btn-glass-danger px-5 py-2.5"
+                        title="Disconnect"
                     >
-                        <LogOut style={{ width: 14, height: 14 }} strokeWidth={3} />
-                        Exit
+                        <LogOut size={12} />
+                        Disconnect
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
 
                     {/* ── Profile Picture ── */}
-                    <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
-                        <div className="absolute -top-3 left-4 bg-highlight-yellow border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform rotate-1">
-                            Profile Picture
-                        </div>
-                        <div className="flex flex-col items-center gap-4 mt-2">
-                            <div className="relative group">
+                    <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative overflow-hidden group">
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent/10 blur-[30px] rounded-full pointer-events-none group-hover:bg-accent/20 transition-colors"></div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
+                             Visual Identification Log
+                        </h3>
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-6 relative z-10">
+                            <div className="relative group/avatar cursor-pointer shrink-0">
+                                <div className="absolute inset-0 bg-accent/20 rounded-full blur flex-1 -z-10 group-hover/avatar:bg-accent/40 transition-colors"></div>
                                 <img 
-                                    src={formData.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(resolvedName)}&background=random&size=128`} 
+                                    src={formData.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(resolvedName)}&background=050505&color=fff&size=128`} 
                                     alt="Profile" 
-                                    className="w-24 h-24 rounded-full border-4 border-primary shadow-neo object-cover"
+                                    className="w-28 h-28 rounded-full border-2 border-white/20 shadow-glass object-cover bg-bg transition-transform duration-500 group-hover/avatar:scale-105"
                                 />
                                 {uploadingImage && (
-                                    <div className="absolute inset-0 bg-white/50 flex items-center justify-center rounded-full border-4 border-primary">
-                                        <svg className="animate-spin w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                                        </svg>
+                                    <div className="absolute inset-0 bg-bg/80 backdrop-blur-sm flex items-center justify-center rounded-full border-2 border-accent">
+                                        <Loader2 className="animate-spin w-8 h-8 text-accent" />
                                     </div>
                                 )}
-                            </div>
-                            <div className="w-full max-w-xs">
+                                <div className="absolute bottom-0 right-0 w-8 h-8 bg-surface rounded-full border border-white/10 shadow-glass flex items-center justify-center text-slate-300 group-hover/avatar:text-accent group-hover/avatar:border-accent/50 transition-colors">
+                                    <UploadCloud size={14} />
+                                </div>
                                 <input 
                                     type="file" 
                                     accept="image/*"
                                     onChange={handleProfilePictureUpload}
                                     disabled={uploadingImage}
-                                    className="hidden" 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                                     id="profile-picture-upload"
                                 />
+                            </div>
+                            <div className="text-center sm:text-left">
+                                <p className="font-bold text-white uppercase tracking-widest text-sm mb-1">{resolvedName || 'Unknown Node'}</p>
+                                <p className="text-xs text-slate-400 font-medium mb-4">Update your visual signature. Max file size: 2MB.</p>
                                 <label 
                                     htmlFor="profile-picture-upload" 
-                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer font-bold text-xs uppercase ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    className={`btn-neo-secondary px-6 py-2 h-auto text-[9px] ${uploadingImage ? 'opacity-50 cursor-not-allowed hidden' : ''}`}
                                 >
-                                    {uploadingImage ? 'Uploading...' : 'Upload New Picture'}
+                                    Upload Signature
                                 </label>
                             </div>
                         </div>
                     </div>
 
                     {/* ── Identity (read-only) ── */}
-                    <div className="bg-white border-4 border-primary rounded-none p-5 shadow-neo relative">
-                        <div className="absolute -top-3 -left-2 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 transform -rotate-1">Google Identity</div>
-                        <div className="grid grid-cols-1 gap-3 pt-2">
+                    <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative">
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 relative z-10 flex items-center gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span> Authentication Metadata
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[
-                                { label: 'Enrollment', value: resolvedEnrollment || 'N/A', color: 'bg-highlight-blue/20' },
-                                { label: 'Full Name', value: resolvedName || 'N/A', color: 'bg-highlight-purple/20' },
-                                { label: 'Email', value: user.email, color: 'bg-highlight-yellow/20' },
-                            ].map(({ label, value, color }) => (
-                                <div key={label} className="flex items-center gap-3">
-                                    <span className="text-[10px] font-bold uppercase text-gray-500 tracking-wider w-24 shrink-0">{label}</span>
-                                    <span className={`text-sm font-bold text-primary ${color} border-2 border-primary px-3 py-2 flex-1 min-w-0 truncate shadow-neo-sm transform hover:translate-x-[1px] transition-transform`}>
+                                { label: 'Node ID (Enrollment)', value: resolvedEnrollment || 'Pending', color: 'text-accent-magenta border-accent-magenta/30 bg-accent-magenta/5' },
+                                { label: 'Signature (Name)', value: resolvedName || 'Pending', color: 'text-accent-blue border-accent-blue/30 bg-accent-blue/5' },
+                                { label: 'Contact (Email)', value: user.email, color: 'text-accent border-accent/30 bg-accent/5', className: "md:col-span-2" },
+                            ].map(({ label, value, color, className }) => (
+                                <div key={label} className={`flex flex-col gap-1.5 p-4 rounded-xl border border-white/5 bg-surface/30 ${className}`}>
+                                    <span className="text-[10px] font-bold uppercase text-slate-500 tracking-[0.2em]">{label}</span>
+                                    <span className={`text-sm font-bold uppercase tracking-wider min-w-0 truncate px-3 py-2 rounded-lg border flex items-center shadow-inner ${color}`}>
                                         {value}
                                     </span>
                                 </div>
@@ -270,62 +286,69 @@ export default function Onboarding() {
                     </div>
 
                     {user?.userType === 'mentor' ? (
-                        <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
-                            <div className="absolute -top-3 right-4 bg-highlight-teal border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform rotate-1">
-                                Mentor Profile <span className="text-primary">*</span>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                        <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative">
+                            <h3 className="text-[10px] font-bold text-accent-cyan uppercase tracking-widest mb-6 relative z-10 flex items-center gap-3">
+                                Mentor Clearance Parameters <span className="text-red-500">*</span>
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                                 <div className="sm:col-span-2">
-                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                        About You <span className="text-red-500">*</span>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                        Professional Overview <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
                                         name="aboutMentor"
                                         value={formData.aboutMentor}
                                         onChange={handleChange}
-                                        placeholder="Write a brief bio about your experience..."
+                                        placeholder="Outline your professional experience and mentorship capability..."
                                         required
                                         rows="3"
                                         className={inputCls + " resize-none"}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                        Domain of Interest <span className="text-red-500">*</span>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                        Primary Domain <span className="text-red-500">*</span>
                                     </label>
-                                    <select
-                                        name="domainOfExpertise"
-                                        value={formData.domainOfExpertise}
-                                        onChange={handleChange}
-                                        required
-                                        className={inputCls}
-                                    >
-                                        <option value="" disabled>Select Domain</option>
-                                        {predefinedDomains.map(d => (
-                                            <option key={d} value={d}>{d}</option>
-                                        ))}
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            name="domainOfExpertise"
+                                            value={formData.domainOfExpertise}
+                                            onChange={handleChange}
+                                            required
+                                            className={inputCls + " appearance-none"}
+                                        >
+                                            <option value="" disabled className="bg-bg text-white">Select Domain</option>
+                                            {predefinedDomains.map(d => (
+                                                <option key={d} value={d} className="bg-bg text-white">{d}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                        Expertise Tag <span className="text-red-500">*</span>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                        Specialized Array <span className="text-red-500">*</span>
                                     </label>
-                                    <select
-                                        name="expertise"
-                                        value={formData.expertise}
-                                        onChange={handleChange}
-                                        required
-                                        className={inputCls}
-                                    >
-                                        <option value="" disabled>Select Primary Expertise</option>
-                                        {predefinedExpertise.map(e => (
-                                            <option key={e} value={e}>{e}</option>
-                                        ))}
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            name="expertise"
+                                            value={formData.expertise}
+                                            onChange={handleChange}
+                                            required
+                                            className={inputCls + " appearance-none"}
+                                        >
+                                            <option value="" disabled className="bg-bg text-white">Select Primary Expertise</option>
+                                            {predefinedExpertise.map(e => (
+                                                <option key={e} value={e} className="bg-bg text-white">{e}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                        Department <span className="text-red-500">*</span>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                        Department Link <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative">
                                         <select
@@ -335,10 +358,10 @@ export default function Onboarding() {
                                             required
                                             className={inputCls + " appearance-none pr-8"}
                                         >
-                                            <option value="">Select your department</option>
-                                            {branches.map(b => <option key={b} value={b}>{b}</option>)}
+                                            <option value="" className="bg-bg text-white">Select operational department</option>
+                                            {branches.map(b => <option key={b} value={b} className="bg-bg text-white">{b}</option>)}
                                         </select>
-                                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                                     </div>
                                 </div>
                             </div>
@@ -346,15 +369,17 @@ export default function Onboarding() {
                     ) : (
                         <>
                     {/* ── Academic ── */}
-                    <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
-                        <div className="absolute -top-3 right-4 bg-highlight-teal border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform rotate-1">
-                            Academic Info <span className="text-primary">*</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                    <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-accent-blue opacity-50"></div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 relative z-10 flex items-center gap-2">
+                             Academic Parameters <span className="text-red-500">*</span>
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                             {/* Branch */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                    Branch <span className="text-red-500">*</span>
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                    Branch Specification <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
                                     <select
@@ -362,18 +387,18 @@ export default function Onboarding() {
                                         value={formData.branch}
                                         onChange={handleChange}
                                         required
-                                        className={inputCls + " appearance-none pr-8"}
+                                        className={inputCls + " appearance-none cursor-pointer"}
                                     >
-                                        <option value="">Select your branch</option>
-                                        {branches.map(b => <option key={b} value={b}>{b}</option>)}
+                                        <option value="" className="bg-bg text-slate-400">Select branch specification...</option>
+                                        {branches.map(b => <option key={b} value={b} className="bg-bg text-white">{b}</option>)}
                                     </select>
-                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                                 </div>
                             </div>
                             {/* Batch */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
-                                    Batch <span className="text-red-500">*</span>
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
+                                    Temporal Batch <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
                                     <select
@@ -381,64 +406,68 @@ export default function Onboarding() {
                                         value={formData.batch}
                                         onChange={handleChange}
                                         required
-                                        className={inputCls + " appearance-none pr-8"}
+                                        className={inputCls + " appearance-none cursor-pointer"}
                                     >
-                                        <option value="">Select your batch</option>
-                                        {availableBatches.map(b => <option key={b} value={b}>{b}</option>)}
+                                        <option value="" className="bg-bg text-slate-400">Select batch cycle...</option>
+                                        {availableBatches.map(b => <option key={b} value={b} className="bg-bg text-white">{b}</option>)}
                                     </select>
-                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* ── Skills ── */}
-                    <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
-                        <div className="absolute -top-3 left-4 bg-highlight-pink border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform -rotate-1">
-                            Technical Stack <span className="text-primary">*</span>
-                        </div>
-                        <div className="mt-2">
-                            <div className="flex flex-wrap gap-2 min-h-[48px] p-3 rounded-xl border-2 border-dashed border-primary bg-gray-50 mb-4">
+                    <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-accent-blue/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 relative z-10 flex items-center gap-2">
+                             Technical Architecture <span className="text-red-500">*</span>
+                        </h3>
+                        
+                        <div className="relative z-10">
+                            <div className="flex flex-wrap gap-2 min-h-[56px] p-4 rounded-xl border border-white/10 bg-surface/30 mb-6 shadow-inner">
                                 {formData.skills.length === 0
-                                    ? <span className="text-gray-400 text-xs italic self-center">No skills added yet</span>
+                                    ? <span className="text-slate-500 text-xs font-medium italic self-center uppercase tracking-widest w-full text-center">No capabilities registered</span>
                                     : formData.skills.map(skill => (
-                                        <span key={skill} className="inline-flex items-center gap-1 bg-highlight-teal border-2 border-primary px-2.5 py-1 text-xs font-bold rounded-full shadow-neo-sm">
+                                        <span key={skill} className="inline-flex items-center gap-2 bg-accent/10 border border-accent/40 px-3 py-1.5 text-[10px] font-bold text-accent uppercase tracking-widest rounded-lg shadow-glow-purple">
                                             {skill}
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveSkill(skill)}
-                                                className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center hover:bg-red-500 transition-colors text-[10px] leading-none"
-                                            >×</button>
+                                                className="w-4 h-4 rounded-full bg-accent/20 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors flex items-center justify-center -mr-1"
+                                            >
+                                                <X size={10} strokeWidth={3} />
+                                            </button>
                                         </span>
                                     ))}
                             </div>
 
                             {/* Add skill */}
-                            <div className="flex gap-2 mb-4">
+                            <div className="flex gap-3 mb-6">
                                 <input
                                     type="text"
                                     value={customSkill}
                                     onChange={(e) => setCustomSkill(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill(customSkill))}
-                                    placeholder="Type a skill & press Enter…"
-                                    className="flex-1 min-w-0 border-2 border-primary rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                    placeholder="Input custom protocol..."
+                                    className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-accent/50 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all placeholder:text-slate-500 backdrop-blur-md font-body"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => handleAddSkill(customSkill)}
-                                    className="shrink-0 bg-highlight-pink border-2 border-primary font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-highlight-purple transition-colors"
+                                    className="btn-neo-secondary px-6 py-3 h-auto"
                                 >
-                                    Add
+                                    <Plus size={14} /> Inject
                                 </button>
                             </div>
 
                             {/* Quick add */}
-                            <div>
-                                <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Quick add:</span>
-                                <div className="flex flex-wrap gap-2 mt-2">
+                            <div className="pt-4 border-t border-white/10">
+                                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-[0.2em] mb-3 block">Preset Architectures:</span>
+                                <div className="flex flex-wrap gap-2">
                                     {predefinedSkills.map(s => (
                                         <button key={s} type="button" onClick={() => handleAddSkill(s)}
-                                            className="text-[11px] border border-primary/30 bg-white px-3 py-1.5 rounded-full hover:bg-highlight-teal hover:border-primary transition-colors font-semibold text-gray-600 normal-case">
+                                            className="text-[10px] border border-white/10 bg-surface/50 px-3 py-1.5 rounded-lg hover:border-accent hover:text-accent transition-colors font-bold text-slate-300 uppercase tracking-wider backdrop-blur-sm">
                                             + {s}
                                         </button>
                                     ))}
@@ -448,23 +477,24 @@ export default function Onboarding() {
                     </div>
 
                     {/* ── Social Links ── */}
-                    <div className="bg-white border-4 border-primary rounded-none p-6 shadow-neo relative">
-                        <div className="absolute -top-3 right-4 bg-highlight-yellow border-2 border-primary px-3 py-1 font-heading uppercase text-xs shadow-neo-sm transform rotate-2">
-                            Public Profiles
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                    <div className="glass-panel border border-white/10 rounded-2xl p-6 md:p-8 shadow-glass relative">
+                         <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 relative z-10 flex items-center gap-2">
+                             External Uplinks
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                             {[
-                                { name: 'linkedin', label: 'LinkedIn', placeholder: 'https://linkedin.com/in/...', required: true },
-                                { name: 'github', label: 'GitHub', placeholder: 'https://github.com/...', required: true },
-                                { name: 'leetcode', label: 'LeetCode', placeholder: 'https://leetcode.com/u/...', required: false },
-                                { name: 'other', label: 'Portfolio / Website', placeholder: 'https://...', required: false },
+                                { name: 'linkedin', label: 'LinkedIn Comms', placeholder: 'https://linkedin.com/in/...', required: true },
+                                { name: 'github', label: 'GitHub Repository', placeholder: 'https://github.com/...', required: true },
+                                { name: 'leetcode', label: 'LeetCode Matrix', placeholder: 'https://leetcode.com/u/...', required: false },
+                                { name: 'other', label: 'Personal Domain', placeholder: 'https://...', required: false },
                             ].map(({ name, label, placeholder, required }) => (
                                 <div key={name}>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1.5 normal-case">
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">
                                         {label}{' '}
                                         {required
                                             ? <span className="text-red-500">*</span>
-                                            : <span className="text-gray-300 font-normal">(optional)</span>}
+                                            : <span className="text-slate-600 font-normal">/ Optional</span>}
                                     </label>
                                     <input
                                         type="url"
@@ -487,23 +517,31 @@ export default function Onboarding() {
                     <button
                         type="submit"
                         disabled={saving}
-                        className="w-full flex items-center justify-center gap-2 bg-highlight-yellow border-2 border-primary font-black uppercase text-sm py-4 rounded-2xl shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 font-heading"
+                        className="btn-neo w-full py-5 text-sm tracking-[0.3em]"
                     >
-                        {saving ? (
-                            <>
-                                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                                </svg>
-                                Saving…
-                            </>
-                        ) : (
-                            <>
-                                <CheckCircle2 className="w-5 h-5" />
-                                {isEditing ? 'Save Changes' : 'Complete Profile & Save'}
-                            </>
-                        )}
+                        {/* Shimmer effect */}
+                        <div className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
+                        
+                        <div className="relative z-10 flex items-center gap-3">
+                            {saving ? (
+                                <>
+                                    <Loader2 className="animate-spin w-5 h-5" />
+                                    Synchronizing Arrays...
+                                </>
+                            ) : (
+                                <>
+                                    {isEditing ? 'Compile Changes' : 'Finalize Calibration'}
+                                    <ChevronRight className="w-5 h-5" />
+                                </>
+                            )}
+                        </div>
                     </button>
+                    
+                    {!isEditing && (
+                        <p className="text-center text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-4">
+                            You can modify these parameters later in your profile matrix.
+                        </p>
+                    )}
                 </form>
             </div >
         </div >

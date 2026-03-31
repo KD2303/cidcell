@@ -20,7 +20,7 @@ const navLinks = [
     isDropdown: true,
     children: [
       { name: 'Projects', path: '/projects' },
-      { name: 'Submit Project', path: '/projects/submit', authRequired: true, studentOrMentor: true },
+      { name: 'Start Project', path: '/projects/submit', authRequired: true, studentOrMentor: true },
       { name: 'My Projects', path: '/projects/mine', authRequired: true, studentOrMentor: true },
       { name: 'Mentors', path: '/mentors' },
     ]
@@ -46,18 +46,15 @@ export default function Navbar() {
   const { user, socket, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Notifications State
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [chatUnread, setChatUnread] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const [mobileDropdowns, setMobileDropdowns] = useState({});
   
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
 
-  // Handle outside clicks for dropdowns
   useEffect(() => {
     function handleClickOutside(event) {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
@@ -77,7 +74,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fetch initial notifications
   useEffect(() => {
     if (user) {
       axios.get(`${API}/notifications`, authHeaders())
@@ -92,7 +88,6 @@ export default function Navbar() {
     }
   }, [user]);
 
-  // Fetch chat unread total
   useEffect(() => {
     if (user) {
       axios.get(`${API}/chat/unread-counts`, authHeaders())
@@ -107,7 +102,6 @@ export default function Navbar() {
     }
   }, [user]);
 
-  // Listen for real-time notifications
   useEffect(() => {
     if (socket) {
       const handleNewNotif = (notif) => {
@@ -116,7 +110,6 @@ export default function Navbar() {
       };
       socket.on('new_notification', handleNewNotif);
 
-      // Bump chat unread on new DMs (when not on /chat page)
       const handleNewDM = () => {
         if (!window.location.pathname.startsWith('/chat')) {
           setChatUnread(prev => prev + 1);
@@ -151,48 +144,37 @@ export default function Navbar() {
 
   const [mobileExpanded, setMobileExpanded] = useState(null);
 
-  // Disable scrolling when mobile menu is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-      setMobileExpanded(null); // Reset when closing
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    if (isOpen) document.body.style.overflow = 'hidden';
+    else { document.body.style.overflow = 'unset'; setMobileExpanded(null); }
+    return () => document.body.style.overflow = 'unset';
   }, [isOpen]);
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
-        ? 'bg-white border-b-4 border-primary shadow-sm py-1'
-        : 'bg-transparent border-b-4 border-transparent shadow-none py-3'
-        }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-500 bg-transparent ${scrolled ? 'py-3' : 'py-5'}`}
+      style={{ willChange: 'padding' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-16 md:h-20">
+        <div className="relative flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0 z-10">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 z-10 relative">
+            <div className="absolute -inset-2 bg-gradient-to-r from-accent/20 to-accent-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
             <img
               src="/logo.png"
               alt="CID-Cell Logo"
-              className="w-10 h-10 md:w-12 md:h-12 object-contain shadow-neo group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all"
+              className="w-10 h-10 md:w-12 md:h-12 object-contain relative z-10 brightness-200 drop-shadow-[0_0_8px_rgba(217,70,239,0.5)]"
             />
-            <div className="hidden sm:flex flex-col justify-center">
-              <span className="text-primary font-heading text-xl md:text-2xl uppercase tracking-widest leading-none block">
-                CID-Cell
-              </span>
-              <span className="text-primary font-bold text-[10px] md:text-xs uppercase tracking-widest bg-highlight-teal inline-block px-1 border border-primary mt-0.5 transform -rotate-1 self-start">
-                CSE DEPT
+            <div className="hidden sm:flex flex-col justify-center relative z-10">
+              <span className="text-white font-heading font-black text-xl md:text-2xl tracking-tighter leading-none block group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-accent-magenta transition-all">
+                CID-CELL
               </span>
             </div>
           </Link>
 
           {/* Desktop nav - Centered */}
           <div className="hidden xl:flex flex-1 justify-center items-center px-4">
-            <div className="flex items-center bg-white border-4 border-primary shadow-neo px-1 py-1">
+            <div className="flex items-center bg-surface/50 backdrop-blur-md border border-border rounded-full p-1 shadow-glass">
               {navLinks.filter(link => {
                 if (link.isDropdown) return true;
                 if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
@@ -217,18 +199,18 @@ export default function Navbar() {
                   });
                   if (visibleChildren.length === 0) return null;
                   return (
-                    <div key={link.name} className="relative group/navdrop">
-                      <button className="px-3 lg:px-4 py-2 font-bold uppercase text-[12px] lg:text-sm transition-all border-2 border-transparent text-primary hover:bg-highlight-yellow hover:border-primary hover:shadow-neo-sm hover:-translate-y-[2px] flex items-center gap-1">
-                        {link.name} <ChevronDown size={14} className="group-hover/navdrop:-rotate-180 transition-transform" />
+                    <div key={link.name} className="relative group/navdrop px-1">
+                      <button className="px-5 py-2 font-medium text-sm transition-all rounded-full text-secondary hover:text-white hover:bg-white/5 flex items-center gap-1">
+                        {link.name} <ChevronDown size={14} className="group-hover/navdrop:-rotate-180 transition-transform opacity-50" />
                       </button>
-                      <div className="absolute left-0 top-[110%] w-48 bg-white border-3 border-primary shadow-neo rounded-xl overflow-hidden opacity-0 invisible group-hover/navdrop:opacity-100 group-hover/navdrop:visible transition-all z-[9999] flex flex-col">
+                      <div className="absolute left-1/2 -translate-x-1/2 top-[120%] w-48 glass-panel opacity-0 invisible group-hover/navdrop:opacity-100 group-hover/navdrop:visible z-[9999] flex flex-col p-2 overflow-hidden transform group-hover/navdrop:translate-y-0 translate-y-2 transition-all duration-300">
                         {visibleChildren.map(child => (
                           <NavLink
                             key={child.name}
                             to={child.path}
                             className={({ isActive }) =>
-                              `block px-4 py-3 font-bold uppercase border-b-2 border-slate-100 transition-colors text-[10px] hover:bg-highlight-blue hover:text-primary ${
-                                isActive ? 'bg-highlight-purple text-primary shadow-neo-sm' : 'text-primary'
+                              `block px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                                isActive ? 'bg-gradient-to-r from-accent/20 to-accent-magenta/20 text-white shadow-glow-purple border border-accent/30' : 'text-secondary hover:bg-white/5 hover:text-white'
                               }`
                             }
                           >
@@ -249,10 +231,10 @@ export default function Navbar() {
                       '/dashboard'
                   ) : link.path}
                   className={({ isActive }) =>
-                    `px-3 lg:px-4 py-2 font-bold uppercase text-[12px] lg:text-sm transition-all border-2 ${isActive
-                      ? 'bg-highlight-purple border-primary shadow-neo-sm -translate-y-[2px]'
-                      : 'border-transparent text-primary hover:bg-highlight-yellow hover:border-primary hover:shadow-neo-sm hover:-translate-y-[2px]'
-                    } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black shadow-neo-sm' : ''}`
+                    `mx-1 px-5 py-2 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 ${isActive
+                      ? 'bg-gradient-to-r from-accent/20 to-accent-magenta/20 text-white shadow-glow-purple border border-accent/30 scale-105'
+                      : 'text-secondary hover:bg-white/5 hover:text-white'
+                    }`
                   }
                 >
                   {link.name}
@@ -262,72 +244,68 @@ export default function Navbar() {
           </div>
 
           {/* Actions - Right side */}
-          <div className="hidden md:flex items-center gap-2 pl-2 z-10 shrink-0">
-            {/* GitHub Org External Link */}
+          <div className="hidden md:flex items-center gap-3 pl-2 z-10 shrink-0">
             <a 
               href="https://github.com/CID-CELL" 
               target="_blank" 
-              className="p-2 bg-primary text-white rounded-full border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-highlight-yellow hover:text-primary transition-all -translate-y-0.5"
-              title="CID-CELL GitHub Organization"
+              className="p-2.5 rounded-full border border-border text-secondary hover:text-white hover:bg-white/5 hover:border-accent transition-all duration-300"
+              title="GitHub Organization"
             >
-              <Github size={18} strokeWidth={2.5} />
+              <Github size={18} />
             </a>
 
             {user ? (
-              <div className="flex items-center gap-3 ml-2">
-                {/* Chat Icon */}
+              <div className="flex items-center gap-2 pr-1">
                 <Link 
                   to="/chat" 
                   onClick={() => setChatUnread(0)}
-                  className="relative p-2 bg-white text-primary rounded-full border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-highlight-blue transition-all -translate-y-0.5"
+                  className="relative p-2.5 rounded-full border border-border text-secondary hover:text-white hover:bg-white/5 hover:border-accent transition-all duration-300"
                   title="Messages"
                 >
-                  <MessageSquare size={18} strokeWidth={2.5} />
+                  <MessageSquare size={18} />
                   {chatUnread > 0 && 
-                    <span className="absolute -top-2 -right-2 w-5 h-5 bg-highlight-pink text-primary text-[10px] font-black flex items-center justify-center rounded-full border-2 border-primary shadow-neo-sm">
+                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-glow-purple">
                       {chatUnread > 9 ? '9+' : chatUnread}
                     </span>
                   }
                 </Link>
 
-                {/* Notification Bell */}
                 <div className="relative" ref={notificationDropdownRef}>
                   <button 
                     onClick={() => setShowDropdown(!showDropdown)} 
-                    className="relative p-2 bg-white text-primary rounded-full border-2 border-primary shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-highlight-yellow transition-all -translate-y-0.5"
+                    className={`relative p-2.5 rounded-full border border-border transition-all duration-300 ${showDropdown ? 'bg-white/10 text-white border-accent' : 'text-secondary hover:text-white hover:bg-white/5'}`}
                   >
-                    <Bell size={18} strokeWidth={2.5} />
+                    <Bell size={18} />
                     {unreadCount > 0 && 
-                      <span className="absolute -top-2 -right-2 w-5 h-5 bg-highlight-pink text-primary text-[10px] font-black flex items-center justify-center rounded-full border-2 border-primary shadow-neo-sm">
+                      <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-glow-purple">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     }
                   </button>
 
-                  {/* Dropdown menu */}
                   {showDropdown && (
-                    <div className="absolute right-0 mt-4 w-80 bg-white border-3 border-primary shadow-neo rounded-xl overflow-hidden z-[9999]">
-                      <div className="p-3 border-b-3 border-primary bg-highlight-blue flex justify-between items-center">
-                        <span className="font-black text-xs text-primary uppercase tracking-widest">Notifications</span>
+                    <div className="absolute right-0 mt-4 w-80 glass-panel overflow-hidden z-[9999] animate-fade-in-up">
+                      <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                        <span className="font-medium text-sm text-white flex items-center gap-2"><Bell size={14} className="text-accent" /> Notifications</span>
                         {unreadCount > 0 && (
-                          <button onClick={markAllAsRead} className="text-[9px] font-black uppercase text-primary/70 hover:text-primary transition-colors">Mark all read</button>
+                          <button onClick={markAllAsRead} className="text-xs text-secondary hover:text-white transition-colors">Mark all read</button>
                         )}
                       </div>
-                      <div className="max-h-80 overflow-y-auto">
+                      <div className="max-h-80 overflow-y-auto custom-scrollbar-dark p-2">
                         {notifications.length === 0 ? (
-                          <div className="p-6 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">You have no notifications</div>
+                          <div className="p-6 text-center text-xs text-secondary">You have no new notifications</div>
                         ) : (
                           notifications.map(n => (
-                            <div key={n._id} className={`p-4 border-b-2 border-slate-100 hover:bg-slate-50 transition-colors ${!n.isRead ? 'bg-blue-50/30' : ''}`}>
-                              <p className="text-xs text-slate-700 mb-2 font-medium">{n.message}</p>
+                            <div key={n._id} className={`p-3 rounded-lg mb-1 transition-colors ${!n.isRead ? 'bg-accent/10 border border-accent/20' : 'hover:bg-white/5'}`}>
+                              <p className="text-sm text-gray-300 mb-2">{n.message}</p>
                               <div className="flex justify-between items-center">
                                 {n.link && (
-                                  <button onClick={() => { setShowDropdown(false); if (!n.isRead) markAsRead(n._id); navigate(n.link); }} className="text-[9px] font-black text-highlight-purple hover:underline uppercase tracking-widest">View details</button>
+                                  <button onClick={() => { setShowDropdown(false); if (!n.isRead) markAsRead(n._id); navigate(n.link); }} className="text-xs text-accent hover:text-white transition-colors">View details</button>
                                 )}
                                 {!n.isRead ? (
-                                  <button onClick={(e) => markAsRead(n._id, e)} className="text-[10px] font-black text-slate-300 hover:text-highlight-green uppercase flex items-center gap-1 transition-colors"><Check size={12} strokeWidth={3} /> Mark read</button>
+                                  <button onClick={(e) => markAsRead(n._id, e)} className="text-xs text-secondary hover:text-white flex items-center gap-1 transition-colors"><Check size={12} /> Mark read</button>
                                 ) : (
-                                  <span className="text-[9px] font-bold text-slate-300 uppercase">Read</span>
+                                  <span className="text-xs text-zinc-600">Read</span>
                                 )}
                               </div>
                             </div>
@@ -338,79 +316,55 @@ export default function Navbar() {
                   )}
                 </div>
 
-                {/* Profile Picture Dropdown */}
-                <div className="relative group/profile border-2 border-primary bg-white pl-2 pr-3 py-1 rounded-full shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer flex items-center gap-2"
-                     onClick={() => { setShowProfileDropdown(!showProfileDropdown); setShowDropdown(false); }}
-                     ref={profileDropdownRef}
-                >
-                  <div className="relative">
-                    <img
-                      src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}`}
-                      alt="Profile"
-                      className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border border-primary object-cover"
-                    />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border border-white rounded-full"></div>
+                <div className="relative group pl-1" onClick={() => { setShowProfileDropdown(!showProfileDropdown); setShowDropdown(false); }} ref={profileDropdownRef}>
+                  <div className={`flex items-center gap-2 p-1.5 pr-3 rounded-full border border-border cursor-pointer transition-all duration-300 ${showProfileDropdown ? 'bg-white/10 border-accent shadow-glow-purple' : 'bg-surface hover:bg-white/5'}`}>
+                    <div className="relative">
+                      <img src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}`} alt="Profile" className="w-8 h-8 rounded-full border border-white/20 object-cover" />
+                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#050505] rounded-full"></div>
+                    </div>
+                    <span className="font-medium text-sm text-white truncate max-w-[80px]">
+                      {user.username.split(' ')[0]}
+                    </span>
+                    <ChevronDown size={14} className={`text-secondary transition-transform ${showProfileDropdown ? 'rotate-180 text-white' : ''}`} />
                   </div>
-                  <span className="font-bold text-xs uppercase tracking-widest text-primary truncate max-w-[80px]">
-                    {user.username.split(' ')[0]}
-                  </span>
-                  <ChevronDown size={14} className={`text-primary transition-transform ${showProfileDropdown ? 'rotate-180' : ''}`} />
 
-                  {/* Dropdown Menu */}
                   {showProfileDropdown && (
-                    <div className="absolute right-0 top-full mt-3 w-48 bg-white border-3 border-primary shadow-neo rounded-xl overflow-hidden z-[9999]" onClick={e => e.stopPropagation()}>
-                       <Link 
-                         to={
-                           user?.userType?.toLowerCase() === 'admin' ? '/admin/dashboard' :
-                           user?.userType === 'faculty' ? '/faculty/dashboard' :
-                           user?.userType === 'mentor' ? '/mentor/dashboard' :
-                           '/dashboard'
-                         } 
-                         onClick={() => setShowProfileDropdown(false)} 
-                         className="flex items-center gap-2 px-4 py-3 hover:bg-highlight-teal transition-colors border-b-2 border-slate-100 font-bold text-xs uppercase text-primary"
-                       >
-                         <LayoutDashboard size={14} strokeWidth={3} /> Dashboard
+                    <div className="absolute right-0 top-full mt-3 w-56 glass-panel overflow-hidden z-[9999] animate-fade-in-up p-2" onClick={e => e.stopPropagation()}>
+                       <div className="px-3 py-2 border-b border-border/50 mb-2">
+                         <p className="text-sm text-white truncate font-medium">{user.username}</p>
+                         <p className="text-xs text-secondary truncate">{user.email}</p>
+                       </div>
+                       <Link to={user?.userType?.toLowerCase() === 'admin' ? '/admin/dashboard' : user?.userType === 'faculty' ? '/faculty/dashboard' : user?.userType === 'mentor' ? '/mentor/dashboard' : '/dashboard'} onClick={() => setShowProfileDropdown(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 text-secondary hover:text-white transition-colors text-sm font-medium">
+                         <LayoutDashboard size={16} /> Dashboard
                        </Link>
-                       <Link to="/profile" onClick={() => setShowProfileDropdown(false)} className="flex items-center gap-2 px-4 py-3 hover:bg-highlight-yellow transition-colors border-b-2 border-slate-100 font-bold text-xs uppercase text-primary">
-                         <User size={14} strokeWidth={3} /> Profile
+                       <Link to="/profile" onClick={() => setShowProfileDropdown(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 text-secondary hover:text-white transition-colors text-sm font-medium">
+                         <User size={16} /> Profile
                        </Link>
-                       <button onClick={() => { setShowProfileDropdown(false); setShowDropdown(true); }} className="w-full flex items-center gap-2 px-4 py-3 hover:bg-highlight-pink transition-colors border-b-2 border-slate-100 font-bold text-xs uppercase text-primary text-left">
-                         <Bell size={14} strokeWidth={3} /> Notifications
-                       </button>
-                       <Link to="/chat" onClick={() => setShowProfileDropdown(false)} className="flex items-center gap-2 px-4 py-3 hover:bg-highlight-blue transition-colors border-b-2 border-slate-100 font-bold text-xs uppercase text-primary">
-                         <MessageSquare size={14} strokeWidth={3} /> Chat
-                       </Link>
-                       <button onClick={() => { setShowProfileDropdown(false); logout(); navigate('/'); }} className="w-full flex items-center gap-2 px-4 py-3 hover:bg-red-200 text-red-600 transition-colors font-bold text-xs uppercase text-left group">
-                         <LogOut size={14} strokeWidth={3} className="text-red-500 group-hover:text-red-700" /> <span className="text-red-600 group-hover:text-red-700">Logout</span>
+                       <button onClick={() => { setShowProfileDropdown(false); logout(); navigate('/'); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors text-sm font-medium">
+                         <LogOut size={16} /> Logout
                        </button>
                     </div>
                   )}
                 </div>
-             </div>
+              </div>
             ) : (
-              <Link
-                to="/auth"
-                className="px-4 py-2 font-bold uppercase text-xs lg:text-sm border-2 border-primary bg-white hover:bg-highlight-blue shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-lg"
-              >
-                Login
-              </Link>
+              <Link to="/auth" className="btn-neo ml-2">Login</Link>
             )}
           </div>
 
           {/* Mobile toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 border-2 border-primary bg-white shadow-neo active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all rounded-lg"
-            aria-label="Toggle menu"
+            className="md:hidden p-2 rounded-full border border-border bg-surface text-white hover:bg-white/10 transition-colors"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
         {/* Mobile menu overlay */}
         {isOpen && (
-          <div className="absolute top-full left-0 w-full md:hidden px-4 pb-24 overflow-y-auto animate-fade-in-up bg-bg/95 backdrop-blur-sm border-b-2 border-primary shadow-neo h-[calc(100vh-64px)] z-40">
-            <div className="bg-white border-3 border-primary shadow-neo rounded-xl p-4 space-y-2 mt-4 mb-8">
+          <div className="absolute top-full left-0 w-full md:hidden px-4 pb-24 overflow-y-auto animate-fade-in-up bg-bg/95 backdrop-blur-3xl border-b border-border shadow-glass h-[calc(100vh-64px)] z-40">
+            <div className="glass-panel p-4 mt-4 space-y-1">
               {navLinks.filter(link => {
                 if (link.isDropdown) return true;
                 if (link.adminRequired && user?.userType?.toLowerCase() !== 'admin') return false;
@@ -438,25 +392,25 @@ export default function Navbar() {
                   const isExpanded = mobileExpanded === link.name;
 
                   return (
-                    <div key={link.name} className={`space-y-2 mt-2 bg-slate-50 border-3 transition-all rounded-xl p-2 pb-3 ${isExpanded ? 'border-primary' : 'border-transparent'}`}>
+                    <div key={link.name} className={`space-y-1 transition-all rounded-xl p-1 ${isExpanded ? 'bg-white/5 border border-white/10' : 'border border-transparent'}`}>
                        <button 
                          onClick={() => setMobileExpanded(isExpanded ? null : link.name)}
-                         className="w-full px-4 py-2 font-black uppercase text-primary text-xs flex items-center justify-between gap-2 hover:bg-slate-100 rounded-lg transition-colors"
+                         className="w-full px-4 py-3 font-medium text-white text-sm flex items-center justify-between rounded-lg hover:bg-white/5 transition-colors"
                        >
-                          <span className="flex items-center gap-2">{link.name}</span>
-                          <ChevronDown size={14} className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                          <span>{link.name}</span>
+                          <ChevronDown size={16} className={`text-secondary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                        </button>
                        {isExpanded && (
-                         <div className="space-y-2 animate-fade-in-down">
+                         <div className="space-y-1 px-2 pb-2">
                            {visibleChildren.map(child => (
                                <NavLink
                                  key={child.name}
                                  to={child.path}
                                  onClick={() => setIsOpen(false)}
                                  className={({ isActive }) =>
-                                   `block px-4 py-3 font-bold uppercase border-2 transition-all rounded-lg ml-2 text-[10px] ${isActive
-                                     ? 'bg-highlight-purple border-primary shadow-neo-sm'
-                                     : 'border-white hover:bg-highlight-blue hover:border-primary bg-white'
+                                   `block px-4 py-2.5 rounded-lg transition-all text-sm ${isActive
+                                     ? 'bg-accent/20 text-accent font-medium'
+                                     : 'text-secondary hover:bg-white/5 hover:text-white'
                                    }`
                                  }
                                >
@@ -479,33 +433,23 @@ export default function Navbar() {
                   ) : link.path}
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `block px-4 py-3 font-bold uppercase border-2 transition-all rounded-lg ${isActive
-                      ? 'bg-highlight-purple border-primary shadow-neo-sm'
-                      : 'border-transparent hover:bg-highlight-blue hover:border-primary'
-                    } ${link.name === 'Developers' && !isActive ? 'animate-pulse bg-highlight-pink border-primary text-black' : ''}`
+                    `block px-5 py-3 rounded-xl transition-all font-bold text-xs tracking-widest uppercase ${isActive
+                      ? 'bg-gradient-to-r from-accent/20 to-accent-magenta/20 text-white shadow-glow-purple'
+                      : 'text-white hover:bg-white/5'
+                    }`
                   }
                 >
                   {link.name}
                 </NavLink>
               )})}
 
-              {user ? (
-                <Link
-                  to="/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-center mt-2 w-full px-4 py-3 font-bold uppercase text-primary border-2 border-primary bg-highlight-yellow rounded-lg"
-                >
-                  My Profile
-                </Link>
-              ) : (
-                <Link
-                  to="/auth"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-center mt-2 w-full px-4 py-3 font-bold uppercase text-primary border-2 border-primary bg-highlight-yellow rounded-lg"
-                >
-                  Login
-                </Link>
-              )}
+              <div className="pt-4 mt-2 border-t border-border">
+                {user ? (
+                  <Link to="/profile" onClick={() => setIsOpen(false)} className="btn-neo w-full text-center">My Profile</Link>
+                ) : (
+                  <Link to="/auth" onClick={() => setIsOpen(false)} className="btn-neo w-full text-center">Login</Link>
+                )}
+              </div>
             </div>
           </div>
         )}

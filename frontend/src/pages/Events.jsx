@@ -54,125 +54,138 @@ export default function Events() {
 
   const getCategoryColor = (cat) => {
     switch (cat.toLowerCase()) {
-      case 'tech': return 'bg-highlight-blue';
-      case 'cultural': return 'bg-highlight-purple';
-      case 'sports': return 'bg-highlight-orange';
-      case 'educational': return 'bg-highlight-teal';
-      case 'trainig and mentorships': return 'bg-highlight-green';
-      default: return 'bg-highlight-yellow';
+      case 'tech': return 'text-accent-blue bg-accent-blue/10 border-accent-blue/30';
+      case 'cultural': return 'text-accent-magenta bg-accent-magenta/10 border-accent-magenta/30';
+      case 'sports': return 'text-orange-400 bg-orange-400/10 border-orange-400/30';
+      case 'educational': return 'text-accent-cyan bg-accent-cyan/10 border-accent-cyan/30';
+      case 'trainig and mentorships': return 'text-green-400 bg-green-400/10 border-green-400/30';
+      default: return 'text-accent bg-accent/10 border-accent/30';
     }
   };
 
   return (
     <>
       {/* Hero */}
-      <section className="pt-40 pb-20 bg-bg relative overflow-hidden border-b-3 border-primary">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-highlight-orange border-3 border-primary rounded-full shadow-neo opacity-80 animate-bounce-slow"></div>
-        <div className="absolute bottom-20 right-10 w-48 h-48 bg-highlight-blue border-3 border-primary transform -rotate-6 shadow-neo opacity-60"></div>
+      <section className="pt-40 pb-20 bg-bg relative overflow-hidden border-b border-border">
+        {/* Abstract Glowing Orb Background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[150px] pointer-events-none z-0"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-accent-magenta/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
         <div className="container-max mx-auto px-4 text-center relative z-10">
-          <div className="inline-block px-4 py-2 bg-white border-2 border-primary shadow-neo-sm transform rotate-1 mb-6">
-            <span className="font-bold uppercase tracking-widest text-sm">Join Our Community</span>
+          <div className="inline-flex px-4 py-1.5 glass-panel rounded-full border border-accent/20 mb-6 items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-accent shadow-glow-purple"></span>
+            <span className="font-semibold uppercase tracking-[0.2em] text-xs text-white">Event Matrix</span>
           </div>
-          <h1 className="font-heading text-6xl md:text-8xl font-black text-primary mb-6 uppercase leading-none">
-            Events
+          <h1 className="font-heading text-5xl md:text-7xl font-black text-white mb-6 uppercase leading-tight drop-shadow-2xl">
+            Upcoming <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-cyan">Events</span>
           </h1>
-          <p className="text-primary font-medium text-xl max-w-2xl mx-auto bg-white border-2 border-primary p-6 shadow-neo-sm transform -rotate-1">
-            Browse upcoming workshops, hackathons, and guest lectures hosted by CID Cell.
+          <p className="text-secondary font-medium text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+            Browse upcoming workshops, hackathons, and guest lectures hosted by CID-Cell. Join the network and upgrade your skills.
           </p>
         </div>
       </section>
 
       {/* Events Grid */}
-      <section className="section-padding bg-white min-h-[600px]">
-        <div className="container-max mx-auto px-4">
+      <section className="section-padding min-h-[600px] relative">
+        <div className="container-max mx-auto px-4 relative z-10">
           {/* Filters */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
-            <div className="bg-white border-3 border-primary p-2 rounded-xl sm:rounded-full shadow-neo flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActive(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase border-2 transition-all ${
-                    active === cat
-                      ? 'bg-primary text-white border-primary shadow-none transform translate-y-[1px]'
-                      : 'bg-white text-primary border-transparent hover:border-primary hover:bg-gray-100'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
+             <div className="glass-panel p-2 rounded-2xl md:rounded-full bg-white/[0.03] flex flex-wrap gap-2 justify-center max-w-4xl">
+               {categories.map((cat) => (
+                 <button
+                   key={cat}
+                   onClick={() => setActive(cat)}
+                   className={`px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                     active === cat
+                       ? 'bg-accent/20 text-white border border-accent/50 shadow-glow-purple'
+                       : 'bg-transparent text-slate-400 border border-transparent hover:text-white hover:bg-white/5'
+                   }`}
+                 >
+                   {cat}
+                 </button>
+               ))}
+             </div>
           </div>
 
           {loading ? (
-             <div className="flex justify-center py-20 font-bold text-primary animate-pulse text-xl">Loading events...</div>
+             <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+                <div className="font-medium text-secondary text-sm tracking-widest uppercase">Syncing Events...</div>
+             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((event, idx) => {
                 const isFull = event.registeredCount >= event.maxAttendees;
                 return (
                   <ScrollReveal key={event._id} delay={idx * 50}>
                     <div 
                       onClick={() => navigate(`/events/${event._id}`)}
-                      className="neo-card flex flex-col group relative h-full bg-white border-3 border-primary shadow-[8px_8px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden"
+                      className="glass-card flex flex-col group relative h-full transition-all duration-300 hover:shadow-glow-purple cursor-pointer overflow-hidden hover:-translate-y-1"
                     >
                       {/* Image Thumbnail */}
-                      <div className="w-full aspect-[2/1] bg-slate-50 border-b-3 border-primary overflow-hidden relative rounded-t-neo">
+                      <div className="w-full aspect-[2/1] bg-surface/50 border-b border-border overflow-hidden relative">
                         {event.image ? (
-                          <img src={event.image} alt={event.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                          <img src={event.image} alt={event.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100 mix-blend-screen" />
                         ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                          <div className="w-full h-full flex flex-col items-center justify-center text-secondary/30 bg-surface">
                              <ImageIcon size={40} />
                           </div>
                         )}
-                        {isFull && !registeredEventIds.has(event._id) && (
-                          <span className="absolute top-4 right-4 text-[10px] font-black uppercase px-2 py-1 border-2 border-primary bg-white text-red-500 shadow-neo-sm z-10">
-                            Housefull
-                          </span>
-                        )}
-                        {registeredEventIds.has(event._id) && (
-                          <span className="absolute top-4 right-4 text-[10px] font-black uppercase px-3 py-1.5 border-2 border-primary bg-highlight-green text-primary shadow-neo-sm z-10">
-                            Registered
-                          </span>
-                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent opacity-80"></div>
+
+                        {/* Badges */}
+                        <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
+                          {isFull && !registeredEventIds.has(event._id) && (
+                            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 backdrop-blur-md">
+                              Housefull
+                            </span>
+                          )}
+                          {registeredEventIds.has(event._id) && (
+                            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border border-green-400/30 bg-green-400/10 text-green-400 backdrop-blur-md">
+                              Registered
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      <div className={`p-4 border-b-3 border-primary flex justify-between items-center ${getCategoryColor(event.category)}`}>
-                        <span className="font-bold uppercase tracking-tight text-xs truncate max-w-[150px]">{event.category}</span>
-                        <span className="text-[10px] font-bold uppercase bg-white px-2 py-0.5 border-2 border-primary">
+                      {/* Info header */}
+                      <div className="px-5 pt-5 pb-3 flex justify-between items-center z-10">
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border ${getCategoryColor(event.category)} truncate max-w-[150px]`}>
+                          {event.category}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase text-secondary bg-surface border border-border px-2.5 py-1 rounded-md">
                           {event.type}
                         </span>
                       </div>
 
-                      <div className="p-6 flex-1 flex flex-col">
-                        <div className="flex items-center gap-2 mb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                           <Calendar size={12} /> {event.date}
+                      <div className="px-5 pb-6 flex-1 flex flex-col z-10">
+                        <div className="flex items-center gap-2 mb-3 text-[10px] font-semibold text-secondary uppercase tracking-widest">
+                           <Calendar size={12} className="text-accent" /> {event.date}
                         </div>
 
-                        <h3 className="font-heading text-2xl font-black text-primary mb-6 leading-tight group-hover:text-blue-600 transition-colors uppercase">
+                        <h3 className="font-heading text-xl font-bold text-white mb-5 leading-tight group-hover:text-accent transition-colors">
                           {event.title}
                         </h3>
 
-                        <div className="space-y-3 mb-8 flex-1">
-                          <div className="flex items-center gap-3 text-sm font-medium border-l-3 border-primary pl-3">
-                             <MapPin size={16} className="text-red-500" /> 
-                             <span className="truncate">{event.location}</span>
+                        <div className="space-y-3 mb-6 flex-1 text-xs">
+                          <div className="flex items-center gap-3 text-secondary font-medium">
+                             <MapPin size={14} className="text-accent-magenta" /> 
+                             <span className="truncate group-hover:text-white transition-colors">{event.location}</span>
                           </div>
-                          <div className="flex items-center gap-3 text-sm font-medium border-l-3 border-primary pl-3">
-                             <Clock size={16} className="text-blue-600" /> {formatTime12h(event.time) || 'Schedule TBD'}
+                          <div className="flex items-center gap-3 text-secondary font-medium">
+                             <Clock size={14} className="text-accent-cyan" /> 
+                             <span className="group-hover:text-white transition-colors">{formatTime12h(event.time) || 'Schedule TBD'}</span>
                           </div>
-                          <div className="flex items-center gap-3 text-sm font-medium border-l-3 border-primary pl-3">
-                             <Users size={16} className="text-purple-600" /> 
-                             <span>{event.registeredCount} / {event.maxAttendees} Joined</span>
+                          <div className="flex items-center gap-3 text-secondary font-medium">
+                             <Users size={14} className="text-green-400" /> 
+                             <span className="group-hover:text-white transition-colors">{event.registeredCount} / {event.maxAttendees} Joined</span>
                           </div>
                         </div>
 
-                        <button 
-                          className="w-full py-3 bg-white border-3 border-primary font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
-                        >
-                          View Details <ArrowRight size={18} />
-                        </button>
+                        <div className="pt-4 border-t border-border mt-auto flex items-center justify-between text-secondary group-hover:text-accent transition-colors">
+                           <span className="text-xs font-semibold tracking-widest uppercase">View Details</span>
+                           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
                       </div>
                     </div>
                   </ScrollReveal>
@@ -182,8 +195,11 @@ export default function Events() {
           )}
 
           {!loading && filtered.length === 0 && (
-            <div className="text-center py-20 border-3 border-dashed border-slate-200 rounded-3xl">
-              <p className="font-bold text-slate-400 uppercase tracking-widest">No events found in this category</p>
+            <div className="flex flex-col items-center justify-center py-20 glass-panel border border-dashed border-border/50 max-w-2xl mx-auto">
+              <div className="w-16 h-16 rounded-full bg-surface border border-border flex items-center justify-center mb-4 text-secondary">
+                 <Calendar size={24} />
+              </div>
+              <p className="font-semibold text-secondary uppercase tracking-widest text-sm">No Events found</p>
             </div>
           )}
         </div>

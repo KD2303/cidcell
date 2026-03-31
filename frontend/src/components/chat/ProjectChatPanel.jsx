@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import { Send, Users } from 'lucide-react';
+import { Send, Users, Terminal, ArrowLeft } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL;
 const SOCKET_URL = API.replace('/api', '');
 
-export default function ProjectChatPanel({ projectId, projectData }) {
+export default function ProjectChatPanel({ projectId, projectData, onBack }) {
   const token = localStorage.getItem('token');
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -87,80 +87,120 @@ export default function ProjectChatPanel({ projectId, projectData }) {
   const memberCount = 1 + (projectData?.contributors?.length || 0) + (projectData?.mentors?.length || 0);
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full bg-[#050505]/40 relative">
+      
       {/* Header */}
-      <div className="bg-white px-6 py-4 flex items-center gap-4 border-b-2 border-primary shadow-sm shrink-0">
-        <div className="w-10 h-10 rounded-full bg-highlight-purple border-2 border-primary flex items-center justify-center text-primary shrink-0">
-          <Users size={18} />
+      <div className="bg-[#0a0a0a]/80 backdrop-blur-xl px-4 py-3 sm:px-8 sm:py-5 flex items-center justify-between border-b border-white/5 shrink-0 z-10">
+        <div className="flex items-center gap-3 sm:gap-4">
+            <button
+                onClick={onBack}
+                className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors"
+                title="Back to Sidebar"
+            >
+                <ArrowLeft size={20} />
+            </button>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-accent/20 border border-accent/30 flex items-center justify-center text-accent shadow-glow-purple">
+                 <Users size={20} />
+            </div>
+            <div>
+               <h2 className="font-heading font-black text-sm sm:text-lg text-white uppercase tracking-tighter">{projectData?.title}</h2>
+               <div className="flex items-center gap-2 mt-1">
+                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-glow-purple"></div>
+                   <p className="text-[8px] font-black uppercase text-slate-500 tracking-[0.2em]">
+                       Project Hub · {memberCount} Node{memberCount !== 1 ? 's' : ''} Connected
+                   </p>
+               </div>
+            </div>
         </div>
-        <div>
-          <h2 className="font-black text-lg text-primary uppercase">{projectData?.title}</h2>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-            Project Team Chat · {memberCount} members
-          </p>
+        <div className="hidden sm:flex items-center gap-3">
+             <div className="px-3 py-1.5 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
+                 <Terminal size={12} className="text-accent" />
+                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Secure Channel</span>
+             </div>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3">
+      {/* Group Messages Area */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar-dark p-4 sm:p-8 space-y-6">
         {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="font-bold text-slate-300 animate-pulse">Loading messages...</p>
-          </div>
+             <div className="flex flex-col items-center justify-center h-full gap-4 text-slate-600">
+                <div className="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Accessing Project Cloud...</p>
+             </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-300">
-            <p className="font-black uppercase tracking-widest text-sm">No messages yet</p>
-            <p className="text-xs font-bold italic mt-2">Start the conversation with your team.</p>
+          <div className="flex flex-col items-center justify-center h-full text-slate-700 animate-fade-in-up p-8 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6">
+                 <Users size={32} className="opacity-10 text-accent" />
+            </div>
+            <h3 className="font-heading font-black uppercase tracking-[0.3em] text-[12px] text-white">Project Protocol Idle</h3>
+            <p className="text-[10px] font-bold mt-2 opacity-50 uppercase tracking-widest max-w-[280px] leading-loose">The team board is clear. Initiate deployment coordination.</p>
           </div>
         ) : (
-          messages.map(msg => {
-            const isMe = msg.senderId?._id === currentUserId;
-            return (
-              <div key={msg._id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex gap-3 max-w-[80%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <img
-                    src={msg.senderId?.profilePicture || `https://ui-avatars.com/api/?name=${msg.senderId?.username}`}
-                    alt={msg.senderId?.username}
-                    className="w-8 h-8 rounded-full border-2 border-primary object-cover shadow-neo-sm shrink-0 mt-1"
-                  />
-                  <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                    <span className="text-[10px] font-black uppercase text-slate-400 mb-1 tracking-widest px-1">
-                      {isMe ? 'You' : msg.senderId?.username}
-                    </span>
-                    <div className={`px-4 py-3 border-2 border-primary shadow-neo-sm
-                      ${isMe ? 'bg-highlight-green rounded-2xl rounded-tr-none' : 'bg-white rounded-2xl rounded-tl-none'}
-                    `}>
-                      <p className="text-sm font-medium text-slate-800 break-words">{msg.text}</p>
-                      <span className="text-[9px] font-bold text-slate-400 mt-1 block opacity-70">
-                        {formatTime(msg.createdAt)}
-                      </span>
+          <div className="space-y-8">
+            {messages.map(msg => {
+                const isMe = msg.senderId?._id === currentUserId;
+                return (
+                <div key={msg._id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                    <div className={`flex gap-4 max-w-[90%] sm:max-w-[75%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                        {/* Avatar bubble - skip for me if needed, but standardizing with it */}
+                        <div className="shrink-0 mt-1">
+                             <img
+                                src={msg.senderId?.profilePicture || `https://ui-avatars.com/api/?name=${msg.senderId?.username}`}
+                                alt={msg.senderId?.username}
+                                className={`w-8 h-8 rounded-xl border border-white/10 object-cover shadow-2xl transition-all duration-300 ${isMe ? 'border-accent' : ''}`}
+                            />
+                        </div>
+
+                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                            <div className="flex items-center gap-2 mb-1 px-1">
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                    {isMe ? 'Local Admin' : msg.senderId?.username}
+                                </span>
+                                {!isMe && <div className="w-1 h-1 rounded-full bg-accent/40"></div>}
+                            </div>
+                            
+                            <div className={`relative px-4 py-3 border transition-all duration-300
+                                ${isMe 
+                                    ? 'bg-accent/10 border-accent/20 rounded-2xl rounded-tr-none text-white shadow-glow-purple shadow-[0_0_20px_rgba(139,92,246,0.05)]' 
+                                    : 'bg-white/[0.03] border-white/5 rounded-2xl rounded-tl-none text-slate-200 backdrop-blur-md'}
+                            `}>
+                                <p className="text-[13px] font-medium leading-relaxed break-words">{msg.text}</p>
+                                <div className={`flex items-center gap-1 mt-2 opacity-30 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                                    <span className="text-[8px] font-bold uppercase tracking-widest">
+                                        {formatTime(msg.createdAt)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-            );
-          })
+                );
+            })}
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="bg-white border-t-2 border-primary p-4 shrink-0">
-        <form onSubmit={handleSend} className="flex gap-3">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={e => setNewMessage(e.target.value)}
-            placeholder="Type a message to the team..."
-            className="flex-1 bg-slate-50 border-2 border-primary rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:ring-2 focus:ring-primary/30 transition-colors"
-          />
-          <button
-            type="submit"
-            disabled={!newMessage.trim()}
-            className="w-12 h-12 bg-primary text-white border-2 border-primary rounded-xl flex items-center justify-center shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Send size={18} />
-          </button>
+      {/* Message Input Field */}
+      <div className="bg-[#0a0a0a]/80 backdrop-blur-3xl border-t border-white/5 p-4 sm:p-6 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <form onSubmit={handleSend} className="max-w-5xl mx-auto flex gap-3 sm:gap-4">
+            <div className="flex-1 relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/20 to-accent-magenta/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+                <input
+                    type="text"
+                    value={newMessage}
+                    onChange={e => setNewMessage(e.target.value)}
+                    placeholder="Coordinate with the project nodes..."
+                    className="relative w-full bg-[#0a0a0a] border border-white/10 rounded-2xl px-6 py-4 text-[13px] text-white outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/20 transition-all placeholder:text-slate-700"
+                />
+            </div>
+            <button
+                type="submit"
+                disabled={!newMessage.trim()}
+                className="w-14 h-14 bg-accent text-white border border-accent/50 rounded-2xl flex items-center justify-center shadow-glow-purple hover:bg-accent-magenta hover:shadow-glow-purple active:scale-90 transition-all disabled:opacity-20 disabled:cursor-not-allowed shrink-0"
+            >
+                <Send size={20} />
+            </button>
         </form>
       </div>
     </div>

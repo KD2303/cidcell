@@ -4,8 +4,8 @@ import { io } from 'socket.io-client';
 
 export const AuthContext = createContext();
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = API_URL.replace('/api', '');
+const API_URL = import.meta.env.VITE_API_URL;
+const SOCKET_URL = API_URL ? API_URL.replace('/api', '') : '';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -30,9 +30,8 @@ export const AuthProvider = ({ children }) => {
             socketRef.current = s;
             setSocket(s);
 
-            s.on('connect', () => console.log('✅ WebSocket Connected'));
+            s.on('connect', () => {});
             s.on('connect_error', (err) => {
-                console.error('❌ WebSocket Error:', err.message);
                 if (err.message === 'xhr poll error') setOnlineUsers([]);
             });
 

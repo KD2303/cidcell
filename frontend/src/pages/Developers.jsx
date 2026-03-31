@@ -1,140 +1,88 @@
-import { Github, Linkedin, ExternalLink } from 'lucide-react';
+import { Github, Linkedin, Code } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
+import ScrollReveal from '../components/ScrollReveal';
+import ProfileCard from '../components/ui/ProfileCard';
 
-const developers = [
+import { developers } from '../data/developersData';
 
-  {
-    name: 'Krish Dargar',
-    role: 'Full Stack Developer',
-    github: 'https://github.com/KD2303',
-    linkedin: 'https://www.linkedin.com/in/krish-dargar-101774324/',
-    image: 'https://github.com/KD2303.png',
-    bio: 'Software engineer who loves solving complex problems and building scalable apps.',
-    color: 'bg-highlight-teal',
-  },
-  {
-    name: 'Anurag Mishra',
-    role: 'Full Stack Developer',
-    github: 'https://github.com/anuragmishra5159',
-    linkedin: 'https://www.linkedin.com/in/anuragmishra5159/',
-    image: 'https://github.com/anuragmishra5159.png',
-    bio: 'Passionate full-stack developer focusing on React and modern web technologies.',
-    color: 'bg-highlight-blue',
-  },
-  {
-    name: 'Harsh Manmode',
-    role: 'Backend Developer',
-    github: 'https://github.com/Harsh-2006-git',
-    linkedin: 'https://www.linkedin.com/in/harsh-manmode-2a0b91325/',
-    image: 'https://avatars.githubusercontent.com/u/192864282',
-    bio: 'Specialist in Node.js and database architecture, building robust and secure server-side solutions.',
-    color: 'bg-highlight-yellow',
-  },
-  {
-    name: 'Nemish Nagaria',
-    role: 'Developer',
-    github: 'https://github.com/thedebroglie',
-    linkedin: 'https://www.linkedin.com/in/nemish-nagaria-555198313/',
-    image: 'https://github.com/thedebroglie.png',
-    bio: 'Innovative software engineer focused on building efficient technological solutions.',
-    color: 'bg-highlight-pink',
-  },
-];
+function getColorConfig(color) {
+  switch(color) {
+    case 'blue': return { text: 'text-blue-400', border: 'border-blue-500/30 group-hover:border-blue-500/50', glow: 'shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]', bgGlow: 'bg-blue-500/10' };
+    case 'magenta': return { text: 'text-accent-magenta', border: 'border-accent-magenta/30 group-hover:border-accent-magenta/50', glow: 'shadow-[0_0_15px_rgba(217,70,239,0.3)] hover:shadow-[0_0_25px_rgba(217,70,239,0.5)]', bgGlow: 'bg-accent-magenta/10' };
+    case 'cyan': return { text: 'text-accent-cyan', border: 'border-accent-cyan/30 group-hover:border-accent-cyan/50', glow: 'shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)]', bgGlow: 'bg-accent-cyan/10' };
+    default: return { text: 'text-accent', border: 'border-accent/30 group-hover:border-accent/50', glow: 'shadow-glow-purple hover:shadow-[0_0_25px_rgba(139,92,246,0.6)]', bgGlow: 'bg-accent/10' };
+  }
+}
 
 export default function Developers() {
   return (
-    <div className="pt-32 min-h-screen pb-24 relative overflow-hidden bg-bg">
-      {/* Background Neo-Brutalist Elements */}
-      <div className="absolute top-40 left-10 w-24 h-24 bg-highlight-yellow border-4 border-primary shadow-neo hidden lg:block transform -rotate-12"></div>
-      <div className="absolute bottom-40 right-20 w-32 h-32 bg-highlight-pink border-4 border-primary shadow-neo transform rotate-12 hidden lg:block"></div>
-      <div className="absolute top-1/2 left-20 w-16 h-16 bg-highlight-teal border-4 border-primary shadow-neo hidden lg:block transform rotate-45"></div>
-      <div className="absolute top-60 right-1/4 w-20 h-20 bg-highlight-blue border-4 border-primary rounded-full shadow-neo hidden lg:block"></div>
+    <div className="pt-32 min-h-screen pb-24 relative overflow-hidden bg-bg text-white">
+      {/* Background Ambience */}
+      <div className="absolute top-20 right-10 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-accent-blue/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-slow"></div>
+      <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-accent-magenta/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
 
-      <div className="relative z-10 container-max mx-auto px-4">
-        <SectionHeading title="Site Developers" subtitle="Meet the creators of this platform" isCenter />
+      <div className="relative z-10 container-max mx-auto px-4 text-center">
+        <div className="inline-flex px-4 py-1.5 glass-panel rounded-full border border-accent/20 mb-6 items-center gap-2 shadow-glow-purple mx-auto">
+             <Code size={14} className="text-accent" />
+             <span className="font-semibold uppercase tracking-[0.2em] text-xs text-secondary">The Engineers</span>
+        </div>
+        <SectionHeading title="Site Developers" subtitle="" isCenter compact />
+        <p className="text-slate-300 font-medium max-w-2xl mx-auto -mt-6 mb-16">
+          Meet the creators behind the CID-Cell platform architecture.
+        </p>
       </div>
 
-      <div className="container-max mx-auto mt-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
-          {developers.map((dev, idx) => (
-            <div
-              key={idx}
-              className={`border-4 border-primary bg-white shadow-neo group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo relative z-10`}
-            >
-              {/* Header Box */}
-              <div className={`h-32 ${dev.color} border-b-4 border-primary flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(#000_2px,transparent_2px),linear-gradient(90deg,#000_2px,transparent_2px)] bg-[size:20px_20px]"></div>
-              </div>
-
-              {/* Adjusted Content Box: increased top padding, converted to centered flex layout */}
-              <div className="px-6 pb-10 relative bg-white pt-20 flex flex-col items-center text-center">
-                {/* Image wrapped in an inset to perfectly center horizontally without conflicting transforms */}
-                <div className="absolute -top-16 inset-x-0 w-full flex justify-center pointer-events-none">
-                  <img
-                    src={dev.image}
-                    alt={dev.name}
-                    className="w-32 h-32 border-4 border-primary shadow-neo object-cover bg-white z-10 relative transform -rotate-3 group-hover:rotate-0 transition-neo pointer-events-auto"
-                    onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=' + dev.name + '&background=random&color=white&size=128&bold=true'; }}
+      <div className="container-max mx-auto mt-8 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
+          {developers.map((dev, idx) => {
+            return (
+              <ScrollReveal key={idx} delay={idx * 100}>
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                  <ProfileCard
+                    name={dev.name}
+                    title={dev.role}
+                    avatarUrl={dev.image}
+                    handle={dev.github.split('/').pop() || 'developer'}
+                    status="Contributor"
+                    githubUrl={dev.github}
+                    linkedinUrl={dev.linkedin}
+                    className="w-full max-w-[280px] mx-auto"
+                    innerGradient={
+                      dev.color === 'accent' ? 'linear-gradient(145deg, rgba(139,92,246,0.3) 0%, rgba(0,0,0,0) 100%)' :
+                      dev.color === 'blue'   ? 'linear-gradient(145deg, rgba(59,130,246,0.3) 0%, rgba(0,0,0,0) 100%)' :
+                      dev.color === 'magenta'? 'linear-gradient(145deg, rgba(217,70,239,0.3) 0%, rgba(0,0,0,0) 100%)' :
+                                               'linear-gradient(145deg, rgba(6,182,212,0.3) 0%, rgba(0,0,0,0) 100%)'
+                    }
                   />
                 </div>
-
-                <div className="mt-4">
-                  <h3 className="font-heading font-black text-3xl md:text-4xl uppercase tracking-wider text-primary mb-3">
-                    {dev.name}
-                  </h3>
-                  <div className="inline-block bg-highlight-yellow border-4 border-primary px-4 py-1.5 mb-4 shadow-neo-sm transform rotate-1">
-                    <p className="font-bold text-primary uppercase tracking-widest text-xs">
-                      {dev.role}
-                    </p>
-                  </div>
-                  <p className="text-primary font-bold text-lg leading-relaxed mt-2 max-w-sm mx-auto">
-                    {dev.bio}
-                  </p>
-                </div>
-
-                <div className="flex gap-5 mt-8 justify-center">
-                  <a
-                    href={dev.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 flex items-center justify-center border-4 border-primary bg-black text-white shadow-neo hover:bg-[#2ea043] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo transform rotate-2 hover:rotate-0"
-                    aria-label={`${dev.name}'s GitHub`}
-                  >
-                    <Github className="w-7 h-7" />
-                  </a>
-                  <a
-                    href={dev.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 flex items-center justify-center border-4 border-primary bg-highlight-blue text-primary shadow-neo hover:bg-[#0a66c2] hover:text-white hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo transform -rotate-2 hover:rotate-0"
-                    aria-label={`${dev.name}'s LinkedIn`}
-                  >
-                    <Linkedin className="w-7 h-7 stroke-[2.5]" />
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
+              </ScrollReveal>
+            );
+          })}
         </div>
 
-        {/* Call to action at the bottom */}
-        <div className="mt-32 max-w-3xl mx-auto bg-highlight-green border-4 border-primary p-8 md:p-12 shadow-neo relative transform -rotate-1 hover:rotate-0 transition-neo">
-          <div className="absolute -top-6 -right-6 w-12 h-12 bg-highlight-pink border-4 border-primary shadow-neo rounded-full z-10 transform translate-x-2 -translate-y-2"></div>
-          <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-highlight-yellow border-4 border-primary shadow-neo z-10 transform rotate-12"></div>
-
-          <h4 className="font-heading text-4xl md:text-5xl uppercase tracking-widest text-primary mb-4 leading-none">Want to <br /> Contribute?</h4>
-          <p className="text-primary font-bold text-lg mb-8 max-w-xl">
-            CID-Cell is an open community. Whether you're interested in making modifications to this site, or starting a new project, we're always looking for collaborators.
-          </p>
-          <a
-            href="https://github.com/CID-CELL"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-white text-primary font-heading uppercase tracking-widest text-xl px-8 py-4 border-4 border-primary shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-neo transform rotate-1"
-          >
-            <Github className="w-6 h-6" /> View on GitHub
-          </a>
-        </div>
+        {/* Call to action */}
+        <ScrollReveal delay={400}>
+          <div className="mt-24 max-w-4xl mx-auto glass-panel border border-accent/30 p-10 md:p-14 text-center relative overflow-hidden group hover:border-accent/60 transition-colors shadow-glow-purple">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 blur-[60px] rounded-full pointer-events-none group-hover:scale-150 transition-transform duration-1000"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-blue/10 blur-[60px] rounded-full pointer-events-none group-hover:scale-150 transition-transform duration-1000"></div>
+            
+            <h4 className="font-heading text-3xl md:text-5xl uppercase tracking-widest font-black text-white mb-6 relative z-10 leading-tight">
+              Want to <br className="md:hidden" /> <span className="text-accent">Contribute?</span>
+            </h4>
+            <p className="text-slate-300 font-medium text-base md:text-lg mb-10 max-w-2xl mx-auto relative z-10 leading-relaxed">
+              CID-Cell is an open community. Whether you're interested in making modifications to this site, or starting a new open-source project, we're always looking for collaborators.
+            </p>
+            <a
+              href="https://github.com/CID-CELL"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 bg-white text-black font-bold uppercase tracking-widest text-sm px-8 py-3.5 rounded-full hover:scale-105 hover:bg-accent hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-glow-purple relative z-10"
+            >
+              <Github size={18} className="fill-current" /> View on GitHub
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
     </div>
   );

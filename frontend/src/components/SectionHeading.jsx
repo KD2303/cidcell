@@ -36,19 +36,20 @@ export default function SectionHeading({ subtitle, title, description, light = f
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
       }`}
     >
-      {/* Decorative elements behind heading */}
-      <div className={`absolute -top-6 ${alignLeft ? 'left-6' : 'left-1/2 -translate-x-1/2'} w-24 h-24 bg-highlight-yellow opacity-50 rounded-full blur-xl -z-10`}></div>
+      {/* Decorative center glow */}
+      <div className={`absolute -top-10 ${alignLeft ? 'left-6' : 'left-1/2 -translate-x-1/2'} w-32 h-32 bg-accent/20 rounded-full blur-2xl -z-10 pointer-events-none`}></div>
       
       {subtitle && (
-        <span className={`inline-block px-3 py-1 bg-white border-2 border-primary shadow-neo-sm text-primary text-xs font-bold uppercase tracking-widest ${compact ? 'mb-4' : 'mb-6'} transform -rotate-2`}>
+        <span className={`inline-flex items-center gap-2 px-3 py-1.5 glass-panel rounded-full border border-white/10 shadow-glass text-secondary text-[10px] md:text-xs font-bold uppercase tracking-widest ${compact ? 'mb-4' : 'mb-6'}`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-glow-purple"></span>
           {subtitle}
         </span>
       )}
-      <h2 className={`font-heading ${compact ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-5' : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-8'} font-black uppercase tracking-widest leading-none ${light ? 'text-white' : 'text-primary'}`}>
+      <h2 className={`font-heading ${compact ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-5' : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-8'} font-black uppercase tracking-tight leading-[1] text-white drop-shadow-md`}>
         {title}
       </h2>
       {description && (
-        <p className={`${compact ? 'text-base md:text-lg' : 'text-lg md:text-xl'} font-medium max-w-2xl mx-auto leading-relaxed ${light ? 'text-gray-300' : 'text-gray-700'}`}>
+        <p className={`${compact ? 'text-sm md:text-base' : 'text-base md:text-lg'} font-medium max-w-2xl mx-auto leading-relaxed text-slate-300`}>
           {description}
         </p>
       )}

@@ -106,12 +106,19 @@ export default function ChatHub() {
   const renderPanel = () => {
     if (!activePanel.type) {
       return (
-        <div className="flex-1 flex flex-col items-center justify-center text-slate-300 gap-4">
-          <div className="w-20 h-20 rounded-full bg-slate-50 border-2 border-slate-200 flex items-center justify-center">
-            <MessageSquare size={32} className="text-slate-300" />
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-500 gap-6 p-8 text-center animate-fade-in-up">
+          <div className="relative">
+            <div className="absolute inset-0 bg-accent/20 blur-2xl rounded-full animate-pulse"></div>
+            <div className="relative w-24 h-24 rounded-3xl bg-white/[0.03] border border-white/10 flex items-center justify-center backdrop-blur-xl shadow-2xl">
+              <MessageSquare size={40} className="text-accent" />
+            </div>
           </div>
-          <p className="font-black uppercase tracking-widest text-sm">Select a conversation</p>
-          <p className="text-xs font-bold italic">Pick a DM, doubt session, or project chat from the sidebar.</p>
+          <div className="space-y-2">
+            <h3 className="font-heading font-black text-xl text-white uppercase tracking-[0.3em]">Neural Link Standby</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest max-w-[280px] leading-loose">
+              Select a secure communication channel from the sidebar to establish a connection.
+            </p>
+          </div>
         </div>
       );
     }
@@ -122,6 +129,7 @@ export default function ChatHub() {
           <DirectMessagePanel
             recipientId={activePanel.id}
             recipientData={activePanel.data}
+            onBack={() => setActivePanel({ type: null, id: null, data: null })}
           />
         );
       case 'doubt':
@@ -129,6 +137,7 @@ export default function ChatHub() {
           <DoubtSessionPanel
             sessionId={activePanel.id}
             sessionData={activePanel.data}
+            onBack={() => setActivePanel({ type: null, id: null, data: null })}
           />
         );
       case 'project':
@@ -136,6 +145,7 @@ export default function ChatHub() {
           <ProjectChatPanel
             projectId={activePanel.id}
             projectData={activePanel.data}
+            onBack={() => setActivePanel({ type: null, id: null, data: null })}
           />
         );
       default:
@@ -152,17 +162,25 @@ export default function ChatHub() {
   }
 
   return (
-    <div className="bg-bg h-screen pt-20 flex overflow-hidden">
-      <ChatSidebar
-        conversations={conversations}
-        unreadCounts={unreadCounts}
-        activePanel={activePanel}
-        onSelect={handleSelectConversation}
-        userType={user?.userType}
-        currentUserId={user?._id}
-        onlineUsers={onlineUsers}
-      />
-      <div className="flex-1 flex flex-col h-[calc(100vh-80px)]">
+    <div className="bg-bg h-screen pt-20 flex overflow-hidden selection:bg-accent/30">
+      {/* Background Decorative patterns */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[20%] -left-[10%] w-[40%] h-[40%] bg-accent/5 blur-[150px] rounded-full"></div>
+        <div className="absolute bottom-[20%] -right-[10%] w-[30%] h-[30%] bg-accent-magenta/5 blur-[150px] rounded-full"></div>
+      </div>
+
+      <div className={`${activePanel.id ? 'hidden md:flex' : 'flex'} contents`}>
+        <ChatSidebar
+          conversations={conversations}
+          unreadCounts={unreadCounts}
+          activePanel={activePanel}
+          onSelect={handleSelectConversation}
+          userType={user?.userType}
+          currentUserId={user?._id}
+          onlineUsers={onlineUsers}
+        />
+      </div>
+      <div className={`flex-1 flex flex-col h-[calc(100vh-80px)] backdrop-blur-md relative z-10 ${!activePanel.id ? 'hidden md:flex' : 'flex'}`}>
         {renderPanel()}
       </div>
     </div>

@@ -1,0 +1,38 @@
+export const developers = [
+  {
+    name: 'Krish Dargar',
+    role: 'Full Stack Developer',
+    github: 'https://github.com/KD2303',
+    linkedin: 'https://www.linkedin.com/in/krish-dargar-101774324/',
+    image: 'https://github.com/KD2303.png',
+    bio: 'Software engineer who loves solving complex problems and building scalable apps.',
+    color: 'magenta',
+  },
+  {
+    name: 'Anurag Mishra',
+    role: 'Full Stack Developer',
+    github: 'https://github.com/anuragmishra5159',
+    linkedin: 'https://www.linkedin.com/in/anuragmishra5159/',
+    image: 'https://github.com/anuragmishra5159.png',
+    bio: 'Passionate full-stack developer focusing on React and modern web technologies.',
+    color: 'blue',
+  },
+  {
+    name: 'Harsh Manmode',
+    role: 'Backend Developer',
+    github: 'https://github.com/Harsh-2006-git',
+    linkedin: 'https://www.linkedin.com/in/harsh-manmode-2a0b91325/',
+    image: 'https://avatars.githubusercontent.com/u/192864282',
+    bio: 'Specialist in Node.js and database architecture, building robust and secure server-side solutions.',
+    color: 'magenta',
+  },
+  {
+    name: 'Nemish Nagaria',
+    role: 'Backend Developer',
+    github: 'https://github.com/thedebroglie',
+    linkedin: 'https://www.linkedin.com/in/nemish-nagaria-555198313/',
+    image: 'https://github.com/thedebroglie.png',
+    bio: 'Innovative software engineer focused on building efficient technological solutions.',
+    color: 'cyan',
+  },
+];

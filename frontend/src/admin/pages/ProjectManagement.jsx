@@ -16,22 +16,12 @@ import {
   Loader,
   Github,
   ExternalLink,
-  PlusCircle
+  PlusCircle,
+  Folder
 } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL;
 const authHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
-
-const statusColors = {
-  draft: 'bg-gray-100 text-gray-600',
-  pending_mentor_review: 'bg-yellow-100 text-yellow-700',
-  pending_faculty_review: 'bg-yellow-100 text-yellow-700',
-  pending_admin_approval: 'bg-orange-100 text-orange-700',
-  active: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-700',
-  completed: 'bg-blue-100 text-blue-700',
-  inactive: 'bg-gray-100 text-gray-600',
-};
 
 const ProjectManagement = () => {
   const [activeTab, setActiveTab] = useState('pending');
@@ -49,9 +39,14 @@ const ProjectManagement = () => {
     setTimeout(() => setToast({ message: '', type: null }), 3000);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
+
+  const toArray = (data) => {
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.projects)) return data.projects;
+    if (data && Array.isArray(data.data)) return data.data;
+    return [];
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -60,8 +55,8 @@ const ProjectManagement = () => {
         axios.get(`${API}/projects/all`, authHeaders()),
         axios.get(`${API}/projects/review/admin`, authHeaders()),
       ]);
-      setAllProjects(allRes.data);
-      setPendingProjects(pendingRes.data);
+      setAllProjects(toArray(allRes.data));
+      setPendingProjects(toArray(pendingRes.data));
     } catch (err) {
       showToast('Failed to fetch project data', 'error');
     } finally {
@@ -72,8 +67,7 @@ const ProjectManagement = () => {
   const handleAdminReview = async (projectId, action) => {
     try {
       await axios.patch(`${API}/projects/${projectId}/admin-review`, {
-        action,
-        feedback: feedback[projectId] || '',
+        action, feedback: feedback[projectId] || '',
       }, authHeaders());
       showToast(`Project ${action === 'approve' ? 'approved' : 'rejected'}!`);
       fetchData();
@@ -94,133 +88,147 @@ const ProjectManagement = () => {
     }
   };
 
-  const filteredAll = allProjects.filter(p =>
-    p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.createdBy?.username?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAll = Array.isArray(allProjects)
+    ? allProjects.filter(p =>
+        p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.createdBy?.username?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+
+  const statusGlow = {
+    active: 'text-green-400 bg-green-500/10 border-green-500/30',
+    pending_admin_approval: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+    rejected: 'text-red-400 bg-red-500/10 border-red-500/30',
+    completed: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+    draft: 'text-slate-400 bg-slate-500/10 border-slate-500/30',
+  };
 
   return (
-    <div className="space-y-10 pb-8">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b-4 border-primary pb-8">
+    <div className="space-y-10 pb-8 text-white">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-white/5 pb-8">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-black text-primary uppercase tracking-tight">Project Registry</h1>
-          <div className="inline-block bg-highlight-green border-2 border-primary px-3 py-0.5 mt-3 transform -rotate-1">
-            <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Ecosystem Oversight Hub</p>
+          <h1 className="text-3xl lg:text-4xl font-bold text-white uppercase tracking-widest leading-tight">Project Registry</h1>
+          <div className="inline-block bg-accent/10 border border-accent/20 px-4 py-1 mt-3 rounded-full">
+            <p className="text-[10px] font-bold text-accent uppercase tracking-[0.2em] leading-none">Ecosystem Oversight Hub</p>
           </div>
         </div>
         <button
           onClick={() => navigate('/projects/submit')}
-          className="flex items-center gap-3 px-8 py-4 bg-highlight-blue border-3 border-primary rounded-2xl text-primary font-black uppercase text-xs shadow-neo-mini hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-fit"
+          className="flex items-center gap-3 px-6 py-3 bg-accent/10 border border-accent/30 rounded-2xl text-white font-bold uppercase text-xs hover:bg-accent/20 hover:border-accent/50 transition-all w-fit shadow-glass"
         >
-          <PlusCircle size={20} /> Add New Entry
+          <PlusCircle size={18} /> Add New Entry
         </button>
       </div>
 
-      {/* Tabs Segment */}
-      <div className="flex flex-wrap gap-6 pt-4">
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-4">
         <button
           onClick={() => setActiveTab('pending')}
-          className={`px-8 py-4 text-xs font-black uppercase border-3 rounded-2xl transition-all shadow-neo-mini flex items-center gap-3 ${
+          className={`px-6 py-3 text-xs font-bold uppercase rounded-2xl transition-all flex items-center gap-3 border ${
             activeTab === 'pending'
-              ? 'bg-highlight-yellow border-primary text-primary translate-x-[2px] translate-y-[2px] shadow-none'
-              : 'bg-white border-primary text-primary/40 hover:bg-highlight-yellow/10'
+              ? 'bg-yellow-500/10 border-yellow-500/40 text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]'
+              : 'border-white/5 text-slate-400 hover:bg-white/5 hover:text-white'
           }`}
         >
-          <Clock size={18} />
-          Review Queue ({pendingProjects.length})
+          <Clock size={16} /> Review Queue ({pendingProjects.length})
         </button>
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-8 py-4 text-xs font-black uppercase border-3 rounded-2xl transition-all shadow-neo-mini flex items-center gap-3 ${
+          className={`px-6 py-3 text-xs font-bold uppercase rounded-2xl transition-all flex items-center gap-3 border ${
             activeTab === 'all'
-              ? 'bg-highlight-blue border-primary text-primary translate-x-[2px] translate-y-[2px] shadow-none'
-              : 'bg-white border-primary text-primary/40 hover:bg-highlight-blue/10'
+              ? 'bg-accent/10 border-accent/40 text-accent shadow-[0_0_15px_rgba(139,92,246,0.2)]'
+              : 'border-white/5 text-slate-400 hover:bg-white/5 hover:text-white'
           }`}
         >
-          <PlusCircle size={18} />
-          Registry Master ({allProjects.length})
+          <Folder size={16} /> Registry Master ({allProjects.length})
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader className="animate-spin text-indigo-600" size={28} />
+        <div className="flex flex-col items-center justify-center py-24 gap-6">
+          <div className="relative">
+            <div className="w-16 h-16 border-2 border-accent rounded-full animate-ping opacity-20"></div>
+            <Loader className="w-16 h-16 animate-spin absolute top-0 left-0 text-accent stroke-[1.5]" />
+          </div>
+          <div className="bg-accent/10 border border-accent/20 px-6 py-2 rounded-full">
+            <p className="text-xs font-bold text-accent uppercase tracking-[0.3em]">Syncing Registry...</p>
+          </div>
         </div>
       ) : activeTab === 'pending' ? (
-        /* ── Pending Admin Approvals ── */
-        <div className="space-y-8 bg-white border-4 border-primary shadow-neo rounded-3xl p-8 lg:p-12">
+        /* Pending Review */
+        <div className="space-y-6 p-8 rounded-3xl border border-white/5 bg-white/[0.02]">
           {pendingProjects.length === 0 ? (
-            <div className="text-center py-20 text-primary/20">
-              <CheckCircle size={60} className="mx-auto mb-6 opacity-20" />
-              <p className="text-sm font-black uppercase tracking-[0.2em]">Queue Fully Purged</p>
+            <div className="text-center py-20 text-slate-600">
+              <CheckCircle size={56} className="mx-auto mb-4 opacity-20" />
+              <p className="text-sm font-bold uppercase tracking-[0.2em]">Queue Fully Purged</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-10">
+            <div className="grid grid-cols-1 gap-8">
               {pendingProjects.map(project => (
-                <div key={project._id} className="bg-slate-50 border-3 border-primary rounded-3xl p-8 shadow-neo-mini hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-                  <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-8 pb-6 border-b-2 border-primary/10">
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-black text-primary uppercase leading-tight">{project.title}</h3>
+                <div key={project._id} className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-all">
+                  <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-8 pb-6 border-b border-white/5">
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-bold text-white uppercase leading-tight">{project.title}</h3>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="px-4 py-1.5 text-[10px] font-black uppercase text-primary bg-highlight-yellow border-2 border-primary rounded-xl tracking-widest shadow-neo-mini">
+                        <span className="px-3 py-1 text-[10px] font-bold uppercase text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 rounded-lg tracking-widest">
                           Awaiting Oversight
                         </span>
-                        <span className="px-4 py-1.5 text-[10px] font-black uppercase text-primary bg-highlight-blue border-2 border-primary rounded-xl tracking-widest shadow-neo-mini">
+                        <span className="px-3 py-1 text-[10px] font-bold uppercase text-accent bg-accent/10 border border-accent/30 rounded-lg tracking-widest">
                           {project.type}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-base text-primary/70 font-medium mb-6 leading-relaxed line-clamp-3">{project.description}</p>
-                  
-                  <div className="bg-white border-2 border-primary rounded-2xl p-5 mb-8">
-                    <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.15em] mb-2">Architect Identity</p>
+                  <p className="text-sm text-slate-400 mb-6 leading-relaxed line-clamp-3">{project.description}</p>
+
+                  <div className="bg-black/20 border border-white/5 rounded-2xl p-4 mb-6">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] mb-3">Architect Identity</p>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-highlight-teal border-2 border-primary flex items-center justify-center font-black text-primary text-xs uppercase shadow-neo-mini">
+                      <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center font-bold text-accent text-sm uppercase">
                         {project.createdBy?.username?.charAt(0) || "U"}
                       </div>
                       <div>
-                        <p className="text-xs font-black text-primary uppercase leading-none">{project.createdBy?.username}</p>
-                        <p className="text-[10px] font-black text-primary/40 uppercase mt-1.5">{project.createdBy?.email}</p>
+                        <p className="text-xs font-bold text-white uppercase">{project.createdBy?.username}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">{project.createdBy?.email}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-6 mb-10">
+                  <div className="flex flex-wrap gap-3 mb-8">
                     {project.githubRepo && (
-                      <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[11px] font-black uppercase text-primary bg-white border-2 border-primary px-5 py-2.5 rounded-xl shadow-neo-mini hover:shadow-none hover:bg-highlight-blue/10 transition-all">
-                        <Github size={16} /> Codebase
+                      <a href={project.githubRepo} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-[11px] font-bold uppercase text-slate-300 bg-white/5 border border-white/10 px-4 py-2 rounded-xl hover:bg-white/10 hover:text-white transition-all">
+                        <Github size={14} /> Codebase
                       </a>
                     )}
                     {project.deployedLink && (
-                      <a href={project.deployedLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[11px] font-black uppercase text-primary bg-white border-2 border-primary px-5 py-2.5 rounded-xl shadow-neo-mini hover:shadow-none hover:bg-highlight-teal/10 transition-all">
-                        <ExternalLink size={16} /> Launch Demo
+                      <a href={project.deployedLink} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-[11px] font-bold uppercase text-slate-300 bg-white/5 border border-white/10 px-4 py-2 rounded-xl hover:bg-white/10 hover:text-white transition-all">
+                        <ExternalLink size={14} /> Live Demo
                       </a>
                     )}
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="relative">
-                      <textarea
-                        className="w-full p-6 bg-white border-3 border-primary rounded-3xl text-sm font-medium outline-none shadow-neo-mini focus:shadow-neo transition-all min-h-[120px]"
-                        placeholder="ADMIN FEEDBACK / MODIFICATION NOTES..."
-                        value={feedback[project._id] || ''}
-                        onChange={e => setFeedback({ ...feedback, [project._id]: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="flex flex-wrap gap-5 pt-4">
-                      <button 
-                        onClick={() => handleAdminReview(project._id, 'approve')} 
-                        className="flex-1 min-w-[160px] flex items-center justify-center gap-3 px-8 py-5 bg-highlight-green border-3 border-primary rounded-2xl text-primary font-black uppercase text-xs shadow-neo-mini hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                  <div className="space-y-4">
+                    <textarea
+                      className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl text-sm text-white outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-all min-h-[100px] placeholder:text-slate-600"
+                      placeholder="Admin feedback / modification notes..."
+                      value={feedback[project._id] || ''}
+                      onChange={e => setFeedback({ ...feedback, [project._id]: e.target.value })}
+                    />
+                    <div className="flex flex-wrap gap-4">
+                      <button
+                        onClick={() => handleAdminReview(project._id, 'approve')}
+                        className="flex-1 min-w-[140px] flex items-center justify-center gap-2 px-6 py-4 bg-green-500/10 border border-green-500/30 rounded-2xl text-green-400 font-bold uppercase text-xs hover:bg-green-500/20 transition-all"
                       >
-                        <CheckCircle size={20} /> Authorize Entry
+                        <CheckCircle size={18} /> Authorize
                       </button>
-                      <button 
-                        onClick={() => handleAdminReview(project._id, 'reject')} 
-                        className="flex-1 min-w-[160px] flex items-center justify-center gap-3 px-8 py-5 bg-rose-500 border-3 border-primary rounded-2xl text-white font-black uppercase text-xs shadow-neo-mini hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                      <button
+                        onClick={() => handleAdminReview(project._id, 'reject')}
+                        className="flex-1 min-w-[140px] flex items-center justify-center gap-2 px-6 py-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 font-bold uppercase text-xs hover:bg-red-500/20 transition-all"
                       >
-                        <XCircle size={20} /> Reject Entry
+                        <XCircle size={18} /> Reject
                       </button>
                     </div>
                   </div>
@@ -230,68 +238,61 @@ const ProjectManagement = () => {
           )}
         </div>
       ) : (
-        /* ── All Projects ── */
-        <div className="space-y-10">
-          {/* Registry Search */}
+        /* All Projects */
+        <div className="space-y-8">
           <div className="relative group max-w-2xl">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-primary opacity-30 group-focus-within:opacity-100 transition-opacity" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-accent transition-colors" />
             <input
               type="text"
-              placeholder="SEARCH PROJECT REPOSITORY..."
+              placeholder="Search project repository..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-white border-3 border-primary rounded-2xl py-5 pl-16 pr-8 outline-none shadow-neo-mini focus:shadow-neo transition-all font-black text-[11px] uppercase placeholder:text-primary/20"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-accent/40 focus:bg-white/[0.07] transition-all text-sm text-white placeholder:text-slate-600"
             />
           </div>
 
-          {/* Master Registry Table */}
-          <div className="bg-white border-4 border-primary shadow-neo rounded-3xl overflow-hidden font-sans">
+          <div className="border border-white/5 bg-white/[0.02] rounded-3xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-highlight-blue border-b-4 border-primary text-primary">
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest border-r-2 border-primary/10">Project Identity</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest border-r-2 border-primary/10">Architecture</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest border-r-2 border-primary/10">Lead Developer</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest border-r-2 border-primary/10">Operational Status</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">Sanction</th>
+                  <tr className="border-b border-white/5 bg-black/20">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Project</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Type</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Lead Dev</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y-2 divide-primary/10">
+                <tbody className="divide-y divide-white/5">
                   {filteredAll.map(project => (
-                    <tr key={project._id} className="hover:bg-highlight-blue/5 transition-colors group">
+                    <tr key={project._id} className="hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-4">
-                        <p className="font-black text-sm text-primary uppercase leading-tight group-hover:translate-x-1 transition-transform">{project.title}</p>
+                        <p className="font-bold text-sm text-white uppercase leading-tight">{project.title}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-block px-3 py-1 text-[9px] font-black uppercase bg-white border-2 border-primary rounded-lg tracking-widest shadow-neo-mini">
+                        <span className="inline-block px-3 py-1 text-[9px] font-bold uppercase bg-white/5 border border-white/10 text-slate-400 rounded-lg tracking-widest">
                           {project.type}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-md bg-highlight-teal border border-primary flex items-center justify-center text-[8px] font-black text-primary uppercase">
+                          <div className="w-6 h-6 rounded-md bg-accent/20 border border-accent/30 flex items-center justify-center text-[8px] font-bold text-accent uppercase">
                             {project.createdBy?.username?.charAt(0) || "U"}
                           </div>
-                          <span className="text-[10px] font-black text-primary/60 uppercase">{project.createdBy?.username || '—'}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">{project.createdBy?.username || '—'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-block px-3 py-1 rounded-xl border-2 border-primary shadow-neo-mini text-[9px] font-black uppercase ${
-                          project.status === 'approved' ? 'bg-highlight-green' :
-                          project.status === 'pending' ? 'bg-highlight-yellow' :
-                          'bg-highlight-pink'
-                        }`}>
+                        <span className={`inline-block px-3 py-1 rounded-lg border text-[9px] font-bold uppercase ${statusGlow[project.status] || statusGlow.draft}`}>
                           {project.status?.replace(/_/g, ' ')}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => setDeleteConfirm({ isOpen: true, id: project._id })}
-                          className="w-9 h-9 inline-flex items-center justify-center border-2 border-primary rounded-xl bg-white text-rose-500 shadow-neo-mini hover:bg-rose-500 hover:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
-                          title="Purge Entry"
+                          className="w-9 h-9 inline-flex items-center justify-center border border-white/10 rounded-xl bg-white/5 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </button>
                       </td>
                     </tr>
@@ -299,29 +300,28 @@ const ProjectManagement = () => {
                 </tbody>
               </table>
             </div>
-
             {filteredAll.length === 0 && (
-              <div className="text-center py-20 bg-slate-50/50">
-                <Search className="w-14 h-14 mx-auto mb-6 opacity-10 text-primary" />
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-primary/20">Registry Is Empty</p>
+              <div className="text-center py-20 text-slate-600">
+                <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                <p className="text-xs font-bold uppercase tracking-[0.2em]">Registry Is Empty</p>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {deleteConfirm.isOpen && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="text-red-500" size={24} />
-              <h3 className="text-lg font-bold text-gray-800">Delete Project?</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-5">
+              <AlertTriangle className="text-red-400 w-8 h-8" />
             </div>
-            <p className="text-sm text-gray-600 mb-6">This action cannot be undone.</p>
-            <div className="flex justify-end gap-3">
-              <button onClick={() => setDeleteConfirm({ isOpen: false, id: null })} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm.id)} className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+            <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Delete Project?</h3>
+            <p className="text-sm text-slate-500 mb-8">This action is permanent and cannot be reversed.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteConfirm({ isOpen: false, id: null })} className="flex-1 px-4 py-3 border border-white/10 rounded-2xl text-slate-400 hover:bg-white/5 text-xs font-bold uppercase tracking-widest transition-all">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm.id)} className="flex-1 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 hover:bg-red-500/20 text-xs font-bold uppercase tracking-widest transition-all">Delete</button>
             </div>
           </div>
         </div>,
@@ -331,8 +331,8 @@ const ProjectManagement = () => {
       {/* Toast */}
       {toast.message && ReactDOM.createPortal(
         <div className="fixed bottom-6 right-6 z-[9999]">
-          <div className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
-            {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
+          <div className={`px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold border backdrop-blur-md ${toast.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-accent/10 border-accent/30 text-white'}`}>
+            {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} className="text-green-400" />}
             <p>{toast.message}</p>
             <button onClick={() => setToast({ message: '', type: null })}><X size={14} /></button>
           </div>

@@ -1,23 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 
 const Modal = ({ isOpen, onClose, title, footer, children, maxWidth = 'max-w-2xl' }) => {
+  // Prevent scrolling on body when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className={`bg-white border-4 border-primary shadow-neo rounded-3xl w-full ${maxWidth} flex flex-col overflow-hidden animate-in zoom-in-95 duration-200`} style={{ maxHeight: '90vh' }}>
-        <div className="flex-none p-5 border-b-4 border-primary bg-highlight-blue flex items-center justify-between z-10">
-          <h2 className="text-lg font-black text-primary uppercase tracking-tight">{title}</h2>
-          <button type="button" onClick={onClose} className="p-2 border-2 border-primary rounded-xl bg-white hover:bg-highlight-yellow transition-all shadow-neo-mini hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none text-primary">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+      <div 
+        className={`bg-[#0a0a0a] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-[32px] w-full ${maxWidth} flex flex-col overflow-hidden animate-in zoom-in-95 duration-300 shadow-glass`} 
+        style={{ maxHeight: '92vh' }}
+      >
+        {/* Header */}
+        <div className="flex-none p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between z-10">
+          <h2 className="text-xl font-bold text-white uppercase tracking-widest">{title}</h2>
+          <button 
+            type="button" 
+            onClick={onClose} 
+            className="p-2 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-slate-400 hover:text-white"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto bg-white custom-scrollbar min-h-0 text-primary p-2">
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 text-white scroll-smooth">
           {children}
         </div>
+
+        {/* Footer */}
         {footer && (
-          <div className="flex-none p-5 border-t-4 border-primary bg-slate-50 flex justify-end gap-4 z-10 font-black uppercase text-xs">
+          <div className="flex-none p-6 border-t border-white/5 bg-white/[0.02] flex justify-end gap-4 z-10 font-bold uppercase text-xs">
             {footer}
           </div>
         )}

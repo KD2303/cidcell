@@ -3,215 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SectionHeading from '../components/SectionHeading';
 import ScrollReveal from '../components/ScrollReveal';
-import { Search, Linkedin, Github, Code2, MessageCircle } from 'lucide-react';
-
-// Static Mock Data
-const staticMentors = [
-  {
-    _id: '1',
-    designation: 'Senior Mentor',
-    domain: 'Full Stack Development',
-    user: {
-      _id: 'user1',
-      username: 'Rahul Sharma',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/rahulsharma',
-        github: 'https://github.com/rahulsharma',
-        leetcode: 'https://leetcode.com/rahulsharma'
-      }
-    }
-  },
-  {
-    _id: '2',
-    designation: 'Mentor',
-    domain: 'Full Stack Development',
-    user: {
-      _id: 'user2',
-      username: 'Priya Verma',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/priyaverma',
-        github: 'https://github.com/priyaverma',
-        leetcode: ''
-      }
-    }
-  },
-  {
-    _id: '3',
-    designation: 'Lead Mentor',
-    domain: 'AI/ML',
-    user: {
-      _id: 'user3',
-      username: 'Aditya Patel',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/adityapatel',
-        github: 'https://github.com/adityapatel',
-        leetcode: 'https://leetcode.com/adityapatel'
-      }
-    }
-  },
-  {
-    _id: '4',
-    designation: 'Mentor',
-    domain: 'AI/ML',
-    user: {
-      _id: 'user4',
-      username: 'Neha Singh',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/nehasingh',
-        github: 'https://github.com/nehasingh',
-        leetcode: 'https://leetcode.com/nehasingh'
-      }
-    }
-  },
-  {
-    _id: '5',
-    designation: 'Senior Mentor',
-    domain: 'UI/UX Design',
-    user: {
-      _id: 'user5',
-      username: 'Arjun Kumar',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/arjunkumar',
-        github: 'https://github.com/arjunkumar',
-        leetcode: ''
-      }
-    }
-  },
-  {
-    _id: '6',
-    designation: 'Mentor',
-    domain: 'UI/UX Design',
-    user: {
-      _id: 'user6',
-      username: 'Divya Reddy',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/divyareddy',
-        github: 'https://github.com/divyareddy',
-        leetcode: ''
-      }
-    }
-  },
-  {
-    _id: '7',
-    designation: 'Lead Mentor',
-    domain: 'Mobile Development',
-    user: {
-      _id: 'user7',
-      username: 'Rohit Gupta',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/rohitgupta',
-        github: 'https://github.com/rohitgupta',
-        leetcode: 'https://leetcode.com/rohitgupta'
-      }
-    }
-  },
-  {
-    _id: '8',
-    designation: 'Mentor',
-    domain: 'Mobile Development',
-    user: {
-      _id: 'user8',
-      username: 'Sakshi Nair',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/sakshi-nair',
-        github: 'https://github.com/sakshinnair',
-        leetcode: 'https://leetcode.com/sakshi-nair'
-      }
-    }
-  },
-  {
-    _id: '9',
-    designation: 'Senior Mentor',
-    domain: 'DevOps & Cloud',
-    user: {
-      _id: 'user9',
-      username: 'Vivek Mishra',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/vivekmishra',
-        github: 'https://github.com/vivekmishra',
-        leetcode: ''
-      }
-    }
-  },
-  {
-    _id: '10',
-    designation: 'Mentor',
-    domain: 'Competitive Programming',
-    user: {
-      _id: 'user10',
-      username: 'Ananya Chakraborty',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/ananya-chakraborty',
-        github: 'https://github.com/ananyachakraborty',
-        leetcode: 'https://leetcode.com/ananyachakraborty'
-      }
-    }
-  },
-  {
-    _id: '11',
-    designation: 'Lead Mentor',
-    domain: 'Competitive Programming',
-    user: {
-      _id: 'user11',
-      username: 'Harsh Patel',
-      batch: '2021-2025',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/harshpatel',
-        github: 'https://github.com/harshpatel',
-        leetcode: 'https://leetcode.com/harshpatel'
-      }
-    }
-  },
-  {
-    _id: '12',
-    designation: 'Mentor',
-    domain: 'Data Science',
-    user: {
-      _id: 'user12',
-      username: 'Sneha Desai',
-      batch: '2022-2026',
-      branch: 'CSE',
-      profilePicture: '',
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/snehadesai',
-        github: 'https://github.com/snehadesai',
-        leetcode: ''
-      }
-    }
-  }
-];
+import { Search, Linkedin, Github, Code2, MessageCircle, Sparkles, Filter, Users as UsersIcon } from 'lucide-react';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -231,23 +23,10 @@ function MentorCard({ mentor, delay }) {
   const batch = mentor.user?.batch;
   const mentorId = mentor.user?._id;
 
-  const accentColors = [
-    'bg-highlight-blue',
-    'bg-highlight-green',
-    'bg-highlight-yellow',
-    'bg-highlight-orange',
-    'bg-highlight-purple',
-    'bg-highlight-pink',
-  ];
-
-  // Derive accent color consistently based on name
-  const accentClass = accentColors[Math.abs(name.charCodeAt(0) % accentColors.length)];
-
   const handleChat = async () => {
     const token = localStorage.getItem('token');
     
     if (!token) {
-      alert('Login first to chat with mentor..');
       navigate('/auth');
       return;
     }
@@ -259,110 +38,102 @@ function MentorCard({ mentor, delay }) {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      navigate('/student/chat', { state: { selectedSessionId: res.data._id } });
+      navigate('/chat', { state: { selectedSessionId: res.data._id } });
     } catch (err) {
       console.error('Error starting chat session:', err);
-      alert('Failed to start chat session. Please try again.');
     }
   };
 
   return (
     <ScrollReveal delay={delay} className="h-full">
-      <div className="bg-white border-2 lg:border-3 border-primary shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-300 flex flex-col h-full overflow-hidden flex-1 group">
+      <div className="group relative bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden h-full flex flex-col transition-all duration-500 hover:border-accent/40 hover:shadow-glow-purple hover:-translate-y-1">
         
-        {/* Top Banner */}
-        <div className={`h-24 md:h-28 ${accentClass} border-b-2 lg:border-b-3 border-primary relative overflow-hidden p-4 flex justify-end items-start`}>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 rounded-full -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-[2.5]"></div>
+        {/* Animated Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-glass opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+        {/* Top Header/Banner */}
+        <div className="relative h-28 bg-gradient-to-br from-accent/20 to-accent-magenta/10 border-b border-white/5 overflow-hidden p-5 flex justify-end items-start">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-accent/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
           
-          {/* Domain Tag */}
           {domain && (
-            <span className="bg-white text-primary border-2 border-primary px-3 py-1 text-[10px] font-bold uppercase z-10 shadow-neo-sm transform rotate-2 group-hover:rotate-0 transition-transform">
+            <span className="relative z-10 px-3 py-1 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-accent-magenta shadow-xl">
               {domain}
             </span>
           )}
         </div>
         
-        {/* Content Area */}
-        <div className="px-5 pb-6 pt-0 flex flex-col flex-grow items-center relative -mt-12 text-center bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+        {/* Profile Content */}
+        <div className="relative px-6 pb-8 flex flex-col flex-1 items-center -mt-12">
           
-          {/* Avatar */}
-          <div className="w-24 h-24 bg-white border-2 lg:border-3 border-primary shadow-neo flex items-center justify-center mb-4 transform -rotate-3 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105 z-10 overflow-hidden">
-            {profilePicture ? (
-              <img src={profilePicture} alt={name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="font-heading font-black text-3xl text-primary leading-none tracking-widest">
-                {getInitials(name)}
-              </span>
-            )}
+          {/* Avatar Container */}
+          <div className="relative z-10 mb-5">
+            <div className="w-24 h-24 rounded-2xl bg-[#0a0a0a] border border-white/10 shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 group-hover:border-accent/50 group-hover:shadow-glow-purple">
+              {profilePicture ? (
+                <img src={profilePicture} alt={name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-heading font-black text-3xl text-white tracking-widest">
+                  {getInitials(name)}
+                </span>
+              )}
+            </div>
+            {/* Status Glow Orb */}
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-[#121212] rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
           </div>
 
-          {/* Name and Designation */}
-          <h3 className="font-heading font-black text-2xl text-primary uppercase leading-tight mb-2 tracking-widest line-clamp-2">
-            {name}
-          </h3>
-          <p className="inline-block bg-primary text-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider transform -rotate-1 mb-4 shadow-neo-sm">
-            {designation}
-          </p>
-
-          {/* Batch and Branch */}
-          {(batch || branch) && (
-            <div className="text-[11px] font-bold text-primary/70 uppercase tracking-widest mb-6 flex flex-wrap gap-2 justify-center">
-              {branch && <span className="bg-white px-2 py-0.5 border-2 border-primary/20 rounded shadow-sm">{branch}</span>}
-              {batch && <span className="bg-white px-2 py-0.5 border-2 border-primary/20 rounded shadow-sm">{batch}</span>}
+          <div className="text-center w-full">
+            <h3 className="font-heading font-black text-xl text-white uppercase leading-tight mb-1 tracking-widest transition-all duration-300 group-hover:text-accent">
+              {name}
+            </h3>
+            <div className="flex items-center justify-center gap-2 mb-4">
+               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {designation}
+              </span>
             </div>
-          )}
 
-          {/* Bottom Actions */}
-          <div className="mt-auto w-full pt-4 flex flex-col gap-4 border-t-2 border-primary/10 bg-white/50 backdrop-blur-sm -mx-5 px-5 -mb-6 pb-6">
-            <button
-              onClick={handleChat}
-              className="w-full bg-highlight-yellow text-primary border-2 border-primary px-4 py-3 font-heading font-bold uppercase tracking-wider text-sm shadow-neo transition-all duration-200 hover:bg-highlight-orange hover:translate-x-1 hover:translate-y-1 hover:shadow-none flex items-center justify-center gap-2"
-              title="Chat with Mentor"
-            >
-              <MessageCircle size={20} />
-              Start Chat
-            </button>
-
-            {/* Social Links */}
-            {(linkedin || github || leetcode) && (
-              <div className="flex gap-3 justify-center">
-                {linkedin && (
-                  <a
-                    href={linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 border-2 border-primary shadow-neo-sm bg-highlight-blue hover:bg-white text-primary transition-all hover:-translate-y-1 hover:shadow-neo rounded-full"
-                    title="LinkedIn"
-                  >
-                    <Linkedin size={18} />
-                  </a>
+            {(batch || branch) && (
+              <div className="flex flex-wrap justify-center gap-2 mb-8">
+                {branch && (
+                  <span className="px-2 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                    {branch}
+                  </span>
                 )}
-                {github && (
-                  <a
-                    href={github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 border-2 border-primary shadow-neo-sm bg-highlight-purple hover:bg-white text-primary transition-all hover:-translate-y-1 hover:shadow-neo rounded-full"
-                    title="GitHub"
-                  >
-                    <Github size={18} />
-                  </a>
-                )}
-                {leetcode && (
-                  <a
-                    href={leetcode}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 border-2 border-primary shadow-neo-sm bg-highlight-pink hover:bg-white text-primary transition-all hover:-translate-y-1 hover:shadow-neo rounded-full"
-                    title="LeetCode"
-                  >
-                    <Code2 size={18} />
-                  </a>
+                {batch && (
+                   <span className="px-2 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                    {batch}
+                  </span>
                 )}
               </div>
             )}
           </div>
-          
+
+          {/* Actions */}
+          <div className="mt-auto w-full flex flex-col gap-3">
+            <button
+              onClick={handleChat}
+              className="w-full relative z-10 py-3.5 bg-accent text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-300 shadow-glow-purple hover:bg-accent-magenta active:scale-95 flex items-center justify-center gap-2"
+            >
+              <MessageCircle size={15} />
+              Connect Now
+            </button>
+
+            <div className="flex items-center justify-center gap-4 py-2 opacity-60 hover:opacity-100 transition-opacity">
+              {linkedin && (
+                <a href={linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition-colors">
+                  <Linkedin size={18} />
+                </a>
+              )}
+              {github && (
+                <a href={github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">
+                  <Github size={18} />
+                </a>
+              )}
+              {leetcode && (
+                <a href={leetcode} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent-magenta transition-colors">
+                  <Code2 size={18} />
+                </a>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </ScrollReveal>
@@ -394,7 +165,7 @@ export default function MentorHub() {
 
       const mapped = res.data.map(m => ({
           _id: m._id,
-          designation: 'Mentor',
+          designation: 'Staff Mentor',
           domain: m.domainOfExpertise,
           expertise: m.expertise || [],
           aboutMentor: m.aboutMentor || '',
@@ -403,6 +174,8 @@ export default function MentorHub() {
               username: m.username,
               profilePicture: m.profilePicture,
               branch: m.department,
+              batch: m.batch,
+              socialLinks: m.socialLinks
           }
       }));
 
@@ -413,201 +186,196 @@ export default function MentorHub() {
       const uniqueDomains = [...new Set(mentorsWithDomain.map(m => m.domain))].sort();
       setDomains(uniqueDomains);
 
-      // Set the first domain as selected by default
-      if (uniqueDomains.length > 0) {
+      if (uniqueDomains.length > 0 && !selectedDomain) {
         setSelectedDomain(uniqueDomains[0]);
       }
     } catch (err) {
       console.error('Error fetching mentors:', err);
-      setError('Failed to load mentors. Please try again later.');
+      setError('Neural transmission failed. Retrying in sector 7...');
     } finally {
       setLoading(false);
     }
   };
 
-  // Get mentors for selected domain
   const filteredMentors = selectedDomain
     ? mentors.filter(mentor => mentor.domain === selectedDomain)
     : mentors;
 
   return (
-    <div className="min-h-screen bg-bg bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+    <div className="min-h-screen bg-bg text-white selection:bg-accent/40 overflow-x-hidden">
+      
+      {/* Dynamic Background Patterns */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[20%] -left-[10%] w-[40%] h-[40%] bg-accent/10 blur-[150px] rounded-full"></div>
+        <div className="absolute bottom-[20%] -right-[10%] w-[30%] h-[30%] bg-accent-magenta/10 blur-[150px] rounded-full"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:40px_40px]"></div>
+      </div>
+
       {/* Hero Section */}
-      <div className="relative bg-highlight-blue border-b-4 border-primary pt-32 pb-20 px-4 overflow-hidden mb-12">
-        {/* Background Decorative patterns */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-10 right-10 w-64 h-64 border-8 border-primary rounded-full bg-highlight-yellow opacity-50 translate-x-1/2 -translate-y-1/4"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-highlight-pink rounded-none rotate-45 -translate-x-1/2 translate-y-1/2 border-8 border-primary"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-6 px-4 py-1.5 bg-highlight-yellow border-2 border-primary text-primary font-bold uppercase tracking-widest text-sm shadow-neo transform -rotate-2">
-            Learn From The Best
+      <div className="relative pt-32 pb-16 px-4 z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center">
+            <ScrollReveal>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-full text-accent-magenta text-[10px] font-bold uppercase tracking-[0.3em] backdrop-blur-md mb-8">
+                <Sparkles size={12} />
+                Accessing Elite Network
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={100}>
+              <h1 className="font-heading font-black text-5xl md:text-8xl text-center uppercase leading-[0.9] tracking-tighter mb-8 max-w-4xl">
+                MENTOR <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-accent-magenta">HUB</span>
+              </h1>
+            </ScrollReveal>
+
+            <ScrollReveal delay={200}>
+              <p className="font-medium text-slate-400 text-base md:text-lg text-center max-w-xl mx-auto leading-relaxed border-t border-white/5 pt-8">
+                Connect with domain experts who have built elite products and high-scale systems. Bridge the gap from student to professional.
+              </p>
+            </ScrollReveal>
           </div>
-            <h1 className="font-heading font-black text-5xl md:text-7xl lg:text-8xl text-primary uppercase leading-tight mb-6 tracking-widest">
-            Mentor <span className="text-white drop-shadow-[3px_3px_0_theme('colors.primary')]">Hub</span>
-          </h1>
-          <p className="font-sans font-medium text-lg md:text-2xl text-primary/80 max-w-3xl mx-auto border-t-4 border-primary/20 pt-8 mt-4">
-            Connect with experienced domain experts, accelerate your learning journey, and get the guidance you need to reach the next level.
-          </p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 pb-24">
-        {loading ? (
-          <div className="flex justify-center items-center py-32">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 border-8 border-primary border-t-highlight-blue rounded-full animate-spin shadow-neo mb-6"></div>
-              <p className="text-2xl font-heading font-black text-primary uppercase animate-pulse">Loading Elite Mentors...</p>
+      {/* Main Interface */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pb-32">
+        
+        {loading && mentors.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-40">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-2 border-accent/20 rounded-full animate-ping"></div>
+              <div className="absolute inset-2 border-2 border-accent rounded-full animate-spin border-t-transparent"></div>
             </div>
+            <p className="mt-8 text-xs font-black uppercase tracking-[0.4em] animate-pulse text-accent">Initializing Mentors...</p>
           </div>
         ) : error ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="bg-white border-4 border-primary p-8 shadow-neo max-w-md mx-auto text-center transform rotate-1">
-              <p className="text-red-500 font-heading font-black text-2xl uppercase mb-4">Error!</p>
-              <p className="font-bold">{error}</p>
-            </div>
-          </div>
-        ) : domains.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="bg-highlight-yellow border-4 border-primary p-8 shadow-neo max-w-md mx-auto transform -rotate-1">
-              <p className="text-primary font-heading font-black text-2xl uppercase">No mentors available</p>
-              <p className="font-bold mt-2">Please check back later.</p>
-            </div>
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+             <div className="bg-red-500/10 border border-red-500/30 rounded-3xl p-10 max-w-md">
+                <p className="text-red-400 font-bold mb-2">Protocol Error</p>
+                <p className="text-slate-400 text-sm">{error}</p>
+             </div>
           </div>
         ) : (
-          <>
-            {/* Domain Filter Section */}
-            <ScrollReveal className="mb-16">
-              <div className="flex flex-col items-center">
-                <SectionHeading title="Select Domain" subtitle="Filter by Expertise" />
+          <div className="space-y-16">
+            
+            {/* Search & Select Interface */}
+            <ScrollReveal>
+              <div className="flex flex-col items-center space-y-12">
                 
-                {/* Search Bar */}
-                <div className="w-full max-w-2xl relative mt-8">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary" size={24} />
-                  <input
-                    type="text"
-                    placeholder="Search by name, department, or expertise..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-14 pr-6 py-4 bg-white border-4 border-primary font-bold text-lg focus:outline-none focus:border-highlight-blue transition-all shadow-neo"
-                  />
+                {/* Search Console */}
+                <div className="w-full max-w-2xl relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-accent to-accent-magenta rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative flex items-center bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-xl">
+                    <div className="pl-6 text-slate-500">
+                      <Search size={22} className="group-hover:text-accent transition-colors" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search experts by name, tech stack, or domain..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full px-4 py-6 bg-transparent text-white font-medium text-lg outline-none placeholder:text-slate-600"
+                    />
+                    <div className="pr-4 hidden sm:block">
+                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        <Filter size={12} />
+                        Filtered
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-3 md:gap-4 mt-8">
+                {/* Domain Selector */}
+                <div className="flex flex-wrap justify-center gap-3">
                   <button
                     onClick={() => setSelectedDomain(null)}
-                    className={`px-6 py-3 border-2 border-primary font-heading font-bold uppercase tracking-wider text-sm transition-all duration-200 ${
+                    className={`group px-6 py-3 rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] transition-all border ${
                       selectedDomain === null
-                        ? 'bg-primary text-white shadow-neo translate-x-[2px] translate-y-[2px]'
-                        : 'bg-white text-primary hover:bg-highlight-yellow shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+                        ? 'bg-accent border-accent text-white shadow-glow-purple'
+                        : 'bg-white/[0.02] border-white/5 text-slate-400 hover:border-accent/40 hover:text-white'
                     }`}
                   >
-                    All Mentors 
-                    <span className={`ml-2 px-2 py-0.5 rounded text-xs border border-current ${selectedDomain === null ? 'bg-white/20' : 'bg-primary/10'}`}>
-                      {mentors.length}
-                    </span>
+                    All Sectors
                   </button>
 
-                  {domains.map((domain) => {
-                    const count = mentors.filter(m => m.domain === domain).length;
-                    const accentColors = [
-                      'highlight-blue',
-                      'highlight-green',
-                      'highlight-yellow',
-                      'highlight-orange',
-                      'highlight-purple',
-                      'highlight-pink',
-                    ];
-                    const bgClass =
-                      accentColors[domains.indexOf(domain) % accentColors.length];
-
-                    return (
-                      <button
-                        key={domain}
-                        onClick={() => setSelectedDomain(domain)}
-                        className={`px-6 py-3 border-2 border-primary font-heading font-bold uppercase tracking-wider text-sm transition-all duration-200 ${
-                          selectedDomain === domain
-                            ? `bg-primary shadow-neo text-white translate-x-[2px] translate-y-[2px]`
-                            : `bg-white hover:bg-${bgClass} text-primary shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none`
-                        }`}
-                      >
-                        {domain}
-                        <span className={`ml-2 px-2 py-0.5 rounded text-xs border border-current ${selectedDomain === domain ? 'bg-white/20' : 'bg-primary/10'}`}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {domains.map((domain) => (
+                    <button
+                      key={domain}
+                      onClick={() => setSelectedDomain(domain)}
+                      className={`group px-6 py-3 rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] transition-all border ${
+                        selectedDomain === domain
+                          ? 'bg-accent border-accent text-white shadow-glow-purple'
+                          : 'bg-white/[0.02] border-white/5 text-slate-400 hover:border-accent/40 hover:text-white'
+                      }`}
+                    >
+                      {domain}
+                    </button>
+                  ))}
                 </div>
               </div>
             </ScrollReveal>
 
-            {/* Mentors Grid */}
-            <div className="mb-20">
+            {/* Grid Section */}
+            <div>
               {selectedDomain && (
-                <div className="flex items-center gap-4 mb-8 pb-4 border-b-4 border-primary">
-                  <h2 className="font-heading font-black text-3xl md:text-5xl text-primary uppercase tracking-widest">
-                    {selectedDomain}
-                  </h2>
-                  <span className="bg-highlight-yellow border-2 border-primary px-3 py-1 font-bold text-sm shadow-neo-sm transform rotate-2">
-                    {filteredMentors.length} AVAILABLE
-                  </span>
-                </div>
+                <ScrollReveal>
+                  <div className="flex items-end gap-5 mb-12 border-b border-white/5 pb-8">
+                    <h2 className="font-heading font-black text-3xl md:text-5xl text-white uppercase tracking-tighter">
+                      {selectedDomain.split(' ')[0]} <span className="text-accent-magenta">{selectedDomain.split(' ').slice(1).join(' ')}</span>
+                    </h2>
+                    <div className="flex items-center gap-2 mb-2">
+                       <div className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-glow-purple"></div>
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">
+                         {filteredMentors.length} Verified
+                       </span>
+                    </div>
+                  </div>
+                </ScrollReveal>
               )}
 
               {filteredMentors.length === 0 ? (
-                <div className="text-center py-24">
-                  <div className="bg-white border-4 border-primary border-dashed p-10 max-w-lg mx-auto">
-                    <p className="text-primary font-heading font-black text-3xl uppercase opacity-50 tracking-widest">
-                      No mentors found
-                    </p>
-                  </div>
+                <div className="py-40 text-center">
+                   <div className="text-slate-500 font-bold uppercase tracking-[0.5em] text-sm opacity-50">Zero Matches Found in Domain</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-8 lg:gap-10 items-stretch">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                   {filteredMentors.map((mentor, index) => (
-                    <MentorCard key={mentor._id} mentor={mentor} delay={index * 100} />
+                    <MentorCard key={mentor._id} mentor={mentor} delay={index * 50} />
                   ))}
                 </div>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
 
-      {/* Stats Section */}
+      {/* Global Stats Bar */}
       {!loading && mentors.length > 0 && (
-        <ScrollReveal className="bg-primary text-white border-t-4 border-primary relative overflow-hidden py-16 px-4">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_2px,transparent_2px)] [background-size:24px_24px]"></div>
-          <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
-            <div className="bg-white/5 border-2 border-white/20 p-6 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <p className="text-5xl md:text-7xl font-heading font-black mb-2 text-highlight-yellow drop-shadow-md">
-                {mentors.length}
-              </p>
-              <p className="text-sm md:text-base font-bold uppercase tracking-widest text-white/80">Total Mentors</p>
-            </div>
-            <div className="bg-white/5 border-2 border-white/20 p-6 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <p className="text-5xl md:text-7xl font-heading font-black mb-2 text-highlight-pink drop-shadow-md">
-                {domains.length}
-              </p>
-              <p className="text-sm md:text-base font-bold uppercase tracking-widest text-white/80">Domains</p>
-            </div>
-            <div className="bg-white/5 border-2 border-white/20 p-6 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <p className="text-5xl md:text-7xl font-heading font-black mb-2 text-highlight-green drop-shadow-md">
-                {new Set(mentors.map(m => m.user?._id)).size}
-              </p>
-              <p className="text-sm md:text-base font-bold uppercase tracking-widest text-white/80">Unique Experts</p>
-            </div>
-            <div className="bg-white/5 border-2 border-white/20 p-6 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <p className="text-5xl md:text-7xl font-heading font-black mb-2 text-highlight-blue drop-shadow-md">
-                24/7
-              </p>
-              <p className="text-sm md:text-base font-bold uppercase tracking-widest text-white/80">Guidance</p>
-            </div>
-          </div>
-        </ScrollReveal>
+        <div className="border-t border-white/5 bg-white/[0.01] backdrop-blur-3xl py-20 relative overflow-hidden">
+           <div className="absolute inset-0 bg-accent/5 blur-[200px] pointer-events-none"></div>
+           <div className="max-w-7xl mx-auto px-4 relative z-10">
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left">
+                {[
+                  { label: "Elite Mentors", value: mentors.length, icon: UsersIcon },
+                  { label: "Active Domains", value: domains.length, icon: Sparkles },
+                  { label: "Support Level", value: "24/7", icon: MessageCircle },
+                  { label: "Success Rate", value: "98%", icon: Sparkles }
+                ].map((stat, i) => (
+                  <ScrollReveal key={i} delay={i * 100}>
+                    <div className="space-y-4 group">
+                      <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-accent group-hover:scale-110 group-hover:text-white transition-all">
+                        <stat.icon size={24} />
+                      </div>
+                      <div>
+                        <p className="text-4xl font-heading font-black text-white">{stat.value}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">{stat.label}</p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+             </div>
+           </div>
+        </div>
       )}
     </div>
   );

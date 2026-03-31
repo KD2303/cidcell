@@ -19,22 +19,14 @@ import {
   Send,
   Plus,
   MessageSquare,
-  Trello
+  Trello,
+  ShieldCheck,
+  Star
 } from 'lucide-react';
 import KanbanBoard from '../components/KanbanBoard';
 
 const API = import.meta.env.VITE_API_URL;
 const authHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
-
-const taskStatusBadge = (status) => {
-  const map = {
-    todo: 'bg-slate-200 text-slate-600',
-    in_progress: 'bg-highlight-yellow text-primary',
-    review: 'bg-highlight-purple text-primary',
-    done: 'bg-green-300 text-green-900',
-  };
-  return map[status] || 'bg-slate-100';
-};
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -281,64 +273,73 @@ export default function ProjectDetail() {
     : 0;
 
   if (loading) return (
-    <div className="min-h-screen pt-40 flex items-center justify-center font-bold text-primary animate-pulse">
-      Requesting Asset Details...
+    <div className="min-h-screen bg-bg pt-40 flex flex-col items-center justify-center font-bold text-accent animate-pulse uppercase tracking-widest gap-4">
+      <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+      Loading Project Telemetry...
     </div>
   );
 
   if (!project) return (
-    <div className="min-h-screen pt-40 text-center">
-      <h2 className="text-2xl font-black text-primary mb-4">Project Not Found</h2>
-      <Link to="/projects" className="text-blue-600 font-bold hover:underline italic">Return to Projects</Link>
+    <div className="min-h-screen bg-bg pt-40 text-center">
+      <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-widest">Project Node Offline</h2>
+      <Link to="/projects" className="inline-block px-8 py-3 bg-surface border border-white/10 text-white font-bold uppercase tracking-widest text-xs hover:bg-white/10 transition-colors shadow-glass rounded-full">Return to Matrix</Link>
     </div>
   );
 
   return (
-    <div className="bg-bg min-h-screen pb-20">
+    <div className="bg-bg min-h-screen pb-20 text-white relative overflow-hidden">
+      {/* Abstract Backgrounds */}
+      <div className="absolute top-0 right-[-100px] w-[600px] h-[600px] bg-accent/15 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute top-[30%] left-[-100px] w-[500px] h-[500px] bg-accent-blue/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-slow"></div>
+
       {/* Header */}
-      <section className="pt-32 pb-16 bg-white border-b-3 border-primary relative overflow-hidden">
+      <section className="pt-32 pb-16 relative overflow-hidden border-b border-border">
         <div className="container-max mx-auto px-4 relative z-10">
-          <Link to="/projects" className="inline-flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors mb-8 group">
-            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Projects
+          <Link to="/projects" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-white transition-colors mb-10 group bg-surface/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Matrix
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4 flex-wrap">
-                <span className="px-3 py-1 bg-highlight-yellow border-2 border-primary text-[10px] font-black uppercase shadow-neo-sm">
+              <div className="flex items-center gap-3 mb-6 flex-wrap">
+                <span className="px-3 py-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] font-bold uppercase tracking-widest rounded shadow-glass">
                   {project.type}
                 </span>
-                <span className="px-3 py-1 bg-white border-2 border-primary text-[10px] font-black uppercase shadow-neo-sm">
+                <span className={`px-3 py-1.5 border text-[10px] font-bold uppercase tracking-widest rounded shadow-glass ${
+                  project.status === 'active' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
+                  project.status === 'completed' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
+                  'bg-surface border-border text-slate-300'
+                }`}>
                   {project.status?.replace(/_/g, ' ')}
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-primary uppercase leading-tight tracking-tight mb-4 flex flex-wrap items-center gap-4">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white uppercase leading-tight tracking-tight mb-4 flex flex-wrap items-center gap-4 drop-shadow-2xl">
                 {project.title}
                 {project.githubRepo?.toLowerCase().includes('github.com/cid-cell') && (
-                  <span className="bg-highlight-yellow text-primary border-3 border-primary px-3 py-1 text-[10px] md:text-xs font-black uppercase shadow-neo-sm flex items-center gap-2">
-                     <Github size={14} /> CID-CELL OFFICIAL
+                  <span className="bg-accent/20 text-accent border border-accent/40 px-3 py-1.5 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded flex items-center gap-2 shadow-glow-purple">
+                     <ShieldCheck size={16} /> CID-CELL OFFICAL
                   </span>
                 )}
               </h1>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap shrink-0">
               {project.githubRepo && (
                 <a href={project.githubRepo} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-black text-white border-2 border-black font-bold uppercase text-xs shadow-neo-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  Source <Github size={16} />
+                  className="flex items-center gap-2 px-6 py-3.5 bg-surface border border-white/10 text-white font-bold uppercase tracking-widest text-xs rounded-xl shadow-glass hover:bg-white/5 hover:border-white/20 transition-all">
+                  Source Code <Github size={16} />
                 </a>
               )}
               {project.deployedLink && (
                 <a href={project.deployedLink} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white border-2 border-primary font-bold uppercase text-xs shadow-neo-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  Live Demo <ExternalLink size={16} />
+                  className="flex items-center gap-2 px-6 py-3.5 bg-accent/20 border border-accent/50 text-accent font-bold uppercase tracking-widest text-xs rounded-xl shadow-glow-purple hover:bg-accent/30 hover:text-white transition-all">
+                  Live Endpoint <ExternalLink size={16} />
                 </a>
               )}
               {(isCreator || isContributor) && (
                 <Link to={`/projects/${id}/chat`}
-                  className="flex items-center gap-2 px-6 py-3 bg-highlight-purple text-primary border-2 border-primary font-black uppercase text-xs shadow-neo-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  Project Chat <MessageSquare size={16} />
+                  className="flex items-center gap-2 px-6 py-3.5 bg-accent text-white border border-accent/50 font-bold uppercase tracking-widest text-xs rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] hover:bg-accent/90 transition-all">
+                  Secure Comms <MessageSquare size={16} />
                 </Link>
               )}
             </div>
@@ -346,75 +347,81 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      <div className="container-max mx-auto px-4 mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="container-max mx-auto px-4 mt-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-10">
             {/* Image */}
             {project.images && project.images.length > 0 ? (
-              <div className="aspect-video w-full rounded-2xl border-3 border-primary shadow-neo overflow-hidden bg-slate-50">
-                <img src={project.images[0]} alt={project.title} className="w-full h-full object-cover" />
+              <div className="aspect-video w-full rounded-2xl border border-white/10 shadow-glass overflow-hidden bg-surface relative group">
+                <img src={project.images[0]} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-60 pointer-events-none"></div>
               </div>
             ) : (
-              <div className="aspect-video w-full rounded-2xl border-3 border-primary shadow-neo overflow-hidden bg-slate-50 flex flex-col items-center justify-center text-slate-200">
-                <Layers size={80} strokeWidth={1} />
-                <p className="font-black uppercase tracking-tighter mt-4 text-sm">Visual Documentation Unavailable</p>
+              <div className="aspect-video w-full rounded-2xl border border-white/10 shadow-glass overflow-hidden bg-surface flex flex-col items-center justify-center text-slate-600 relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none"></div>
+                <Layers size={60} strokeWidth={1} className="mb-4 text-slate-500 group-hover:text-accent group-hover:scale-110 transition-all duration-500" />
+                <p className="font-black uppercase tracking-widest text-xs">Visual Data Unavailable</p>
               </div>
             )}
 
             {/* Description */}
-            <div className="bg-white p-8 md:p-12 border-3 border-primary shadow-neo rounded-2xl">
-              <h2 className="flex items-center gap-3 text-2xl font-black text-primary uppercase mb-6 italic">
-                <Info size={24} className="text-blue-600" /> Description
+            <div className="glass-panel p-8 md:p-12 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden">
+               <div className="absolute -top-32 -left-32 w-64 h-64 bg-accent/5 blur-[50px] rounded-full pointer-events-none"></div>
+              <h2 className="flex items-center gap-3 text-2xl font-black text-white uppercase tracking-widest mb-8 border-b border-border pb-4 relative z-10">
+                <Info size={20} className="text-accent" /> System Overview
               </h2>
-              <div className="text-slate-600 text-lg leading-relaxed whitespace-pre-wrap">
+              <div className="text-slate-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10 text-base">
                 {project.description}
               </div>
             </div>
 
             {/* Tech Stack */}
-            <div className="bg-white p-8 border-3 border-primary shadow-neo rounded-2xl">
-              <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6 border-b-2 border-slate-50 pb-2">Technical Stack</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="glass-panel p-8 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-border pb-3 relative z-10">Technical Architecture</h3>
+              <div className="flex flex-wrap gap-2.5 relative z-10">
                 {project.techStack?.map((skill, i) => (
-                  <span key={i} className="px-3 py-1.5 bg-slate-50 border-2 border-slate-200 text-slate-600 text-[11px] font-bold uppercase rounded">
+                  <span key={i} className="px-3 py-1.5 bg-surface border border-white/10 hover:border-accent hover:text-accent transition-colors cursor-default text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-glass">
                     {skill}
                   </span>
                 ))}
-                {(!project.techStack || project.techStack.length === 0) && <p className="text-slate-300 italic text-sm">Not specified</p>}
+                {(!project.techStack || project.techStack.length === 0) && <p className="text-slate-500 italic text-xs tracking-wider">Parameters Unspecified</p>}
               </div>
             </div>
 
             {/* Team Leaderboard */}
-            <div className="bg-white p-8 border-3 border-primary shadow-neo rounded-2xl">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b-2 border-slate-50 pb-4">
-                <h3 className="text-xl font-black text-primary uppercase flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-highlight-green border-2 border-primary flex items-center justify-center -rotate-3"><Users size={16} className="text-green-900" /></span>
-                  Team Leaderboard
+            <div className="glass-panel p-8 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 blur-[50px] pointer-events-none"></div>
+               
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-border pb-4 relative z-10">
+                <h3 className="text-2xl font-black text-white uppercase tracking-widest flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center -rotate-3 shadow-glass text-accent"><Users size={18} /></span>
+                  Active Nodes
                 </h3>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 {project.contributors?.map((c, i) => {
                   const daysSinceActive = Math.floor((new Date() - new Date(c.lastActive || c.joinedAt)) / (1000 * 60 * 60 * 24));
                   const isActive = daysSinceActive < 7;
                   
                   return (
-                    <div key={i} className={`flex items-center justify-between p-4 border-2 rounded-xl transition-all ${isActive ? 'border-primary shadow-neo-sm bg-white' : 'border-slate-100 bg-slate-50 opacity-80'}`}>
+                    <div key={i} className={`flex items-center justify-between p-4 border rounded-xl transition-all ${isActive ? 'bg-surface border-white/10 shadow-glass hover:border-accent/30' : 'bg-bg/50 border-white/5 opacity-60 hover:opacity-100'}`}>
                       <div className="flex items-center gap-4">
                         <div className="relative">
-                          <img src={c.userId?.profilePicture || `https://ui-avatars.com/api/?name=${c.userId?.username}`} className="w-10 h-10 rounded-full border-2 border-primary object-cover" />
-                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center ${isActive ? 'bg-green-500' : 'bg-red-400'}`} title={isActive ? 'Active recently' : 'Inactive'}></div>
+                          <img src={c.userId?.profilePicture || `https://ui-avatars.com/api/?name=${c.userId?.username}&background=050505&color=fff`} className="w-12 h-12 rounded-full border border-white/10 object-cover shadow-glass" alt={c.userId?.username} />
+                          <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-bg flex items-center justify-center ${isActive ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-500'}`} title={isActive ? 'Node Active' : 'Node Dormant'}></div>
                         </div>
                         <div>
-                          <p className="font-black text-sm text-primary uppercase">{c.userId?.username || 'Unknown'}</p>
-                          <div className="flex items-center gap-2 mt-1">
+                          <p className="font-bold text-sm text-white uppercase tracking-wider mb-1">{c.userId?.username || 'Unknown Node'}</p>
+                          <div className="flex items-center gap-2">
                             {isCreator ? (
-                              <div className="flex flex-col gap-1">
+                              <div className="flex gap-2">
                                 <select 
                                   value={c.role || 'developer'}
                                   onChange={(e) => handleRoleChange(c.userId?._id || c.userId, e.target.value)}
-                                  className="text-[9px] font-black uppercase tracking-widest bg-highlight-blue border border-primary px-1 py-0.5 text-primary outline-none cursor-pointer hover:bg-white transition-colors"
+                                  className="text-[9px] font-bold uppercase tracking-widest bg-surface border border-white/10 rounded px-1.5 py-1 text-slate-300 outline-none cursor-pointer hover:border-white/30 transition-colors"
                                 >
                                   <option value="developer">Developer</option>
                                   <option value="tester">Tester</option>
@@ -424,38 +431,38 @@ export default function ProjectDetail() {
                                 <select 
                                   value={c.level || 'new_contributor'}
                                   onChange={(e) => handleLevelChange(c.userId?._id || c.userId, e.target.value)}
-                                  className="text-[9px] font-black uppercase tracking-widest bg-highlight-purple border border-primary px-1 py-0.5 text-white outline-none cursor-pointer hover:bg-white hover:text-primary transition-colors"
+                                  className="text-[9px] font-bold uppercase tracking-widest bg-accent/20 border border-accent/50 rounded px-1.5 py-1 text-accent outline-none cursor-pointer hover:border-accent transition-colors"
                                 >
-                                  <option value="new_contributor">New Contributor</option>
-                                  <option value="active_contributor">Active Contributor</option>
-                                  <option value="core_member">Core Member</option>
+                                  <option value="new_contributor">New</option>
+                                  <option value="active_contributor">Active</option>
+                                  <option value="core_member">Core</option>
                                 </select>
                               </div>
                             ) : (
-                              <div className="flex flex-col gap-1">
-                                <span className="text-[9px] font-black uppercase tracking-widest bg-highlight-blue border border-primary px-2 py-0.5 text-primary text-center">
+                              <div className="flex gap-2">
+                                <span className="text-[9px] font-bold uppercase tracking-widest bg-surface border border-border rounded px-2 py-0.5 text-slate-300">
                                   {c.role || 'Developer'}
                                 </span>
-                                <span className="text-[9px] font-black uppercase tracking-widest bg-highlight-purple border border-primary px-2 py-0.5 text-white text-center">
+                                <span className="text-[9px] font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 rounded px-2 py-0.5 text-accent">
                                   {(c.level || 'new_contributor').replace('_', ' ')}
                                 </span>
                               </div>
                             )}
-                            <span className="text-[9px] font-bold text-slate-400 italic">
-                              {isActive ? 'Active' : `Inactive (${daysSinceActive}d)`}
-                            </span>
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-black text-2xl text-primary leading-none">{c.score || 0}</p>
-                        <p className="text-[9px] font-bold text-highlight-purple uppercase tracking-widest">Points</p>
+                      <div className="text-right flex flex-col items-end">
+                        <div className="flex items-center gap-1.5 text-yellow-400">
+                           <Star size={14} className="fill-current drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]" />
+                           <p className="font-black text-xl leading-none drop-shadow-[0_0_8px_rgba(250,204,21,0.3)]">{c.score || 0}</p>
+                        </div>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">XP Points</p>
                       </div>
                     </div>
                   );
                 })}
                 {(!project.contributors || project.contributors.length === 0) && (
-                  <p className="text-sm font-bold text-slate-400 italic text-center py-6 border-2 border-dashed border-slate-200 rounded-xl">No contributors yet. Be the first!</p>
+                  <p className="text-xs font-bold text-slate-500 tracking-widest text-center py-8 border border-white/10 border-dashed rounded-xl bg-surface/50 uppercase">No active nodes detected. Be the first to uplink.</p>
                 )}
               </div>
             </div>
@@ -471,31 +478,30 @@ export default function ProjectDetail() {
                         href={project.githubRepo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full py-4 bg-primary text-white border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-3"
+                        className="w-full py-4 rounded-xl bg-surface border border-white/10 text-slate-300 font-bold uppercase tracking-widest text-sm shadow-glass hover:bg-white/5 hover:border-white/20 hover:text-white transition-all flex items-center justify-center gap-3"
                       >
-                        <Github size={20} /> 
-                        {project.githubRepo.toLowerCase().includes('github.com/cid-cell') ? 'Contribute to Org' : 'View Core Source'}
+                        <Github size={18} /> 
+                        {project.githubRepo.toLowerCase().includes('github.com/cid-cell') ? 'Contribute to Official Repo' : 'Analyze Source Code'}
                       </a>
                     )}
                     <button onClick={() => setShowJoinModal(true)}
-                      className="w-full py-4 bg-highlight-green border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
-                      <Send size={16} /> Request to Join This Project
+                      className="w-full py-4 rounded-xl bg-accent text-white font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] hover:bg-accent/90 transition-all flex items-center justify-center gap-3">
+                      <Send size={16} /> Request Network Access
                     </button>
                   </>
                 )}
 
                 {/* Pending */}
                 {joinStatus === 'pending' && (
-                  <div className="w-full py-4 bg-highlight-yellow border-3 border-primary font-black uppercase text-sm text-center opacity-80 cursor-not-allowed"
-                    title="The project creator is reviewing your request">
-                    ⏳ Request Pending — Awaiting Creator Review
+                  <div className="w-full py-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-bold uppercase tracking-widest text-sm text-center shadow-[0_0_15px_rgba(250,204,21,0.1)] flex items-center justify-center gap-3 cursor-wait">
+                    <Loader size={16} className="animate-spin" /> Authorization Pending
                   </div>
                 )}
 
                 {/* Rejected + cooldown active */}
                 {joinStatus === 'rejected' && !canReapply && (
-                  <div className="w-full py-4 bg-red-100 border-3 border-red-300 font-bold text-sm text-red-700 text-center">
-                    ❌ Request Rejected — Re-apply in {daysUntilReapply} day{daysUntilReapply !== 1 ? 's' : ''}
+                  <div className="w-full py-4 rounded-xl bg-red-500/10 border border-red-500/30 font-bold uppercase tracking-widest text-sm text-red-400 text-center shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                    ❌ Access Denied — Retry in {daysUntilReapply} cycle{daysUntilReapply !== 1 ? 's' : ''}
                   </div>
                 )}
               </div>
@@ -503,30 +509,32 @@ export default function ProjectDetail() {
 
             {/* Accepted badge */}
             {joinStatus === 'accepted' && isContributor && (
-              <div className="w-full py-4 bg-green-100 border-3 border-green-400 font-black uppercase text-sm text-green-800 text-center flex items-center justify-center gap-2 mb-6">
-                <CheckCircle size={16} /> You are a Contributor
+              <div className="w-full py-4 rounded-xl bg-green-500/10 border border-green-500/30 font-bold uppercase tracking-widest text-sm text-green-400 text-center flex items-center justify-center gap-3 shadow-[0_0_15px_rgba(34,197,94,0.1)] mb-6">
+                <CheckCircle size={18} /> Node Authorized
               </div>
             )}
 
             {/* ── Manage Requests Section (Visible only to Creator) ── */}
             {isCreator && project.type === 'collaborative' && (
-              <div className="bg-white p-8 border-3 border-primary shadow-neo rounded-2xl">
-                <h3 className="text-xl font-black text-primary uppercase mb-6 flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-highlight-purple border-2 border-primary flex items-center justify-center -rotate-3"><Users size={16} className="text-white" /></span>
-                  Manage Join Requests
+              <div className="glass-panel p-8 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden">
+                <h3 className="text-xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3 border-b border-border pb-4">
+                  <span className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center -rotate-3 text-accent shadow-glass"><ShieldCheck size={18} /></span>
+                  Access Requests
                 </h3>
 
                 {loadingRequests ? (
-                  <Loader className="animate-spin text-primary" size={24} />
+                  <div className="flex justify-center py-6">
+                     <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+                  </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {projectRequests.pending.length === 0 && projectRequests.reviewed.length === 0 ? (
-                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest text-center py-6 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 italic">No join requests yet.</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest text-center py-8 border border-white/10 border-dashed rounded-xl bg-surface/50">No incoming connections.</p>
                     ) : (
                       <>
                         {projectRequests.pending.length > 0 && (
                           <div className="mb-6">
-                            <h4 className="text-xs font-black uppercase text-slate-400 tracking-widest mb-3 border-b-2 border-slate-50 pb-2">Pending Review ({projectRequests.pending.length})</h4>
+                            <h4 className="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-4">Pending Authorization ({projectRequests.pending.length})</h4>
                             <div className="space-y-4">
                               {projectRequests.pending.map(request => {
                                 const projectSkills = project.techStack?.map(s => s.toLowerCase()) || [];
@@ -536,35 +544,33 @@ export default function ProjectDetail() {
                                 const matchPercentage = projectSkills.length > 0 ? Math.round((matchedSkills.length / projectSkills.length) * 100) : null;
                                 
                                 return (
-                                <div key={request._id} className="p-5 border-3 border-primary bg-highlight-yellow/10 rounded-xl relative overflow-hidden shadow-neo-sm transform hover:-translate-y-1 transition-transform">
-                                  <div className="absolute top-0 left-0 w-2 h-full bg-highlight-yellow border-r-2 border-primary"></div>
-                                  <div className="flex flex-col md:flex-row justify-between gap-6 pl-2">
+                                <div key={request._id} className="p-5 border border-white/10 bg-surface rounded-xl relative shadow-glass transition-all hover:border-accent/40 group">
+                                  <div className="flex flex-col md:flex-row justify-between gap-6">
                                     <div className="flex-1">
-                                      <div className="flex items-center gap-3 mb-3">
-                                        <img src={request.userId?.profilePicture || `https://ui-avatars.com/api/?name=${request.userId?.username}`} className="w-8 h-8 rounded-full border-2 border-primary object-cover shadow-neo-sm" />
-                                        <span className="font-black text-base text-primary uppercase">{request.userId?.username}</span>
+                                      <div className="flex items-center gap-3 mb-4">
+                                        <img src={request.userId?.profilePicture || `https://ui-avatars.com/api/?name=${request.userId?.username}&background=050505&color=fff`} className="w-10 h-10 rounded-full border border-white/10 object-cover shadow-glass" />
+                                        <span className="font-bold text-sm text-white uppercase tracking-wider">{request.userId?.username}</span>
                                         {matchPercentage !== null && (
-                                          <span className={`text-[9px] font-black uppercase text-white px-2 py-0.5 shadow-neo-sm border-2 border-primary ${matchPercentage >= 70 ? 'bg-green-500' : matchPercentage >= 40 ? 'bg-orange-400' : 'bg-red-400'}`}>
-                                            {matchPercentage}% Skill Match
+                                          <span className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-glass border ${matchPercentage >= 70 ? 'bg-green-500/20 border-green-500/40 text-green-400' : matchPercentage >= 40 ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400' : 'bg-slate-500/20 border-slate-500/40 text-slate-300'}`}>
+                                            {matchPercentage}% Compat
                                           </span>
                                         )}
                                       </div>
-                                      <div className="bg-white p-3 border-2 border-primary shadow-neo-sm rounded-lg relative">
-                                        <div className="absolute -left-2 top-4 w-3 h-3 bg-white border-l-2 border-b-2 border-primary rotate-45 transform"></div>
-                                        <p className="text-xs text-slate-700 font-bold italic relative z-10 leading-relaxed">"{request.message}"</p>
+                                      <div className="bg-bg/50 p-4 border border-white/5 rounded-lg relative">
+                                        <p className="text-xs text-slate-300 font-medium italic relative z-10 leading-relaxed">"{request.message}"</p>
                                       </div>
                                       {request.skills && request.skills.length > 0 && (
-                                        <div className="flex flex-wrap gap-1.5 mt-4">
-                                          {request.skills.map((s, i) => <span key={i} className="text-[10px] font-black uppercase bg-highlight-blue border-2 border-primary px-2 py-1 text-primary shadow-neo-sm">{s}</span>)}
+                                        <div className="flex flex-wrap gap-2 mt-4">
+                                          {request.skills.map((s, i) => <span key={i} className="text-[9px] font-bold uppercase tracking-widest bg-surface border border-white/10 rounded px-2 py-1 text-slate-400">{s}</span>)}
                                         </div>
                                       )}
                                     </div>
                                     <div className="flex flex-row md:flex-col gap-3 shrink-0 justify-center">
-                                      <button onClick={() => handleAcceptRequest(request._id)} className="px-4 py-3 bg-highlight-green text-green-900 border-2 border-primary text-[10px] font-black uppercase shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2 w-full">
-                                        <CheckCircle size={14} /> Accept
+                                      <button onClick={() => handleAcceptRequest(request._id)} className="px-5 py-3 rounded-lg bg-green-500/10 text-green-400 border border-green-500/30 text-[10px] font-bold uppercase tracking-widest shadow-glass hover:bg-green-500 hover:text-white transition-all flex items-center justify-center gap-2 w-full">
+                                        <CheckCircle size={16} /> Authorize
                                       </button>
-                                      <button onClick={() => handleRejectRequest(request._id)} className="px-4 py-3 bg-red-100 text-red-700 border-2 border-primary text-[10px] font-black uppercase shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2 w-full">
-                                        <X size={14} /> Reject
+                                      <button onClick={() => handleRejectRequest(request._id)} className="px-5 py-3 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 text-[10px] font-bold uppercase tracking-widest shadow-glass hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 w-full">
+                                        <X size={16} /> Deny
                                       </button>
                                     </div>
                                   </div>
@@ -576,16 +582,17 @@ export default function ProjectDetail() {
 
                         {projectRequests.reviewed.length > 0 && (
                           <div>
-                            <h4 className="text-[10px] font-black uppercase text-slate-300 tracking-widest mb-3 border-b-2 border-slate-50 pb-2">Previously Reviewed ({projectRequests.reviewed.length})</h4>
-                            <div className="space-y-2">
+                            <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-widest mb-4 border-b border-white/10 pb-2">Archived Logs ({projectRequests.reviewed.length})</h4>
+                            <div className="space-y-3">
                               {projectRequests.reviewed.map(req => (
-                                <div key={req._id} className={`p-3 border-2 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2 opacity-60 hover:opacity-100 transition-opacity ${req.status === 'accepted' ? 'border-highlight-green bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                                <div key={req._id} className="p-3 border border-white/5 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface/30 opacity-60 hover:opacity-100 transition-opacity">
                                   <div className="flex items-center gap-3">
-                                    <img src={req.userId?.profilePicture || `https://ui-avatars.com/api/?name=${req.userId?.username}`} className="w-6 h-6 rounded-full border border-primary object-cover grayscale" />
-                                    <span className="font-bold text-xs text-slate-700">{req.userId?.username}</span>
+                                    <img src={req.userId?.profilePicture || `https://ui-avatars.com/api/?name=${req.userId?.username}&background=050505&color=fff`} className="w-8 h-8 rounded-full border border-white/10 object-cover grayscale" />
+                                    <span className="font-bold text-[11px] text-slate-400 uppercase tracking-widest">{req.userId?.username}</span>
                                     <span className="hidden md:inline-block text-[10px] text-slate-500 italic max-w-[200px] truncate">"{req.message}"</span>
                                   </div>
-                                  <span className={`text-[9px] font-black uppercase px-2 py-1 border-2 self-start sm:self-auto ${req.status === 'accepted' ? 'bg-highlight-green text-green-900 border-primary' : 'bg-red-200 text-red-800 border-red-300'}`}>
+                                  <span className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded border self-start sm:self-auto flex items-center justify-center gap-1 ${req.status === 'accepted' ? 'bg-green-500/10 text-green-500 border-green-500/30' : 'bg-red-500/10 text-red-500 border-red-500/30'}`}>
+                                    {req.status === 'accepted' ? <CheckCircle size={10} /> : <X size={10} />}
                                     {req.status}
                                   </span>
                                 </div>
@@ -602,96 +609,114 @@ export default function ProjectDetail() {
 
             {/* Task Kanban Section (visible if logged in and project is active) */}
             {project.status === 'active' && user && (
-              <div className="bg-white p-8 border-3 border-primary shadow-neo rounded-2xl overflow-hidden">
-                <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-xl font-black text-primary uppercase flex items-center gap-3">
-                        <Trello size={24} className="text-highlight-purple" /> Interactive Kanban
+              <div className="glass-panel py-8 px-4 md:px-8 border border-white/10 shadow-glass rounded-2xl overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 relative z-10 border-b border-border pb-4">
+                    <h3 className="text-xl font-black text-white uppercase tracking-widest flex items-center gap-3">
+                        <Trello size={20} className="text-accent" /> Workstream Matrix
                     </h3>
-                    <div className="flex items-center gap-2">
-                        {loadingTasks && <Loader className="animate-spin text-slate-300" size={16} />}
+                    <div className="flex items-center gap-4">
+                        {loadingTasks && <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>}
                         {(isCreator || isContributor) && (
                             <button 
                                 onClick={() => setShowTaskModal(true)}
-                                className="px-4 py-2 bg-primary text-white border-2 border-primary text-[10px] font-black uppercase shadow-neo-mini hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2"
+                                className="px-5 py-2.5 rounded-lg bg-accent text-white border border-accent/50 text-[10px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:bg-accent/90 transition-all flex items-center gap-2"
                             >
-                                <Plus size={14} /> New Task
+                                <Plus size={14} /> Initialize Task
                             </button>
                         )}
                     </div>
                 </div>
                 
-                <KanbanBoard 
-                    tasks={tasks}
-                    user={user}
-                    onMoveTask={handleMoveTask}
-                    onPick={handlePickTask}
-                    onSubmitPR={handleSubmitPR}
-                    onCreateTask={() => setShowTaskModal(true)}
-                    canManage={isCreator || isContributor}
-                    contributors={project.contributors}
-                />
+                <div className="relative z-10">
+                  <KanbanBoard 
+                      tasks={tasks}
+                      user={user}
+                      onMoveTask={handleMoveTask}
+                      onPick={handlePickTask}
+                      onSubmitPR={handleSubmitPR}
+                      onCreateTask={() => setShowTaskModal(true)}
+                      canManage={isCreator || isContributor}
+                      contributors={project.contributors}
+                  />
+                </div>
               </div>
             )}
 
             {/* Rejection Feedback */}
             {project.status === 'rejected' && (
-              <div className="bg-red-50 p-6 border-3 border-red-300 rounded-2xl">
-                <h3 className="font-black text-red-700 uppercase mb-3 flex items-center gap-2"><AlertTriangle size={18} /> Project Rejected</h3>
-                {project.mentorFeedback && <p className="text-sm text-red-700"><strong>Mentor:</strong> {project.mentorFeedback}</p>}
-                {project.facultyFeedback && <p className="text-sm text-red-700"><strong>Faculty:</strong> {project.facultyFeedback}</p>}
-                {project.adminFeedback && <p className="text-sm text-red-700"><strong>Admin:</strong> {project.adminFeedback}</p>}
+              <div className="bg-red-500/10 p-8 border border-red-500/30 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] relative overflow-hidden backdrop-blur-md">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-[30px] rounded-full"></div>
+                <h3 className="font-black text-red-400 uppercase tracking-widest mb-6 flex items-center gap-3 text-lg border-b border-red-500/20 pb-4">
+                  <AlertTriangle size={20} /> System Rejected
+                </h3>
+                <div className="space-y-4">
+                  {project.mentorFeedback && <p className="text-sm text-red-300 font-medium"><strong className="text-red-400 uppercase tracking-widest text-[10px] block mb-1">Mentor Log:</strong> {project.mentorFeedback}</p>}
+                  {project.facultyFeedback && <p className="text-sm text-red-300 font-medium"><strong className="text-red-400 uppercase tracking-widest text-[10px] block mb-1">Faculty Log:</strong> {project.facultyFeedback}</p>}
+                  {project.adminFeedback && <p className="text-sm text-red-300 font-medium"><strong className="text-red-400 uppercase tracking-widest text-[10px] block mb-1">Admin Log:</strong> {project.adminFeedback}</p>}
+                </div>
               </div>
             )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-8">
-            <div className="bg-primary text-white p-8 border-3 border-primary shadow-neo rounded-2xl">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-white/50 italic">Project Information</h3>
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-blue-400"><User size={20} /></div>
+            <div className="glass-panel p-8 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-[40px] pointer-events-none"></div>
+
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-white flex items-center gap-3 border-b border-border pb-4 relative z-10">
+                <Info size={16} className="text-accent" /> System Metadata
+              </h3>
+              
+              <div className="space-y-6 relative z-10">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center shrink-0 shadow-glass text-accent-blue"><User size={16} /></div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-white/40 leading-none mb-1">Created By</p>
-                    <p className="font-bold text-sm">{project.createdBy?.username || 'Unknown'}</p>
+                    <p className="text-[10px] font-bold uppercase text-slate-500 tracking-widest mb-1">Architect</p>
+                    <p className="font-bold text-sm text-white uppercase tracking-wider">{project.createdBy?.username || 'Unknown'}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-highlight-yellow"><Tag size={20} /></div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center shrink-0 shadow-glass text-accent-magenta"><Tag size={16} /></div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-white/40 leading-none mb-1">Project Type</p>
-                    <p className="font-bold text-sm uppercase">{project.type}</p>
+                    <p className="text-[10px] font-bold uppercase text-slate-500 tracking-widest mb-1">Protocol Type</p>
+                    <p className="font-bold text-sm text-white uppercase tracking-wider">{project.type}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-highlight-teal"><Clock size={20} /></div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center shrink-0 shadow-glass text-accent-cyan"><Clock size={16} /></div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-white/40 leading-none mb-1">Status</p>
-                    <p className="font-bold text-sm">{project.status?.replace(/_/g, ' ')}</p>
+                    <p className="text-[10px] font-bold uppercase text-slate-500 tracking-widest mb-1">Current State</p>
+                    <p className="font-bold text-sm text-white uppercase tracking-wider">{project.status?.replace(/_/g, ' ')}</p>
                   </div>
                 </div>
 
                 {project.mentors && project.mentors.length > 0 && (
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-highlight-purple"><Users size={20} /></div>
+                  <div className="flex items-start gap-4 pt-4 border-t border-border">
+                    <div className="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center shrink-0 shadow-glass text-accent"><Users size={16} /></div>
                     <div>
-                      <p className="text-[10px] font-black uppercase text-white/40 leading-none mb-1">Mentors</p>
-                      {project.mentors.map((m, i) => (
-                        <p key={i} className="font-bold text-sm">{m.userId?.username || 'Unknown'}</p>
-                      ))}
+                      <p className="text-[10px] font-bold uppercase text-slate-500 tracking-widest mb-2">Assigned Mentors</p>
+                      <div className="flex flex-col gap-1.5">
+                        {project.mentors.map((m, i) => (
+                          <p key={i} className="font-bold text-sm text-white uppercase tracking-wider">{m.userId?.username || 'Unknown Node'}</p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white p-8 border-3 border-primary shadow-neo rounded-2xl text-center">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Want to collaborate?</p>
-              <p className="text-sm font-bold text-primary mb-6">Contact CID Cell to get in touch with this project's development team.</p>
-              <Link to="/contact" className="block w-full py-3 bg-slate-50 border-2 border-primary text-primary font-black uppercase text-[10px] tracking-widest hover:bg-slate-100 transition-colors">
-                Enquire
+            <div className="glass-panel p-8 border border-white/10 shadow-glass rounded-2xl text-center relative overflow-hidden group">
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/5 blur-[40px] pointer-events-none group-hover:bg-accent/10 transition-colors"></div>
+               
+              <p className="text-[10px] font-bold text-accent uppercase tracking-widest mb-3 relative z-10">External Collaboration</p>
+              <p className="text-xs font-medium text-slate-400 mb-6 leading-relaxed relative z-10">Ping the CID Cell coordinators to interface with this development team.</p>
+              <Link to="/contact" className="block w-full py-3 bg-surface border border-white/10 text-white font-bold text-xs uppercase tracking-widest hover:border-accent hover:bg-white/5 transition-all shadow-glass rounded-xl relative z-10">
+                Establish Comms
               </Link>
             </div>
           </div>
@@ -700,61 +725,71 @@ export default function ProjectDetail() {
 
       {/* ── Join Request Modal ── */}
       {showJoinModal && (
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white border-3 border-primary shadow-neo rounded-2xl w-full max-w-lg p-8 relative">
-            <button onClick={() => setShowJoinModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-primary">
-              <X size={20} />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="glass-panel border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-2xl w-full max-w-lg p-8 relative overflow-hidden">
+            <div className="absolute -top-32 -right-32 w-64 h-64 bg-accent/10 blur-[50px] rounded-full pointer-events-none"></div>
+
+            <button onClick={() => setShowJoinModal(false)} className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors bg-surface border border-white/10 p-1.5 rounded-lg shadow-glass">
+              <X size={16} />
             </button>
-            <h3 className="text-xl font-black text-primary uppercase mb-6">Request to Join</h3>
+            <h3 className="text-xl font-black text-white uppercase tracking-widest mb-8 border-b border-border pb-4 flex items-center gap-3">
+               <Send size={18} className="text-accent" /> Request Access
+            </h3>
 
             {/* Message */}
-            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-              Why do you want to join? <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={joinMessage}
-              onChange={e => setJoinMessage(e.target.value)}
-              placeholder="Explain your motivation, relevant experience, and what you can contribute... (min 30 characters)"
-              className="w-full h-28 border-2 border-primary p-3 text-sm font-medium outline-none resize-none mb-1 shadow-neo-mini"
-            />
-            <p className="text-[10px] text-slate-400 mb-4">{joinMessage.length}/30 min characters</p>
+            <div className="space-y-2 mb-6">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+                Authorization Payload (Motivation) <span className="text-accent">*</span>
+              </label>
+              <textarea
+                value={joinMessage}
+                onChange={e => setJoinMessage(e.target.value)}
+                placeholder="Explain your motivation, relevant experience, and what you can contribute... (min 30 characters)"
+                className="w-full h-32 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] p-4 text-sm font-medium outline-none resize-none text-white placeholder:text-slate-600 transition-all"
+              />
+              <p className="text-[10px] font-bold uppercase tracking-widest flex justify-end">
+                 <span className={`${joinMessage.length < 30 ? 'text-red-400' : 'text-green-400'}`}>{joinMessage.length}/30 min char</span>
+              </p>
+            </div>
 
             {/* Skills */}
-            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-              Skills you bring
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={skillInput}
-                onChange={e => setSkillInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
-                placeholder="e.g. React, Python..."
-                className="flex-1 border-2 border-primary px-3 py-2 text-sm outline-none shadow-neo-mini"
-              />
-              <button onClick={handleAddSkill} className="px-3 py-2 bg-primary text-white border-2 border-primary shadow-neo-mini">
-                <Plus size={16} />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {joinSkills.map((skill, i) => (
-                <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-highlight-blue border border-primary text-[11px] font-bold uppercase shadow-neo-mini">
-                  {skill}
-                  <button onClick={() => handleRemoveSkill(skill)} className="text-slate-500 hover:text-red-500">
-                    <X size={10} />
-                  </button>
-                </span>
-              ))}
+            <div className="space-y-2 mb-8">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+                Declared Capabilities (Skills)
+              </label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={skillInput}
+                  onChange={e => setSkillInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
+                  placeholder="e.g. React, Python..."
+                  className="flex-1 px-4 py-3 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
+                />
+                <button onClick={handleAddSkill} className="px-4 bg-accent text-white rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:bg-accent/90 transition-all font-bold">
+                  <Plus size={18} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-2">
+                {joinSkills.map((skill, i) => (
+                  <span key={i} className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] font-bold uppercase tracking-widest rounded shadow-glass">
+                    {skill}
+                    <button onClick={() => handleRemoveSkill(skill)} className="hover:bg-accent/30 rounded-full p-0.5 transition-colors">
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Submit */}
             <button
               onClick={handleSubmitJoinRequest}
               disabled={joining || joinMessage.length < 30}
-              className="w-full py-3 bg-highlight-green border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-xl bg-accent text-white font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               {joining ? <Loader size={16} className="animate-spin" /> : <Send size={16} />}
-              {joining ? 'Sending...' : 'Send Request'}
+              {joining ? 'Transmitting...' : 'Transmit Request'}
             </button>
           </div>
         </div>
@@ -762,71 +797,81 @@ export default function ProjectDetail() {
 
       {/* ── New Task Modal ── */}
       {showTaskModal && (
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white border-3 border-primary shadow-neo rounded-2xl w-full max-w-lg p-8 relative">
-            <button onClick={() => setShowTaskModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-primary">
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-black text-primary uppercase mb-6">Create New Project Task</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="glass-panel border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-2xl w-full max-w-lg p-8 relative overflow-hidden">
+            <div className="absolute -top-32 -right-32 w-64 h-64 bg-accent-blue/10 blur-[50px] rounded-full pointer-events-none"></div>
 
-            <div className="space-y-4">
-               <div>
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Task Title*</label>
+            <button onClick={() => setShowTaskModal(false)} className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors bg-surface border border-white/10 p-1.5 rounded-lg shadow-glass">
+              <X size={16} />
+            </button>
+            <h3 className="text-xl font-black text-white uppercase tracking-widest mb-8 border-b border-border pb-4 flex items-center gap-3">
+               <Plus size={18} className="text-accent-blue" /> Initialize Task
+            </h3>
+
+            <div className="space-y-6">
+               <div className="space-y-2">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Task Identifier *</label>
                   <input 
                     type="text" 
                     value={newTask.title}
                     onChange={e => setNewTask({...newTask, title: e.target.value})}
                     placeholder="Briefly describe the objective..."
-                    className="w-full border-2 border-primary px-3 py-2 text-sm font-bold outline-none shadow-neo-mini"
+                    className="w-full px-4 py-3 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent-blue focus:bg-white/5 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
                   />
                </div>
 
-               <div>
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Description</label>
+               <div className="space-y-2">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Specifications</label>
                   <textarea 
                     value={newTask.description}
                     onChange={e => setNewTask({...newTask, description: e.target.value})}
                     placeholder="Detail the technical requirements..."
-                    className="w-full h-24 border-2 border-primary p-3 text-sm font-medium outline-none shadow-neo-mini resize-none"
+                    className="w-full h-24 px-4 py-3 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent-blue focus:bg-white/5 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium resize-none"
                   />
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Difficulty</label>
-                    <select 
-                        value={newTask.difficulty}
-                        onChange={e => setNewTask({...newTask, difficulty: e.target.value})}
-                        className="w-full border-2 border-primary px-3 py-2 text-xs font-black uppercase outline-none shadow-neo-mini bg-white"
-                    >
-                        <option value="small">Low - Quick Fix</option>
-                        <option value="medium">Medium - Feature</option>
-                        <option value="large">High - Refactor</option>
-                        <option value="critical">Critical - Urgent</option>
-                    </select>
+               <div className="grid grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Complexity</label>
+                    <div className="relative">
+                      <select 
+                          value={newTask.difficulty}
+                          onChange={e => setNewTask({...newTask, difficulty: e.target.value})}
+                          className="w-full px-4 py-3 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent-blue focus:bg-white/5 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] outline-none transition-all text-white text-[11px] font-bold uppercase tracking-wider appearance-none cursor-pointer"
+                      >
+                          <option value="small" className="bg-bg text-white">Low - Quick Fix</option>
+                          <option value="medium" className="bg-bg text-white">Medium - Feature</option>
+                          <option value="large" className="bg-bg text-white">High - Refactor</option>
+                          <option value="critical" className="bg-bg text-white">Critical - Urgent</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Assign To</label>
-                    <select 
-                        value={newTask.assignedTo}
-                        onChange={e => setNewTask({...newTask, assignedTo: e.target.value})}
-                        className="w-full border-2 border-primary px-3 py-2 text-xs font-black uppercase outline-none shadow-neo-mini bg-white"
-                    >
-                        <option value="">Unassigned</option>
-                        {project.contributors?.map(c => (
-                            <option key={c.userId?._id} value={c.userId?._id}>{c.userId?.username}</option>
-                        ))}
-                    </select>
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Assign Node</label>
+                    <div className="relative">
+                      <select 
+                          value={newTask.assignedTo}
+                          onChange={e => setNewTask({...newTask, assignedTo: e.target.value})}
+                          className="w-full px-4 py-3 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent-blue focus:bg-white/5 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] outline-none transition-all text-white text-[11px] font-bold uppercase tracking-wider appearance-none cursor-pointer"
+                      >
+                          <option value="" className="bg-bg text-white">Unassigned</option>
+                          {project.contributors?.map(c => (
+                              <option key={c.userId?._id} value={c.userId?._id} className="bg-bg text-white">{c.userId?.username}</option>
+                          ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                    </div>
                   </div>
                </div>
 
                <button
                   onClick={handleCreateTask}
                   disabled={creatingTask || !newTask.title}
-                  className="w-full py-4 mt-4 bg-highlight-yellow border-3 border-primary font-black uppercase text-sm shadow-neo hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-4 mt-4 rounded-xl bg-accent-blue text-white font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:bg-blue-500 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
                >
                   {creatingTask ? <Loader size={16} className="animate-spin" /> : <Plus size={16} />}
-                  {creatingTask ? 'Saving Output...' : 'Add Task to Board'}
+                  {creatingTask ? 'Processing...' : 'Deploy to Board'}
                </button>
             </div>
           </div>
@@ -835,63 +880,13 @@ export default function ProjectDetail() {
 
       {/* Toast */}
       {toast.message && (
-        <div className="fixed bottom-6 right-6 z-[9999]">
-          <div className={`px-4 py-3 border-2 border-primary shadow-[4px_4px_0px_rgba(0,0,0,1)] flex items-center gap-3 text-sm font-bold ${toast.type === 'error' ? 'bg-red-400 text-white' : 'bg-highlight-green text-primary'}`}>
-            {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
-            <p>{toast.message}</p>
-            <button onClick={() => setToast({ message: '', type: null })}><X size={14} /></button>
+        <div className="fixed bottom-6 right-6 z-[9999] animate-fade-in">
+           <div className={`px-5 py-4 rounded-xl border font-bold shadow-glass backdrop-blur-md flex items-center gap-3 text-sm ${toast.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+            {toast.type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle size={18} />}
+            <p className="tracking-wide">{toast.message}</p>
+            <button onClick={() => setToast({ message: '', type: null })} className="ml-3 hover:text-white transition-colors"><X size={14} /></button>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
-
-// ── Sub-component for task cards on the detail page ──
-function TaskCard({ task, user, isCreator, userRole, onPick, onSubmitPR }) {
-  const [prLink, setPrLink] = useState('');
-  const isAssigned = task.assignedTo?._id === user._id;
-  
-  const canInteract = isCreator || (userRole && userRole !== 'viewer');
-
-  return (
-    <div className="border-2 border-primary p-4 rounded-xl bg-slate-50">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="font-bold text-primary text-sm">{task.title}</h4>
-        <span className={`px-2 py-0.5 text-[9px] font-black uppercase border border-primary ${taskStatusBadge(task.status)}`}>
-          {task.status.replace('_', ' ')}
-        </span>
-      </div>
-      {task.description && <p className="text-xs text-slate-500 mb-2">{task.description}</p>}
-      {task.assignedTo && <p className="text-[10px] font-bold text-slate-400 mb-1">Assigned to: <span className="text-primary">{task.assignedTo.username}</span></p>}
-
-      {/* Pick button */}
-      {task.status === 'todo' && user.userType === 'student' && canInteract && (
-        <button onClick={() => onPick(task._id)} className="mt-2 px-4 py-2 bg-highlight-blue border-2 border-primary text-[10px] font-black uppercase shadow-neo-sm hover:shadow-none transition-all">
-          Pick This Task
-        </button>
-      )}
-
-      {/* Submit PR */}
-      {task.status === 'in_progress' && isAssigned && canInteract && (
-        <div className="mt-2 flex gap-2">
-          <input type="text" placeholder="PR Link..." value={prLink} onChange={e => setPrLink(e.target.value)} className="flex-1 px-2 py-1 border border-primary text-xs outline-none" />
-          <button onClick={() => { onSubmitPR(task._id, prLink); setPrLink(''); }} className="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase border border-primary">
-            Submit PR
-          </button>
-        </div>
-      )}
-
-      {/* PR link display */}
-      {task.prLink && (
-        <a href={task.prLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:underline mt-2">
-          <ExternalLink size={12} /> View PR
-        </a>
-      )}
-
-      {/* Mentor feedback */}
-      {task.mentorFeedback && (
-        <p className="text-[10px] text-slate-500 italic mt-1">Feedback: {task.mentorFeedback}</p>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Plus, X, AlertTriangle, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Plus, X, AlertTriangle, CheckCircle, ArrowLeft, Upload, Code2 } from 'lucide-react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { compressImage } from '../utils/compressImage';
@@ -20,7 +20,6 @@ export default function SubmitProject() {
   });
 
   const [newSkill, setNewSkill] = useState('');
-  const [newImage, setNewImage] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: null });
@@ -85,111 +84,125 @@ export default function SubmitProject() {
   };
 
   return (
-    <div className="min-h-screen bg-bg">
-      <div className="pt-32 pb-20 container-max mx-auto section-padding max-w-3xl">
-        <Link to="/projects" className="inline-flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors mb-8 group">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Projects
+    <div className="min-h-screen bg-bg text-white relative overflow-hidden">
+      {/* Abstract Backgrounds */}
+      <div className="absolute top-0 right-[-100px] w-[600px] h-[600px] bg-accent/15 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute bottom-[-100px] left-[-100px] w-[500px] h-[500px] bg-accent-blue/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-slow"></div>
+
+      <div className="pt-32 pb-20 container-max mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl relative z-10">
+        <Link to="/projects" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-white transition-colors mb-10 group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Matrix
         </Link>
 
-        <h1 className="mb-2 uppercase font-black text-primary font-heading text-4xl">Submit a Project</h1>
-        <p className="font-body normal-case tracking-normal text-primary/70 mb-10 border-l-4 border-primary pl-4">
-          Submit your project for review. Independent projects go to Faculty review. Collaborative projects go through Mentor → Faculty → Admin.
-        </p>
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 border border-accent/20 mb-6 shadow-glow-purple mx-auto">
+             <Code2 size={24} className="text-accent" />
+          </div>
+          <h1 className="uppercase font-black text-white font-heading text-4xl md:text-5xl mb-4 tracking-wider">Initialize Project</h1>
+          <p className="font-medium text-slate-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed glass-panel p-3 border-l-2 border-accent">
+            Submit your node into the network. Independent nodes go to Faculty review. Collaborative nodes sync through Mentor → Faculty → Admin.
+          </p>
+        </div>
 
-        <div className="neo-card p-8 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
+        <div className="glass-panel p-6 md:p-10 border border-white/10 shadow-glass rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-64 h-64 bg-accent/10 blur-[50px] rounded-full pointer-events-none"></div>
+
+          <form onSubmit={handleSubmit} className="relative z-10">
+            <div className="space-y-8">
 
               {/* Project Type Toggle */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-widest mb-3 text-primary">Project Type*</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-3 text-slate-400 pl-1">Protocol Type *</label>
                 <div className="flex gap-4">
                   {['independent', 'collaborative'].map(t => (
                     <button
                       key={t}
                       type="button"
                       onClick={() => setFormData({ ...formData, type: t })}
-                      className={`flex-1 py-4 px-6 border-3 border-primary font-black uppercase text-sm transition-all ${
+                      className={`flex-1 py-4 px-4 rounded-xl border font-bold uppercase tracking-widest text-xs transition-all ${
                         formData.type === t
-                          ? 'bg-primary text-white shadow-none translate-x-[2px] translate-y-[2px]'
-                          : 'bg-white text-primary shadow-neo hover:-translate-y-1'
+                          ? 'bg-accent/20 text-accent border-accent/50 shadow-glow-purple'
+                          : 'bg-surface text-slate-400 border-white/5 hover:border-white/10 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {t}
                     </button>
                   ))}
                 </div>
-                <p className="text-[10px] font-bold mt-2 text-slate-500 italic">
+                <p className="text-[10px] font-medium mt-3 text-slate-500 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
                   {formData.type === 'independent'
-                    ? '→ Reviewed by Faculty only. Requires a GitHub link or deployed URL.'
-                    : '→ Goes through Mentor → Faculty → Admin review. Other students can join once active.'}
+                    ? 'Reviewed by Faculty only. Requires a verified GitHub or Host Link.'
+                    : 'Full network review. External nodes (students) can connect once authorized.'}
                 </p>
               </div>
 
               {/* Title */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-widest mb-2 text-primary">Project Title*</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Project Identifier *</label>
                 <input
                   type="text" required
                   value={formData.title}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-primary bg-white text-sm outline-none focus:bg-slate-50 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] font-bold text-primary"
+                  className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
                   placeholder="e.g. AI Threat Detection System"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-widest mb-2 text-primary">Description*</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Core Objectives *</label>
                 <textarea
                   required rows="5"
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-primary bg-white text-sm outline-none focus:bg-slate-50 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] font-bold text-primary"
-                  placeholder="Describe the project's goal, impact, and technical approach..."
+                  className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium resize-none"
+                  placeholder="Describe the system architecture, goals, and technical impacts..."
                 />
               </div>
 
               {/* Tech Stack Tags */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest">Technical Stack</label>
-                <div className="flex gap-2">
+              <div className="space-y-4">
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Tech Stack *</label>
+                <div className="flex gap-3">
                   <input
                     type="text" value={newSkill}
                     onChange={e => setNewSkill(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                    className="flex-1 px-3 py-2 border-2 border-primary focus:bg-slate-50 outline-none text-sm font-bold"
+                    className="flex-1 px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium"
                     placeholder="e.g. React, Python"
                   />
-                  <button type="button" onClick={addSkill} className="px-3 bg-white border-2 border-primary hover:bg-primary hover:text-white transition-all shadow-[2px_2px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-0.5">
+                  <button type="button" onClick={addSkill} className="px-5 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all font-bold shadow-[0_0_15px_rgba(139,92,246,0.2)] border border-accent/50 shrink-0">
                     <Plus size={20} />
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {formData.techStack.map((tech, i) => (
-                    <span key={i} className="px-2 py-1 bg-highlight-blue text-primary border-2 border-primary text-[10px] font-black uppercase flex items-center gap-2">
-                      {tech}
-                      <button type="button" onClick={() => removeSkill(i)}><X size={12} /></button>
-                    </span>
-                  ))}
-                </div>
+                {formData.techStack.length > 0 && (
+                  <div className="flex flex-wrap gap-2 p-4 bg-surface border border-white/5 rounded-xl">
+                    {formData.techStack.map((tech, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-accent/10 text-accent border border-accent/30 rounded-lg text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-glass">
+                        {tech}
+                        <button type="button" onClick={() => removeSkill(i)} className="hover:text-white hover:bg-accent/50 rounded-full p-0.5 transition-colors"><X size={12} /></button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Links */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-2">GitHub Repository {formData.type === 'independent' && '*'}</label>
-                  <input type="text" value={formData.githubRepo} onChange={e => setFormData({ ...formData, githubRepo: e.target.value })} className="w-full px-4 py-3 border-2 border-primary bg-white text-sm outline-none focus:bg-slate-50 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] font-bold text-primary" placeholder="https://github.com/..." />
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Source Node URL {formData.type === 'independent' && '*'}</label>
+                  <input type="text" value={formData.githubRepo} onChange={e => setFormData({ ...formData, githubRepo: e.target.value })} className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium" placeholder="https://github.com/..." />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-2">Deployed Link {formData.type === 'independent' && '*'}</label>
-                  <input type="text" value={formData.deployedLink} onChange={e => setFormData({ ...formData, deployedLink: e.target.value })} className="w-full px-4 py-3 border-2 border-primary bg-white text-sm outline-none focus:bg-slate-50 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] font-bold text-primary" placeholder="https://..." />
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Live Endpoint URL {formData.type === 'independent' && '*'}</label>
+                  <input type="text" value={formData.deployedLink} onChange={e => setFormData({ ...formData, deployedLink: e.target.value })} className="w-full px-5 py-4 bg-surface backdrop-blur-md border border-white/10 rounded-xl focus:border-accent focus:bg-white/5 focus:shadow-[0_0_15px_rgba(139,92,246,0.2)] outline-none transition-all text-white placeholder:text-slate-600 text-sm font-medium" placeholder="https://..." />
                 </div>
               </div>
 
               {/* Project Images */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest">Project Images</label>
+              <div className="space-y-4">
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-400 pl-1">Visual Assets</label>
                 <div className="flex gap-2">
                   <div className="flex-1 relative">
                     <input 
@@ -202,36 +215,39 @@ export default function SubmitProject() {
                     />
                     <label 
                       htmlFor="project-image-upload" 
-                      className={`w-full flex items-center justify-center gap-2 px-3 py-2 border-2 border-primary border-dashed cursor-pointer hover:bg-slate-50 transition-colors text-sm font-bold ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`w-full flex items-center justify-center gap-3 px-5 py-6 border border-white/10 border-dashed rounded-xl cursor-pointer hover:bg-white/5 hover:border-accent/50 transition-all text-sm font-bold text-slate-400 ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      {uploadingImage ? 'Uploading...' : <><Plus size={20} /> Add Image</>}
+                      {uploadingImage ? 'Transmitting Data...' : <><Upload size={18} className="text-accent" /> Uplink Image Asset</>}
                     </label>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {formData.images.map((img, i) => (
-                    <div key={i} className="relative group border-2 border-primary shadow-neo-sm overflow-hidden aspect-video">
-                      <img src={img} alt={`Project screenshot ${i + 1}`} className="w-full h-full object-cover" />
-                      <button 
-                        type="button" 
-                        onClick={() => removeImage(i)}
-                        className="absolute top-1 right-1 bg-highlight-pink border-2 border-primary p-1 text-primary opacity-0 group-hover:opacity-100 transition-opacity shadow-neo-sm"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                {formData.images.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {formData.images.map((img, i) => (
+                      <div key={i} className="relative group rounded-xl border border-white/10 overflow-hidden aspect-video shadow-glass">
+                        <img src={img} alt={`Asset ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <button 
+                          type="button" 
+                          onClick={() => removeImage(i)}
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Submit */}
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <button type="submit" disabled={submitting} className="flex-1 py-4 bg-primary text-white font-black uppercase text-sm border-2 border-primary shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                {submitting ? 'Submitting…' : 'Submit for Review'}
+            <div className="mt-12 flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/5">
+              <button type="submit" disabled={submitting} className="flex-[2] py-4 rounded-xl bg-accent text-white font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                {submitting ? 'Authenticating...' : 'Transmit Protocol'}
               </button>
-              <Link to="/projects" className="py-4 px-8 bg-white text-primary text-center font-black uppercase text-sm border-2 border-primary shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                Cancel
+              <Link to="/projects" className="flex-1 py-4 rounded-xl bg-surface border border-white/10 text-slate-300 hover:text-white hover:bg-white/5 hover:border-white/20 text-center font-bold uppercase tracking-widest text-sm transition-all flex items-center justify-center">
+                Abort
               </Link>
             </div>
           </form>
@@ -241,10 +257,10 @@ export default function SubmitProject() {
       {/* Toast */}
       {toast.message && (
         <div className="fixed bottom-6 right-6 z-[9999] animate-fade-in">
-          <div className={`px-4 py-3 border-2 border-primary shadow-[4px_4px_0px_rgba(0,0,0,1)] flex items-center gap-3 text-sm font-bold ${toast.type === 'error' ? 'bg-highlight-orange text-primary' : 'bg-highlight-green text-primary'}`}>
-            {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
-            <p>{toast.message}</p>
-            <button onClick={() => setToast({ message: '', type: null })} className="ml-2 hover:opacity-70"><X size={14} /></button>
+           <div className={`px-5 py-4 rounded-xl border font-bold shadow-glass backdrop-blur-md flex items-center gap-3 text-sm ${toast.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+            {toast.type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle size={18} />}
+            <p className="tracking-wide">{toast.message}</p>
+            <button onClick={() => setToast({ message: '', type: null })} className="ml-3 hover:text-white transition-colors"><X size={14} /></button>
           </div>
         </div>
       )}
