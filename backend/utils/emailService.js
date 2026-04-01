@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
-const { getRetroWelcomeTemplate } = require('./emailTemplate');
+const { getPremiumEmailTemplate } = require('./emailTemplate');
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -9,13 +9,12 @@ const transporter = nodemailer.createTransport({
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS
     },
-    // Connection pool — reuse SMTP connection instead of creating a new one per email
+    // Connection pool
     pool: true,
     maxConnections: 5,
     maxMessages: 100,
 });
 
-// Verify transporter config on startup (non-blocking)
 transporter.verify((error) => {
     if (error) {
         console.error('❌ Nodemailer transporter verification failed:', error.message);
@@ -24,57 +23,91 @@ transporter.verify((error) => {
     }
 });
 
-/**
- * Send a welcome email to a newly registered user.
- * Uses the retro-themed HTML template from emailTemplate.js.
- * @param {Object} user - Mongoose user document
- */
+/** Helper to provide standard attachments like Logo to templates */
+const getStandardAttachments = () => [
+    {
+        filename: 'logo.png',
+        path: require('path').join(__dirname, '../assets/logo.png'),
+        cid: 'logo',
+    }
+];
+
 const sendWelcomeEmail = async (user) => {
     try {
-        const html = getRetroWelcomeTemplate(user);
+        const username = user.username || 'Developer';
+        
+        const html = getPremiumEmailTemplate({
+            title: 'ACCESS GRANTED',
+            preheader: 'Welcome to the CID Cell Developer Matrix.',
+            greeting: `Hello ${username},`,
+            bodyLines: [
+                `Your neural link to the **Collaborative Innovation & Development Cell** has been successfully established. Your credentials are now authenticated across the network.`,
+                `**Name:** ${username}`,
+                `**Branch:** ${user.branch || 'Unassigned'}`,
+                `**Batch:** ${user.batch || 'Unassigned'}`,
+                `You are now cleared to access active workspaces, join collaborative projects, and expand your technical potential.`
+            ],
+            cta: {
+                text: 'ENTER DASHBOARD',
+                link: 'https://cid-cell-mits.vercel.app/dashboard'
+            }
+        });
+
         const mailOptions = {
             from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
             to: user.email,
-            subject: '🎮 ACCESS GRANTED — Welcome to CID Cell!',
+            subject: '⚡ Welcome to CID Cell — Access Granted',
             html,
-            attachments: [
-                {
-                    filename: 'logo.png',
-                    path: require('path').join(__dirname, '../assets/logo.png'),
-                    cid: 'logo', // Referenced as cid:logo in the email template
-                }
-            ]
+            attachments: getStandardAttachments()
         };
         await transporter.sendMail(mailOptions);
         console.log(`✅ Welcome email sent to ${user.email}`);
     } catch (error) {
         console.error('❌ Error sending welcome email:', error.message);
-        throw error; // Re-throw so the caller can catch (logged non-fatally in authController)
+        throw error;
     }
 };
 
-/**
- * Returns rendered HTML for browser preview of the welcome email template.
- * Used by GET /api/auth/template-preview
- */
 const getPreviewHtml = () => {
-    return getRetroWelcomeTemplate({
-        username: 'PREVIEW USER',
-        branch: 'Computer Science',
-        batch: '2024',
-        email: 'preview@mitsgwl.ac.in',
+    return getPremiumEmailTemplate({
+        title: 'ACCESS GRANTED',
+        preheader: 'Welcome to the CID Cell Matrix preview.',
+        greeting: `Hello PREVIEW USER,`,
+        bodyLines: [
+            `Your profile has been verified and initialized in the database.`,
+            `This is a preview of the new CID-Cell Cybernetic Email Aesthetic.`
+        ],
+        cta: { text: 'VISIT HUB', link: 'https://cid-cell-mits.vercel.app' }
     });
 };
 
 const sendJoinRequestStatusEmail = async (userEmail, projectName, status) => {
     try {
+        const approved = status.toLowerCase() === 'approved';
+        const title = approved ? 'JOIN REQUEST APPROVED' : 'JOIN REQUEST DECLARED';
+        const colorTitle = approved ? 'successfully integrated' : `marked as ${status}`;
+
+        const html = getPremiumEmailTemplate({
+            title,
+            preheader: `Update regarding your application to ${projectName}`,
+            greeting: `Incoming Network Alert,`,
+            bodyLines: [
+                `Your recent request to join the project workspace **${projectName}** has been automatically processed.`,
+                `Your status has been **${colorTitle}** by the project supervisor.`,
+                `Please navigate to your dynamic dashboard to review your active clusters and team communications.`
+            ],
+            cta: {
+                text: 'VIEW TEAMS',
+                link: 'https://cid-cell-mits.vercel.app/dashboard'
+            }
+        });
+
         const mailOptions = {
             from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
             to: userEmail,
-            subject: `Update on your Join Request for ${projectName}`,
-            html: `<h3>Hello,</h3>
-                   <p>Your join request for the project <b>${projectName}</b> has been <b>${status}</b>.</p>
-                   <p>Regards,<br>CID-Cell Team</p>`
+            subject: `Status Update: ${projectName}`,
+            html,
+            attachments: getStandardAttachments()
         };
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to ${userEmail} regarding join request ${status}`);
@@ -85,14 +118,28 @@ const sendJoinRequestStatusEmail = async (userEmail, projectName, status) => {
 
 const sendDoubtSessionRequestEmail = async (mentorEmail, studentName, domain) => {
     try {
+        const html = getPremiumEmailTemplate({
+            title: 'NEW MENTORSHIP REQUEST',
+            preheader: `Doubt session ticket from ${studentName}`,
+            greeting: `Hello Mentor,`,
+            bodyLines: [
+                `A new mentorship ticket has been filed in your sector.`,
+                `**Student:** ${studentName}`,
+                `**Domain Flag:** ${domain}`,
+                `Please authenticate into your administrative dashboard to review the query logs and schedule an advisory sync.`
+            ],
+            cta: {
+                text: 'REVIEW TICKET',
+                link: 'https://cid-cell-mits.vercel.app/faculty-dashboard'
+            }
+        });
+
         const mailOptions = {
             from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
             to: mentorEmail,
-            subject: `New Doubt Session Request from ${studentName}`,
-            html: `<h3>Hello Mentor,</h3>
-                   <p>You have a new doubt session request from <b>${studentName}</b> regarding <b>${domain}</b>.</p>
-                   <p>Please log in to your dashboard to review it.</p>
-                   <p>Regards,<br>CID-Cell Team</p>`
+            subject: `Action Required: Session Request from ${studentName}`,
+            html,
+            attachments: getStandardAttachments()
         };
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to mentor ${mentorEmail} regarding doubt session`);
@@ -103,13 +150,26 @@ const sendDoubtSessionRequestEmail = async (mentorEmail, studentName, domain) =>
 
 const sendEventApprovalEmail = async (organizerEmail, eventName) => {
     try {
+        const html = getPremiumEmailTemplate({
+            title: 'EVENT COMPILED & APPROVED',
+            preheader: `Your proposal for ${eventName} has been accepted.`,
+            greeting: `Initiative Authorized,`,
+            bodyLines: [
+                `Your architectural proposal for **${eventName}** is completely authorized by the administrative subnet.`,
+                `The event is now officially injected into the global node matrix and visible to all registered developers.`
+            ],
+            cta: {
+                text: 'MANAGE EVENT',
+                link: 'https://cid-cell-mits.vercel.app/events'
+            }
+        });
+
         const mailOptions = {
             from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
             to: organizerEmail,
-            subject: `Event Proposal Approved: ${eventName}`,
-            html: `<h3>Great News!</h3>
-                   <p>Your event proposal for <b>${eventName}</b> has been <b>approved</b> by the administration!</p>
-                   <p>Regards,<br>CID-Cell Team</p>`
+            subject: `Proposal Approved: ${eventName}`,
+            html,
+            attachments: getStandardAttachments()
         };
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to organizer ${organizerEmail} regarding event approval`);
@@ -120,15 +180,28 @@ const sendEventApprovalEmail = async (organizerEmail, eventName) => {
 
 const sendEventRegistrationEmail = async (userEmail, userName, eventName, date, time) => {
     try {
+        const html = getPremiumEmailTemplate({
+            title: 'TICKET & RSVP CONFIRMED',
+            preheader: `Registration locked for ${eventName}`,
+            greeting: `Hello ${userName},`,
+            bodyLines: [
+                `Your registration node for **${eventName}** has successfully synchronized with our attendance registry.`,
+                `**Deployment Date:** ${date}`,
+                `**Time:** ${time || 'TBD'}`,
+                `Your seat array is securely reserved. Connect to your dashboard via the hub to view live location details or any future timing patches.`
+            ],
+            cta: {
+                text: 'VIEW DETAILS',
+                link: 'https://cid-cell-mits.vercel.app/events'
+            }
+        });
+
         const mailOptions = {
             from: `"CID Cell MITS" <${process.env.MAIL_USER}>`,
             to: userEmail,
             subject: `RSVP Confirmed: ${eventName}`,
-            html: `<h3>Hello ${userName},</h3>
-                   <p>Your registration for the event <b>${eventName}</b> has been successfully confirmed!</p>
-                   <p><b>Date:</b> ${date}<br><b>Time:</b> ${time || 'TBD'}</p>
-                   <p>You can manage your registrations from your CID Cell dashboard.</p>
-                   <p>Regards,<br>CID-Cell Team</p>`
+            html,
+            attachments: getStandardAttachments()
         };
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to ${userEmail} regarding registration for ${eventName}`);

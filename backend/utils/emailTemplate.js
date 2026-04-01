@@ -1,13 +1,40 @@
 /**
- * Simplified Retro-themed welcome email template
- * Focuses on: Name, Branch, Batch Year
- * @param {Object} user - User object containing name, branch, batch, etc.
- * @returns {string} HTML string
+ * Unified Premium Email Template
+ * Dynamically wrapped with the CID-Cell Cybernetic Glassmorphism branding.
+ * 
+ * @param {Object} options
+ * @param {string} options.title - The main heading of the email
+ * @param {string} options.preheader - Hidden preheader text for email clients
+ * @param {string} options.greeting - The greeting line (e.g. "Hello Anurag,")
+ * @param {string[]} options.bodyLines - Array of HTML strings for the body paragraphs
+ * @param {Object} [options.cta] - Optional Call-To-Action button
+ * @param {string} options.cta.text - The text on the button
+ * @param {string} options.cta.link - The URL the button directs to
+ * @returns {string} Fully rendered HTML string
  */
-const getRetroWelcomeTemplate = (user) => {
-    const username = user.username || 'Player One';
-    const branch = user.branch || 'N/A';
-    const batch = user.batch || 'N/A';
+const getPremiumEmailTemplate = ({ title, preheader, greeting, bodyLines, cta }) => {
+    
+    // Check if a line is a bold key-value pair and style it like a badge
+    const bodyHtml = bodyLines.map(line => {
+        if (line.startsWith('**') && line.includes(':**')) {
+            const [keyBlock, val] = line.split(':**');
+            const key = keyBlock.replace('**', '').trim();
+            const value = val ? val.trim() : '';
+            return `<div style="margin-bottom: 12px; padding: 12px 16px; background-color: #1a1a1a; border-left: 3px solid #8b5cf6; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                      <strong style="color: #a78bfa; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">${key}:</strong> 
+                      <span style="color: #f8fafc; font-size: 15px; margin-left: 8px;">${value}</span>
+                    </div>`;
+        }
+        return `<p style="margin-bottom: 20px; color: #cbd5e1; font-size: 16px; line-height: 1.6;">${line}</p>`;
+    }).join('');
+
+    const ctaHtml = cta ? `
+        <div style="text-align: center; margin: 45px 0 25px 0;">
+            <a href="${cta.link}" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%); color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);">
+                ${cta.text}
+            </a>
+        </div>
+    ` : '';
 
     return `
 <!DOCTYPE html>
@@ -15,184 +42,68 @@ const getRetroWelcomeTemplate = (user) => {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to CID CELL</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #0d0221;
-            font-family: 'VT323', monospace;
-            color: #39ff14;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 30px auto;
-            background: #1a0b2e;
-            border: 4px solid #ff00ff;
-            box-shadow: 0 0 15px #ff00ff, 10px 10px 0px #00ffff;
-            padding: 30px;
-            position: relative;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #00ffff;
-            padding-bottom: 15px;
-        }
-
-        .title {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
-            color: #39ff14;
-            text-transform: uppercase;
-            margin: 0;
-            text-shadow: 3px 3px #ff00ff;
-        }
-
-        .status-bar {
-            background: #000;
-            color: #39ff14;
-            padding: 5px 10px;
-            font-size: 11px;
-            margin-bottom: 20px;
-            border: 1px solid #39ff14;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .terminal-text {
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        .user-greeting {
-            color: #ffff00;
-            font-size: 22px;
-            display: block;
-            margin-bottom: 20px;
-            border-left: 4px solid #ff00ff;
-            padding-left: 10px;
-        }
-
-        .info-grid {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid #00ffff;
-            padding: 15px;
-            margin: 20px 0;
-        }
-
-        .info-item {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .label {
-            color: #00ffff;
-            font-weight: bold;
-            text-transform: uppercase;
-            width: 80px;
-            display: inline-block;
-        }
-
-        .value {
-            color: #ffffff;
-        }
-
-        .btn-container {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .retro-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #ff00ff;
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            border: 3px solid #00ffff;
-            box-shadow: 6px 6px 0px #39ff14;
-        }
-
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #888;
-            text-align: center;
-            border-top: 1px dotted #00ffff;
-            padding-top: 15px;
-        }
-
-        .pixel-art {
-            text-align: center;
-            font-family: monospace;
-            white-space: pre;
-            color: #39ff14;
-            font-size: 6px;
-            line-height: 1;
-            margin: 20px 0;
-            opacity: 0.6;
-        }
-    </style>
+    <title>${title}</title>
 </head>
-<body>
-    <div class="container">
-        <div class="status-bar">
-            <span>CID_OS_VER.2.1</span>
-            <span>AUTH: OK</span>
-        </div>
+<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+    
+    <!-- Hidden Preheader for Mail Clients -->
+    <span style="display:none;font-size:1px;color:#050505;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${preheader || title}</span>
 
-        <div class="header">
-            <img src="cid:logo" alt="CID" style="max-height: 50px; margin-bottom: 10px;">
-            <h1 class="title">ACCESS GRANTED</h1>
-        </div>
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #050505; padding: 40px 10px;">
+        <tr>
+            <td align="center">
+                <!-- Main Glass Container -->
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; background-color: #0a0a0a; border: 1px solid #1f1f1f; border-top: 4px solid #8b5cf6; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);">
+                    <tr>
+                        <td style="padding: 40px 30px; text-align: left;">
+                            
+                            <!-- Header / Logo Area -->
+                            <div style="text-align: center; margin-bottom: 35px; border-bottom: 1px solid #1f1f1f; padding-bottom: 35px;">
+                                <img src="cid:logo" alt="CID Cell Matrix" width="180" style="max-width: 200px; height: auto; display: inline-block;">
+                            </div>
 
-        <div class="terminal-text">
-            <span class="user-greeting">> WELCOME, ${username.toUpperCase()}</span>
-            
-            <p>Your profile has been <span style="color: #00ffff;">Verified</span> and initialized in the CID Cell Database.</p>
-            
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="label">NAME:</span>
-                    <span class="value">${username.toUpperCase()}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">BRANCH:</span>
-                    <span class="value">${branch.toUpperCase()}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">BATCH:</span>
-                    <span class="value">${batch.toUpperCase()}</span>
-                </div>
-            </div>
+                            <!-- Title -->
+                            <h1 style="color: #ffffff; font-size: 26px; font-weight: 900; line-height: 1.25; margin: 0 0 25px 0; text-transform: uppercase; letter-spacing: 1.5px; text-align: center;">
+                                ${title}
+                            </h1>
 
-            <div class="btn-container">
-                <a href="https://cid-cell-mits.vercel.app" class="retro-button">ENTER DASHBOARD</a>
-            </div>
-        </div>
+                            <!-- Greeting -->
+                            <p style="color: #c4b5fd; font-size: 18px; font-weight: 600; margin-bottom: 25px;">
+                                ${greeting}
+                            </p>
 
-        <div class="pixel-art">
-  _      __________________  __  __________
- | | /| / / __/ / ___/ __ \/  |/  / __/
- | |/ |/ / _// / /__/ /_/ / /|_/ / _/  
- |__/|__/___/_/\___/\____/_/  /_/___/  
-        </div>
+                            <!-- Dynamic Body Content -->
+                            ${bodyHtml}
 
-        <div class="footer">
-            [SYS]: USER_INIT_COMPLETE<br>
-            MITS GWALIOR - CID CELL &copy; 2026
-        </div>
-    </div>
+                            <!-- Optional CTA Button -->
+                            ${ctaHtml}
+
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Footer -->
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; margin-top: 30px;">
+                    <tr>
+                        <td align="center" style="padding: 0 20px;">
+                            <p style="color: #64748b; font-size: 12px; margin: 0 0 10px 0; letter-spacing: 1px; text-transform: uppercase;">
+                                SECURE TRANSMISSION • CID-CELL MATRIX
+                            </p>
+                            <p style="color: #475569; font-size: 12px; margin: 0;">
+                                MITS Gwalior &copy; ${new Date().getFullYear()}<br>
+                                Automated System Notice - Please do not reply directly.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>
     `;
 };
 
-module.exports = { getRetroWelcomeTemplate };
+module.exports = { getPremiumEmailTemplate };
